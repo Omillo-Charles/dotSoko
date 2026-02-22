@@ -12,7 +12,7 @@ const TermsPage = () => {
       title: "1. Acceptance of Terms",
       icon: <ShieldCheck className="w-5 h-5" />,
       content: [
-        <>By accessing or using <span className="text-secondary">.</span>Soko, you agree to be bound by these Terms of Service.</>,
+        <>By accessing or using <span className="text-secondary font-semibold">.Soko</span>, you agree to be bound by these Terms of Service.</>,
         "If you do not agree to these terms, you may not use our platform or services.",
         "We reserve the right to modify these terms at any time, with updates effective upon posting.",
         "Continued use of the platform constitutes acceptance of any updated terms."
@@ -22,7 +22,7 @@ const TermsPage = () => {
       title: "2. Marketplace Platform",
       icon: <ShoppingBag className="w-5 h-5" />,
       content: [
-        <><span className="text-secondary">.</span>Soko provides a marketplace where sellers can list products and buyers can purchase them.</>,
+        <><span className="text-secondary font-semibold">.Soko</span> provides a marketplace where sellers can list products and buyers can purchase them.</>,
         "We are not the seller of items listed by third-party vendors on the platform.",
         "Transactions are directly between the buyer and the seller.",
         "We facilitate payment processing but are not responsible for product quality or delivery by sellers."
@@ -63,13 +63,13 @@ const TermsPage = () => {
               Terms of Service
             </h1>
             <p className="mt-4 text-muted-foreground text-lg leading-relaxed">
-              These terms govern your use of the <span className="text-secondary">.</span>Soko marketplace. Please read them 
+              These terms govern your use of the <span className="text-secondary font-semibold">.Soko</span> marketplace. Please read them 
               carefully to understand your rights and obligations as a user of our platform.
             </p>
             <div className="mt-6 flex items-center gap-4 text-sm text-muted-foreground/60">
               <span className="flex items-center gap-1.5">
                 <FileText className="w-4 h-4" />
-                Version 2.0
+                Version 1.2
               </span>
               <span className="flex items-center gap-1.5">
                 <Bell className="w-4 h-4" />
@@ -103,24 +103,16 @@ const TermsPage = () => {
               </div>
             ))}
 
-            <div className="p-8 bg-slate-900 dark:bg-slate-900/50 rounded-3xl text-slate-50 relative overflow-hidden border border-border/50">
+            <div className="p-8 bg-slate-900 dark:bg-slate-800 rounded-3xl text-white relative overflow-hidden">
               <div className="relative z-10">
-                <div className="flex items-center gap-3 mb-4">
-                  <AlertCircle className="w-6 h-6 text-primary" />
-                  <h3 className="text-2xl font-bold">Prohibited Conduct</h3>
-                </div>
+                <h3 className="text-2xl font-bold mb-4">Cookies & Tracking</h3>
                 <p className="text-slate-300 leading-relaxed mb-6">
-                  Users are strictly prohibited from engaging in fraudulent activities, harassment, 
-                  intellectual property infringement, or any behavior that compromises the security 
-                  and integrity of the <span className="text-secondary">.</span>Soko marketplace.
+                  We use cookies to enhance your browsing experience, serve personalized ads or content, 
+                  and analyze our traffic. By clicking "Accept", you consent to our use of cookies.
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {['No Spam', 'No Fraud', 'No Harassment', 'No Counterfeits'].map((tag) => (
-                    <span key={tag} className="px-3 py-1 bg-white/10 rounded-full text-xs font-bold">
-                      {tag}
-                    </span>
-                  ))}
-                </div>
+                <button className="bg-white text-slate-900 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-slate-100 transition-colors">
+                  Manage Cookie Settings
+                </button>
               </div>
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
             </div>
@@ -148,12 +140,12 @@ const TermsPage = () => {
               </div>
 
               <div className="bg-muted/50 rounded-2xl p-6">
-                <h4 className="font-bold text-foreground text-sm mb-4">Quick Links</h4>
+                <h4 className="font-bold text-foreground text-sm mb-4">Legal Directory</h4>
                 <nav className="space-y-3">
                   {[
-                    { name: 'Privacy Policy', href: '/privacy' },
+                    { name: 'Terms of Service', href: '/terms' },
                     { name: 'Cookie Policy', href: '/cookies' },
-                    { name: 'Return Policy', href: '/returns' },
+                    { name: 'Returns & Refunds', href: '/returns' },
                     { name: 'Help Center', href: '/help' }
                   ].map((item) => (
                     <Link 
