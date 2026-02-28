@@ -33,6 +33,7 @@ import ShopRatingModal from "@/components/ShopRatingModal";
 import ShareShopModal from "@/components/ShareShopModal";
 import ShareModal from "@/components/ShareModal";
 import CommentModal from "@/components/CommentModal";
+import { RepostModal } from "@/components/RepostModal";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -66,6 +67,14 @@ const ShopProfilePage = () => {
   }>({
     isOpen: false,
     productId: "",
+    productName: ""
+  });
+
+  const [repostModal, setRepostModal] = useState<{
+    isOpen: boolean;
+    productName: string;
+  }>({
+    isOpen: false,
     productName: ""
   });
 
@@ -474,7 +483,10 @@ const ShopProfilePage = () => {
                               </div>
                               <span className="text-xs font-bold">{product.commentsCount || 0}</span>
                             </button>
-                            <button onClick={(e) => e.stopPropagation()} className="flex items-center gap-0 group hover:text-green-500 transition-colors">
+                            <button onClick={(e) => {
+                              e.stopPropagation();
+                              toast.success("Product reposted!");
+                            }} className="flex items-center gap-0 group hover:text-green-500 transition-colors">
                               <div className="p-2 rounded-full group-hover:bg-green-500/10">
                                 <Repeat2 className="w-[18px] h-[18px]" />
                               </div>
