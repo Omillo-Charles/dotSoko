@@ -4,6 +4,7 @@ import Categories from "@/components/categories";
 import FeaturedProducts from "@/components/featuredProducts";
 import Footer from "@/components/footer";
 import { Updates } from "@/components/Updates";
+import { BannerCarousel } from "@/components/BannerCarousel";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
 
       <Categories />
       <FeaturedProducts />
+      <BannerCarousel />
 
       <section className="bg-muted/30 backdrop-blur-sm">
         <div className="w-full px-4 md:px-8 py-10">
