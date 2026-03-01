@@ -25,36 +25,49 @@ export default function Home() {
       <BannerCarousel />
 
       <section className="bg-muted/30 backdrop-blur-sm">
-        <div className="w-full px-4 md:px-8 py-10">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-4 shadow-sm">
-              <Truck className="w-6 h-6 text-primary" />
+        <div className="w-full px-4 md:px-8 py-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            
+            <div className="group flex flex-col items-center justify-center text-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-primary/20 hover:bg-primary/5 hover:shadow-primary/10 hover:shadow-lg">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Truck className="w-6 h-6" />
+              </div>
               <div>
-                <div className="font-semibold text-foreground">Fast Delivery</div>
-                <div className="text-sm text-muted-foreground">Across all regions in Kenya</div>
+                <div className="font-bold text-foreground">Fast Delivery</div>
+                <div className="text-sm text-muted-foreground">Across all regions</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-4 shadow-sm">
-              <ShieldCheck className="w-6 h-6 text-primary" />
+
+            <div className="group flex flex-col items-center justify-center text-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-primary/20 hover:bg-primary/5 hover:shadow-primary/10 hover:shadow-lg">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                <ShieldCheck className="w-6 h-6" />
+              </div>
               <div>
-                <div className="font-semibold text-foreground">Secure Payment</div>
+                <div className="font-bold text-foreground">Secure Payment</div>
                 <div className="text-sm text-muted-foreground">Encrypted and protected</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-4 shadow-sm">
-              <Headphones className="w-6 h-6 text-primary" />
+
+            <div className="group flex flex-col items-center justify-center text-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-primary/20 hover:bg-primary/5 hover:shadow-primary/10 hover:shadow-lg">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Headphones className="w-6 h-6" />
+              </div>
               <div>
-                <div className="font-semibold text-foreground">24/7 Support</div>
+                <div className="font-bold text-foreground">24/7 Support</div>
                 <div className="text-sm text-muted-foreground">We are here to help</div>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-4 shadow-sm">
-              <Zap className="w-6 h-6 text-primary" />
+
+            <div className="group flex flex-col items-center justify-center text-center gap-3 bg-background/60 backdrop-blur-md border border-border rounded-2xl p-6 shadow-sm transition-all duration-300 hover:border-primary/20 hover:bg-primary/5 hover:shadow-primary/10 hover:shadow-lg">
+              <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-all duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
+                <Zap className="w-6 h-6" />
+              </div>
               <div>
-                <div className="font-semibold text-foreground">Best Deals</div>
-                <div className="text-sm text-muted-foreground">Daily discounts and offers</div>
+                <div className="font-bold text-foreground">Best Deals</div>
+                <div className="text-sm text-muted-foreground">Daily discounts</div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
