@@ -10,7 +10,7 @@ const slides = [
     title: 'Latest Fashion Trends',
     subtitle: 'Discover the new arrivals',
     buttonText: 'Shop Now',
-    href: '/shop?cat=fashion',
+    href: '/shop?cat=clothing-apparel',
   },
   {
     image: '/bottom banner/gym.jfif',
@@ -24,7 +24,7 @@ const slides = [
     title: 'Crystal Clear Sound',
     subtitle: 'Experience music like never before',
     buttonText: 'Explore Audio',
-    href: '/shop?cat=audio',
+    href: '/shop?cat=electronics',
   },
   {
     image: '/bottom banner/ps.png',
@@ -72,18 +72,6 @@ export const BannerCarousel = () => {
               </div>
             </div>
           ))}
-
-          {/* Navigation */}
-          <div className="absolute inset-y-0 left-0 flex items-center">
-            <button onClick={prevSlide} className="p-4 text-white/50 hover:text-white">
-              <ChevronLeft className="w-8 h-8" />
-            </button>
-          </div>
-          <div className="absolute inset-y-0 right-0 flex items-center">
-            <button onClick={nextSlide} className="p-4 text-white/50 hover:text-white">
-              <ChevronRight className="w-8 h-8" />
-            </button>
-          </div>
 
           {/* Dots */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
