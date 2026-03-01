@@ -778,7 +778,7 @@ const ShopContent = () => {
                                 productId: product._id,
                                 position: {
                                   top: rect.bottom + window.scrollY + 5,
-                                  left: rect.right + window.scrollX - 192,
+                                  left: rect.right + window.scrollX - 100,
                                 },
                               });
                             }}
