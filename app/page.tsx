@@ -3,6 +3,7 @@ import { Zap, Truck, ShieldCheck, Headphones, ChevronRight } from "lucide-react"
 import Categories from "@/components/categories";
 import FeaturedProducts from "@/components/featuredProducts";
 import Footer from "@/components/footer";
+import { Updates } from "@/components/Updates";
 
 export default function Home() {
   return (
@@ -13,6 +14,10 @@ export default function Home() {
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]"></div>
         <div className="absolute top-[10%] right-[-5%] w-[30%] h-[30%] bg-secondary/5 rounded-full blur-[100px]"></div>
       </div>
+
+      <section className="border-y border-border bg-muted/20">
+        <Updates />
+      </section>
 
       <Categories />
       <FeaturedProducts />
