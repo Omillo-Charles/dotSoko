@@ -22,13 +22,12 @@ import {
   Layers,
   CheckCircle2,
   Tag,
-  DollarSign,
-  Info,
-  Store
+  DollarSign
 } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
+import ProductCreateModal from "@/components/ProductCreateModal";
 
 
 const categories = allCategories.filter(c => c.value !== 'all');
@@ -78,7 +77,7 @@ const SellerProductsContent = () => {
       if (shopRes.data.success && shopRes.data.data) {
         setShop(shopRes.data.data);
       } else {
-        router.push("/account/seller/create");
+        router.push("/account/seller");
         setIsLoading(false);
         return;
       }
@@ -397,34 +396,43 @@ const SellerProductsContent = () => {
 
       {/* Create Product Modal */}
       {showCreateModal && (
+        <ProductCreateModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onCreated={() => {
+            setShowCreateModal(false);
+            fetchProducts();
+          }}
+          shopName={shop?.name || "Your Shop"}
+        />
+      )}
+      {false && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div
             className="absolute inset-0 bg-background/60 backdrop-blur-sm transition-opacity"
             onClick={() => !isSubmitting && setShowCreateModal(false)}
           />
-          <div className="relative w-full max-w-5xl max-h-[90vh] flex flex-col bg-background rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-border">
-            {/* Modal Header */}
-            <div className="bg-foreground p-8 text-background relative shrink-0">
+          <div className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-background rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300 border border-border">
+            <div className="relative p-6 border-b border-border shrink-0">
               <button
                 onClick={() => setShowCreateModal(false)}
                 disabled={isSubmitting}
-                className="absolute top-8 right-8 text-muted-foreground hover:text-background transition-colors disabled:opacity-50"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors disabled:opacity-50"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
-              <h3 className="text-2xl font-bold uppercase tracking-tight">
+              <h3 className="text-lg font-bold leading-tight">
                 Create Listing
               </h3>
-              <p className="text-muted-foreground text-sm font-medium mt-1 uppercase tracking-widest">
+              <p className="text-muted-foreground text-xs font-medium mt-1">
                 Drafting in {shop?.name || "Your Shop"}
               </p>
             </div>
 
-            {/* Modal Content */}
-            <div className="flex-1 overflow-y-auto p-8 lg:p-12">
-              <div className="flex flex-col lg:flex-row gap-12 items-start">
+            <div className="flex-1 overflow-y-auto p-4">
+              <div className="flex flex-col gap-8 items-start">
                 {/* Form Column */}
-                <form onSubmit={handleSubmit} className="w-full lg:w-3/5 space-y-8">
+                <form onSubmit={handleSubmit} className="w-full space-y-8">
                   <div className="space-y-8">
                     {/* Image Upload Area */}
                     <div className="space-y-4">
@@ -621,114 +629,7 @@ const SellerProductsContent = () => {
                   </div>
                 </form>
 
-                {/* Preview Column */}
-                <div className="hidden lg:block lg:w-2/5 sticky top-0">
-                  <div className="space-y-6">
-                    <div className="flex items-center justify-between px-2">
-                      <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                        Live Preview
-                      </h3>
-                      <span className="flex items-center gap-2 text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        Real-time
-                      </span>
-                    </div>
-
-                    <div className="bg-muted/40 backdrop-blur-xl border border-border rounded-3xl p-8 shadow-2xl shadow-primary/5">
-                      <div className="bg-background rounded-2xl border border-border overflow-hidden group shadow-lg">
-                        <div className="aspect-square bg-muted relative overflow-hidden flex items-center justify-center">
-                          {imagePreviews.length > 0 ? (
-                            <div
-                              className={`w-full h-full grid gap-0.5 ${
-                                imagePreviews.length === 1
-                                  ? "grid-cols-1"
-                                  : imagePreviews.length === 2
-                                  ? "grid-cols-2"
-                                  : "grid-cols-2 grid-rows-2"
-                              }`}
-                            >
-                              {imagePreviews.map((preview, idx) => (
-                                <div
-                                  key={idx}
-                                  className={`relative ${
-                                    imagePreviews.length === 3 && idx === 0
-                                      ? "row-span-2"
-                                      : ""
-                                  }`}
-                                >
-                                  <img
-                                    src={preview}
-                                    alt="Preview"
-                                    className="w-full h-full object-cover rounded-xl transition-transform duration-700 group-hover:scale-110"
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground gap-3">
-                              <ImageIcon className="w-12 h-12" />
-                              <span className="text-[10px] font-black uppercase tracking-widest">
-                                No Image
-                              </span>
-                            </div>
-                          )}
-                          <div className="absolute top-4 left-4">
-                            <div className="bg-background/90 backdrop-blur-md px-3 py-1 rounded-full shadow-sm">
-                              <span className="text-[9px] font-black text-foreground uppercase tracking-widest">
-                                {formData.category || "Category"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="p-5 space-y-3">
-                          <div className="space-y-1">
-                            <h4 className="font-bold text-foreground text-lg truncate leading-tight">
-                              {formData.name || "Your Product Name"}
-                            </h4>
-                            <div className="flex items-center gap-2">
-                              <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                                <Store className="w-3 h-3 text-primary" />
-                              </div>
-                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
-                                {shop?.name || "Your Store"}
-                              </span>
-                            </div>
-                          </div>
-
-                          <div className="pt-2 border-t border-border flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
-                                Price
-                              </span>
-                              <span className="font-bold text-primary text-xl tracking-tight">
-                                KES {formData.price || "0"}
-                              </span>
-                            </div>
-                            <div className="w-10 h-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/10">
-                              <Plus className="w-5 h-5" />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-8 p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-xl bg-background flex items-center justify-center shadow-sm">
-                            <Info className="w-4 h-4 text-primary" />
-                          </div>
-                          <span className="text-[10px] font-black text-foreground uppercase tracking-widest">
-                            Pro Tip
-                          </span>
-                        </div>
-                        <p className="text-xs font-bold text-muted-foreground leading-relaxed">
-                          Products with clear, high-resolution photos and detailed
-                          descriptions sell 3x faster on <span className="text-secondary">.</span>Soko
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Preview removed */}
               </div>
             </div>
           </div>

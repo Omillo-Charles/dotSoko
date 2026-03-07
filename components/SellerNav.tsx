@@ -24,9 +24,9 @@ export const SellerNav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-background border-b border-border sticky top-[144px] lg:top-[128px] z-20">
+    <nav className="bg-background border-b border-border sticky top-[80px] lg:top-[128px] z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 h-16 overflow-x-auto no-scrollbar scroll-smooth">
+        <div className="flex items-center gap-2 h-12 md:h-16 overflow-x-auto no-scrollbar scroll-smooth">
           {navItems.map((item) => (
             <Link
               key={item.label}

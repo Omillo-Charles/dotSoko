@@ -90,7 +90,7 @@ const SellerSettingsPage = () => {
           setAvatarPreview(shopData.data.avatar || "");
           setBannerPreview(shopData.data.banner || "");
         } else {
-          router.push("/account/seller/create");
+          router.push("/account/seller");
         }
       } catch (e) {
         console.error("Settings Auth Error:", e);
