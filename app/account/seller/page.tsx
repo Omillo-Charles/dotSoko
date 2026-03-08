@@ -37,11 +37,6 @@ const SellerDashboard = () => {
       return;
     }
 
-    if (user && user.accountType !== "seller") {
-      router.push("/account");
-      return;
-    }
-
     if (!isShopLoading && !shop && !shopError) {
       setCreateOpen(true);
     }

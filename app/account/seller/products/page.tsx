@@ -65,10 +65,6 @@ const SellerProductsContent = () => {
 
     try {
       const parsedUser = JSON.parse(userData);
-      if (parsedUser.accountType !== "seller") {
-        router.push("/account");
-        return;
-      }
 
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
       

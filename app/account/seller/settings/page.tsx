@@ -67,10 +67,6 @@ const SellerSettingsPage = () => {
 
       try {
         const parsedUser = JSON.parse(userData);
-        if (parsedUser.accountType !== "seller") {
-          router.push("/account");
-          return;
-        }
         setUser(parsedUser);
 
         const shopRes = await api.get("/shops/my-shop");
