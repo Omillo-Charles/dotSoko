@@ -54,10 +54,15 @@ export const Updates = () => {
   const [canScrollRight, setCanScrollRight] = useState(false);
   const { user, refreshUser } = useUser();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   
   // Real Data State
   const [storiesData, setStoriesData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const fetchStories = useCallback(async () => {
     try {
@@ -84,13 +89,14 @@ export const Updates = () => {
     }
   }, [refreshUser, user?.shop, user?.accountType]);
 
-  const isSeller = user?.accountType === 'seller' || !!user?.shop;
+  const isSeller = isMounted && (user?.accountType === 'seller' || !!user?.shop);
 
   // Story Viewer State
   const [activeStoryGroupIndex, setActiveStoryGroupIndex] = useState<number | null>(null);
   const [activeItemIndex, setActiveItemIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
 
   const activeGroup = activeStoryGroupIndex !== null ? storiesData[activeStoryGroupIndex] : null;
   const activeItem = activeGroup ? activeGroup.items[activeItemIndex] : null;
@@ -107,41 +113,52 @@ export const Updates = () => {
     };
   }, [activeStoryGroupIndex]);
 
+  const scrollToItem = useCallback((index: number) => {
+    if (!modalScrollRef.current) return;
+    const containerWidth = modalScrollRef.current.clientWidth;
+    modalScrollRef.current.scrollTo({
+      left: containerWidth * index,
+      behavior: "smooth"
+    });
+    setActiveItemIndex(index);
+    setProgress(0);
+  }, []);
+
   // Next/Prev Logic for stories
   const nextStory = useCallback(() => {
-    setProgress(0);
     if (!activeGroup) return;
 
     if (activeItemIndex < activeGroup.items.length - 1) {
       // Next item in current shop's story
-      setActiveItemIndex(prev => prev + 1);
+      scrollToItem(activeItemIndex + 1);
     } else if (activeStoryGroupIndex !== null && activeStoryGroupIndex < storiesData.length - 1) {
       // Next shop's story
       setActiveStoryGroupIndex(activeStoryGroupIndex + 1);
       setActiveItemIndex(0);
+      setProgress(0);
     } else {
       // End of all stories
       closeStory();
     }
-  }, [activeGroup, activeItemIndex, activeStoryGroupIndex]);
+  }, [activeGroup, activeItemIndex, activeStoryGroupIndex, scrollToItem, storiesData]);
 
   const prevStory = useCallback(() => {
-    setProgress(0);
     if (!activeGroup) return;
 
     if (activeItemIndex > 0) {
       // Prev item in current shop's story
-      setActiveItemIndex(prev => prev - 1);
+      scrollToItem(activeItemIndex - 1);
     } else if (activeStoryGroupIndex !== null && activeStoryGroupIndex > 0) {
       // Prev shop's story (go to its last item)
       const prevGroup = storiesData[activeStoryGroupIndex - 1];
       setActiveStoryGroupIndex(activeStoryGroupIndex - 1);
       setActiveItemIndex(prevGroup.items.length - 1);
+      setProgress(0);
     } else {
       // Cannot go back further than first item of first shop
       setProgress(0);
     }
-  }, [activeGroup, activeItemIndex, activeStoryGroupIndex]);
+  }, [activeGroup, activeItemIndex, activeStoryGroupIndex, scrollToItem, storiesData]);
 
   // Mark as viewed
   const markAsViewed = useCallback(async (updateId: string) => {
@@ -181,17 +198,33 @@ export const Updates = () => {
 
 
   const openStory = (index: number) => {
+    const group = storiesData[index];
+    if (!group) return;
+
+    // Find the first unviewed item index
+    const firstUnviewedIndex = group.items.findIndex((item: any) => !item.viewed);
+    const startIndex = firstUnviewedIndex !== -1 ? firstUnviewedIndex : 0;
+
     setActiveStoryGroupIndex(index);
-    setActiveItemIndex(0);
+    setActiveItemIndex(startIndex);
     setProgress(0);
     setIsPaused(false);
     
-    // Mark the first item as viewed immediately
-    const group = storiesData[index];
-    if (group && group.items[0] && !group.items[0].viewed) {
-      markAsViewed(group.items[0].id);
+    // We will scroll to the start index in a useEffect after the modal mounts
+    
+    // Mark the starting item as viewed immediately
+    if (group.items[startIndex] && !group.items[startIndex].viewed) {
+      markAsViewed(group.items[startIndex].id);
     }
   };
+
+  // Effect to handle initial scroll when story group is opened
+  useEffect(() => {
+    if (activeStoryGroupIndex !== null && modalScrollRef.current) {
+      const containerWidth = modalScrollRef.current.clientWidth;
+      modalScrollRef.current.scrollLeft = containerWidth * activeItemIndex;
+    }
+  }, [activeStoryGroupIndex]); // Only run when a group is opened
 
   const closeStory = () => {
     setActiveStoryGroupIndex(null);
@@ -344,25 +377,53 @@ export const Updates = () => {
                 </div>
               </div>
 
-              {/* Main Media Area (Tap targets) */}
-              <div className="flex-1 relative flex items-center justify-center">
-                
-                {/* Media */}
-                {activeItem.type === 'video' ? (
-                  <video 
-                    src={activeItem.url} 
-                    className="w-full h-auto max-h-full object-contain pointer-events-none drop-shadow-2xl"
-                    autoPlay
-                    muted
-                    loop
-                  />
-                ) : (
-                  <img 
-                    src={activeItem.url} 
-                    alt="Story content" 
-                    className="w-full h-auto max-h-full object-contain pointer-events-none drop-shadow-2xl"
-                  />
-                )}
+              {/* Main Media Area - Carousel Container */}
+              <div 
+                ref={modalScrollRef}
+                className="flex-1 relative flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
+                onScroll={() => {
+                  if (modalScrollRef.current) {
+                    const scrollPos = modalScrollRef.current.scrollLeft;
+                    const width = modalScrollRef.current.clientWidth;
+                    const newIdx = Math.round(scrollPos / width);
+                    if (newIdx !== activeItemIndex && newIdx >= 0 && newIdx < activeGroup.items.length) {
+                      setActiveItemIndex(newIdx);
+                      setProgress(0);
+                    }
+                  }
+                }}
+              >
+                {activeGroup.items.map((item: any) => (
+                  <div key={item.id} className="w-full h-full flex-none snap-center snap-always relative flex items-center justify-center">
+                    {/* Media */}
+                    {item.type === 'video' ? (
+                      <video 
+                        src={item.url} 
+                        className="w-full h-auto max-h-full object-contain pointer-events-none drop-shadow-2xl"
+                        autoPlay={activeItem?.id === item.id} // Only autoplay if it's the active one
+                        muted
+                        loop
+                      />
+                    ) : (
+                      <img 
+                        src={item.url} 
+                        alt="Story content" 
+                        className="w-full h-auto max-h-full object-contain pointer-events-none drop-shadow-2xl"
+                      />
+                    )}
+
+                    {/* Text Overlay (Specific to each item) */}
+                    {item.text && (
+                      <div className="absolute bottom-16 left-0 w-full px-6 z-10 pointer-events-none">
+                        <div className="bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded-3xl mx-auto w-fit max-w-[90%] shadow-xl">
+                          <p className="text-white text-center font-bold text-[15px] leading-snug drop-shadow-md">
+                            {item.text}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
 
                 {/* Left Tap Target (Prev) */}
                 <div 
@@ -383,17 +444,6 @@ export const Updates = () => {
                   onTouchStart={() => setIsPaused(true)}
                   onTouchEnd={() => setIsPaused(false)}
                 />
-
-                {/* Text Overlay (Bottom) */}
-                {activeItem.text && (
-                  <div className="absolute bottom-16 left-0 w-full px-6 z-10 pointer-events-none">
-                    <div className="bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded-3xl mx-auto w-fit max-w-[90%] shadow-xl">
-                      <p className="text-white text-center font-bold text-[15px] leading-snug drop-shadow-md">
-                        {activeItem.text}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* Footer Reply Action (Optional, visual only for now) */}

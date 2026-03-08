@@ -82,17 +82,21 @@ const ProductDetailsPage = () => {
   }, []);
 
   const popularShops = React.useMemo(() => {
-    return (popularShopsData || []).map((s: any) => ({
-      id: String(s._id || s.id || `shop-${Math.random()}`),
-      name: String(s.name || "Unknown Shop"),
-      handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
-      avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
-      followers: Number(s.followersCount || s.followers?.length || 0),
-      verified: Boolean(s.isVerified || false),
-      followersList: s.followers || [],
-      products: Number(s.productsCount || s.products?.length || 0)
-    }));
-  }, [popularShopsData]);
+    return (popularShopsData || []).map((s: any) => {
+      const isFollowing = Boolean(s.isFollowing) || (Array.isArray(s.followersList) && currentUser && s.followersList.some((f: any) => String(f._id || f) === String(currentUser?._id)));
+      
+      return {
+        id: String(s._id || s.id || `shop-${Math.random()}`),
+        name: String(s.name || "Unknown Shop"),
+        handle: s.username ? `@${s.username}` : `@${String(s.name || "shop").toLowerCase().replace(/\s+/g, "_")}`,
+        avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+        followersCount: Number(s.followersCount || s.followers?.length || 0),
+        verified: Boolean(s.isVerified || false),
+        isFollowing: isFollowing,
+        products: Number(s.productsCount || s.products?.length || 0)
+      };
+    });
+  }, [popularShopsData, currentUser]);
 
   const handleFollowToggle = async (shopId: string) => {
     if (!currentUser) {
@@ -476,22 +480,20 @@ const ProductDetailsPage = () => {
                         <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-muted-foreground truncate max-w-[80px]">{vendor.handle}</p>
                           <span className="text-muted-foreground/30">·</span>
-                          <p className="text-[10px] font-bold text-muted-foreground">{vendor.followers} followers</p>
+                          <p className="text-[10px] font-bold text-muted-foreground">{vendor.followersCount} followers</p>
                         </div>
                       </div>
                     </div>
-                    {isMounted && currentUser && (!myShop || String(myShop._id || myShop.id) !== String(vendor.id)) && (
                       <button 
                         onClick={(e) => { e.stopPropagation(); handleFollowToggle(vendor.id); }}
                         className={`text-[10px] font-black px-4 py-1.5 rounded-full transition-all ${
-                          vendor.followersList?.includes(currentUser?._id) 
+                          vendor.isFollowing
                             ? 'bg-muted text-foreground hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10' 
                             : 'bg-foreground text-background hover:bg-primary'
                         }`}
                       >
-                        {vendor.followersList?.includes(currentUser?._id) ? 'Following' : 'Follow'}
+                        {vendor.isFollowing ? 'Following' : 'Follow'}
                       </button>
-                    )}
                   </div>
                 ))}
               </div>

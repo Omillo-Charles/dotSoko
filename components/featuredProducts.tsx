@@ -199,11 +199,13 @@ const FeaturedProducts = () => {
                 >
                   <MessageSquare className="w-4 h-4" />
                 </button>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-300 ${
+                  isInWishlist(p._id) ? 'opacity-100 scale-110' : 'opacity-0 group-hover:opacity-100 group-hover:scale-100'
+                }`}>
                   <Heart 
                     onClick={(e) => handleWishlist(e, p)}
-                    className={`w-12 h-12 cursor-pointer drop-shadow-lg transition-transform hover:scale-110 active:scale-90 ${
-                      isInWishlist(p._id) ? "fill-red-500 text-red-500" : "text-white/80"
+                    className={`w-12 h-12 cursor-pointer drop-shadow-lg transition-all ${
+                      isInWishlist(p._id) ? "text-pink-500 fill-current" : "text-white/80 hover:text-pink-500"
                     }`} 
                   />
                 </div>

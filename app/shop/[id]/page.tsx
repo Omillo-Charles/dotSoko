@@ -35,6 +35,7 @@ import ShareShopModal from "@/components/ShareShopModal";
 import ShareModal from "@/components/ShareModal";
 import CommentModal from "@/components/CommentModal";
 import { RepostModal } from "@/components/RepostModal";
+import { ImageCarousel } from "@/components/ImageCarousel";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -155,9 +156,7 @@ const ShopProfilePage = () => {
     }));
   }, [productsData]);
 
-  const isFollowing = (shop as any)?.isFollowing 
-    ?? shop?.followers?.some((f: any) => String(f._id || f) === String(currentUser?._id))
-    ?? false;
+  const isFollowing = (shop as any)?.isFollowing ?? false;
   
   const popularShops = React.useMemo(() => {
     return (popularShopsData || []).map((s: any) => ({
@@ -184,7 +183,6 @@ const ShopProfilePage = () => {
 
     try {
       await followMutation.mutateAsync(shop?._id);
-      await refreshUser();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Failed to toggle follow");
     }
@@ -460,12 +458,11 @@ const ShopProfilePage = () => {
                             {product.description}
                           </p>
 
-                          {product.image && (
+                          {(product.images?.length > 0 || product.image) && (
                             <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-square group/img flex items-center justify-center">
-                              <img 
-                                src={product.image} 
+                              <ImageCarousel 
+                                images={product.images?.length > 0 ? product.images : [product.image]} 
                                 alt={product.name} 
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-110" 
                               />
                               <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
                                 <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>

@@ -29,8 +29,9 @@ import { useWishlist } from "@/context/WishlistContext";
 import { categories as allCategories } from "@/constants/categories";
 import { toast } from "sonner";
 
-import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity } from "@/hooks/useProducts";
+import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity, useMyProducts } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
 import RatingModal from "@/components/RatingModal";
 import ShareModal from "@/components/ShareModal";
@@ -38,6 +39,8 @@ import CommentModal from "@/components/CommentModal";
 import ShopSearchModal from "@/components/ShopSearchModal";
 import { RepostModal } from "@/components/RepostModal";
 import { ImageCarousel } from "@/components/ImageCarousel";
+import { CreateUpdateModal } from "@/components/CreateUpdateModal";
+import ProductCreateModal from "@/components/ProductCreateModal";
 
 const ShopContent = () => {
   const router = useRouter();
@@ -52,6 +55,7 @@ const ShopContent = () => {
   const [activeTab, setActiveTab] = useState<'foryou' | 'following'>('foryou');
   const { user: currentUser } = useUser();
   const { data: myShop } = useMyShop();
+  const queryClient = useQueryClient();
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops(4);
   const shopsQuery = searchParams.get("shops_q") || "";
   const { data: flashDealsData } = useLimitedProducts(3);
@@ -140,6 +144,9 @@ const ShopContent = () => {
     position: { top: 0, left: 0 },
   });
 
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
+
   // Sync search query with URL params
   useEffect(() => {
     setDesktopSearchQuery(shopsQuery || "");
@@ -148,6 +155,8 @@ const ShopContent = () => {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const isSeller = isMounted && (currentUser?.accountType === 'seller' || !!myShop);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -236,17 +245,20 @@ const ShopContent = () => {
   }, [products, activeTab, myShop]);
 
   const popularShops = React.useMemo(() => {
-    let shops = (popularShopsData || []).map((s: any) => ({
-      id: s._id || s.id || `shop-${Math.random()}`,
-      name: s.name || "Unknown Shop",
-      handle: s.username ? `@${s.username}` : null,
-      avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
-      followers: s.followersCount || s.followers?.length || 0,
-      verified: s.isVerified || false,
-      followersList: s.followers || [],
-      isFollowing: s.isFollowing ?? false,
-      products: s.productsCount || s.products?.length || 0
-    }));
+    let shops = (popularShopsData || []).map((s: any) => {
+      const isFollowing = Boolean(s.isFollowing) || (Array.isArray(s.followersList) && currentUser && s.followersList.some((f: any) => String(f._id || f) === String(currentUser?._id)));
+      
+      return {
+        id: s._id || s.id || `shop-${Math.random()}`,
+        name: s.name || "Unknown Shop",
+        handle: s.username ? `@${s.username}` : null,
+        avatar: s.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${s.name || "shop"}`,
+        followers: s.followersCount || s.followers?.length || 0,
+        verified: s.isVerified || false,
+        isFollowing: isFollowing,
+        products: s.productsCount || s.products?.length || 0
+      };
+    });
 
     if (shopsQuery) {
       const q = shopsQuery.toLowerCase();
@@ -294,11 +306,6 @@ const ShopContent = () => {
   }, []);
 
   const categories = allCategories.filter(c => c.value !== 'all');
-
-  const specialOffers = [
-    { title: "Summer Sale", discount: "50% OFF", color: "bg-orange-500", icon: "🔥" },
-    { title: "New Arrivals", discount: "FREE DELIVERY", color: "bg-blue-600", icon: "📦" },
-  ];
 
   const handleCategoryClick = (categoryValue: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -525,6 +532,31 @@ const ShopContent = () => {
             </div>
           </div>
 
+          {/* Mobile Quick Actions for Sellers */}
+          {isSeller && (
+            <div className="lg:hidden border-b border-border bg-muted/20 px-4 py-4 space-y-3">
+               <div className="flex items-center justify-between mb-1">
+                 <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Seller Hub</h3>
+               </div>
+               <div className="flex gap-2">
+                 <button 
+                   onClick={() => setShowProductModal(true)}
+                   className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-primary/10 active:scale-95 transition-all"
+                 >
+                   <Plus className="w-4 h-4" />
+                   POST PRODUCT
+                 </button>
+                 <button 
+                   onClick={() => setIsUpdateModalOpen(true)}
+                   className="flex-1 flex items-center justify-center gap-2 bg-secondary text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-secondary/10 active:scale-95 transition-all"
+                 >
+                   <Send className="w-4 h-4" />
+                   ADD UPDATE
+                 </button>
+               </div>
+            </div>
+          )}
+
           {/* Product Feed */}
           <div>
             {/* Mobile Shop Search Results */}
@@ -574,12 +606,12 @@ const ShopContent = () => {
                                 handleFollowToggle(vendor.id);
                               }}
                               className={`px-3 py-1 rounded-full text-[10px] font-black ${
-                                (vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id)))
+                                vendor.isFollowing
                                   ? 'bg-muted text-foreground'
                                   : 'bg-foreground text-background'
                               }`}
                             >
-                              {(vendor.isFollowing ?? vendor.followersList?.some((f: any) => String(f._id || f) === String(currentUser?._id))) ? 'Following' : 'Follow'}
+                              {vendor.isFollowing ? 'Following' : 'Follow'}
                             </button>
                           )}
                         </div>
@@ -895,6 +927,17 @@ const ShopContent = () => {
           initialQuery={shopsQuery}
         />
 
+        <CreateUpdateModal 
+          isOpen={isUpdateModalOpen}
+          onClose={() => setIsUpdateModalOpen(false)}
+          onCreated={() => {
+            // Ideally we'd refresh the Feed or Stories here
+            // but since stories are in a separate component, 
+            // the Story creation modal handles local refreshes if needed.
+            setIsUpdateModalOpen(false);
+          }}
+        />
+
         {/* Right Sidebar - Trending/Quick Links */}
         <div className="hidden lg:block w-[320px] shrink-0">
           <aside className="fixed top-[128px] w-[320px] h-[calc(100vh-128px)] overflow-y-auto custom-scrollbar px-6 py-6 pb-24 space-y-8">
@@ -970,35 +1013,45 @@ const ShopContent = () => {
               </div>
             </div>
 
-            {/* Special Offers */}
-            <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Special Offers</h3>
-              <div className="space-y-3 px-2">
-                {specialOffers.map((offer, index) => (
-                  <Link 
-                    key={offer.title} 
-                    href="/deals"
-                    className={`group block relative overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${
-                      index === 0 
-                        ? 'bg-primary shadow-primary/20' 
-                        : 'bg-secondary shadow-secondary/20'
-                    }`}
+            {/* Quick Actions for Sellers */}
+            {isSeller && (
+              <div className="space-y-4">
+                <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Quick Actions</h3>
+                <div className="space-y-3 px-2">
+                  {/* Post Product Button */}
+                  <button 
+                    onClick={() => setShowProductModal(true)}
+                    className="w-full text-left group block relative overflow-hidden rounded-2xl p-5 bg-primary shadow-xl shadow-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95"
                   >
-                    <div className="relative z-10">
-                      <p className="text-[10px] font-black text-primary-foreground/70 uppercase tracking-widest mb-1">{offer.title}</p>
-                      <p className="text-xl font-black text-primary-foreground leading-tight">{offer.discount}</p>
+                    <div className="relative z-10 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">Inventory</p>
+                        <p className="text-xl font-black text-white leading-tight">POST PRODUCT</p>
+                      </div>
+                      <Plus className="w-8 h-8 text-white/40 group-hover:rotate-90 transition-transform duration-500" />
                     </div>
-                    
                     {/* Decorative Background Elements */}
-                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-primary-foreground/10 rounded-full blur-2xl group-hover:bg-primary-foreground/20 transition-colors"></div>
-                    
-                    <div className="absolute right-3 bottom-3 text-5xl opacity-20 group-hover:scale-110 group-hover:opacity-30 transition-all duration-500 transform -rotate-12">
-                      {offer.icon}
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
+                  </button>
+
+                  {/* Add Update Button */}
+                  <button 
+                    onClick={() => setIsUpdateModalOpen(true)}
+                    className="w-full text-left group block relative overflow-hidden rounded-2xl p-5 bg-secondary shadow-xl shadow-secondary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+                  >
+                    <div className="relative z-10 flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">Stories</p>
+                        <p className="text-xl font-black text-white leading-tight">ADD UPDATE</p>
+                      </div>
+                      <Send className="w-8 h-8 text-white/40 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-500" />
                     </div>
-                  </Link>
-                ))}
+                    {/* Decorative Background Elements */}
+                    <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Flash Deals */}
             <div className="space-y-4">
@@ -1077,9 +1130,9 @@ const ShopContent = () => {
       </div>
 
       {/* Floating Action Button for Sellers */}
-      {isMounted && currentUser?.accountType === 'seller' && (
-        <Link
-          href="/account/seller/products?action=add"
+      {isSeller && (
+        <button
+          onClick={() => setShowProductModal(true)}
           className={`fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${
             showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'
           }`}
@@ -1090,8 +1143,27 @@ const ShopContent = () => {
               POST PRODUCT
             </span>
           </div>
-        </Link>
+        </button>
       )}
+
+      <ProductCreateModal 
+        isOpen={showProductModal}
+        onClose={() => setShowProductModal(false)}
+        onCreated={() => {
+          setShowProductModal(false);
+          // Invalidate multiple possible product queries to ensure the feed/shop updates
+          queryClient.invalidateQueries({ queryKey: ["products"] });
+          queryClient.invalidateQueries({ queryKey: ["products-infinite"] });
+          queryClient.invalidateQueries({ queryKey: ["product-feed"] });
+          queryClient.invalidateQueries({ queryKey: ["my-products"] });
+        }}
+        shopName={myShop?.name}
+      />
+      
+      <CreateUpdateModal 
+        isOpen={isUpdateModalOpen}
+        onClose={() => setIsUpdateModalOpen(false)}
+      />
     </div>
   );
 };

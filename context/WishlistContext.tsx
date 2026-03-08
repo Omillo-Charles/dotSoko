@@ -30,6 +30,12 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
 
+  const isSameId = (pid1: any, pid2: any) => {
+    const id1 = String(pid1?._id || pid1?.id || pid1);
+    const id2 = String(pid2?._id || pid2?.id || pid2);
+    return id1 === id2 && id1 !== 'undefined' && id2 !== 'undefined';
+  };
+
   const { data: wishlistData, isLoading } = useQuery({
     queryKey: ['wishlist'],
     queryFn: async () => {
@@ -64,12 +70,13 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       const previousProducts = queryClient.getQueryData(['products']);
       const previousFeed = queryClient.getQueryData(['product-feed']);
       const previousShopProducts = queryClient.getQueryData(['shop-products']);
+      const previousMyProducts = queryClient.getQueryData(['my-products']);
       const previousWishlist = queryClient.getQueryData(['wishlist']);
 
       // Determine if adding or removing
       // Use the most up-to-date wishlist data (including potential previous optimistic updates)
       const currentWishlist: any = previousWishlist || { products: [] };
-      const currentlyInWishlist = currentWishlist.products?.some((item: any) => (item._id || item.id) === productId);
+      const currentlyInWishlist = currentWishlist.products?.some((item: any) => isSameId(item, productId));
       const action = currentlyInWishlist ? 'removed' : 'added';
 
       // Optimistically update wishlist items
@@ -77,20 +84,31 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         if (!old) return { products: [] };
         const products = old.products || [];
         if (action === 'added') {
-          // We don't have the full product object here necessarily, but for isInWishlist we only need the ID
           return { ...old, products: [...products, { _id: productId }] };
         } else {
-          return { ...old, products: products.filter((p: any) => (p._id || p.id) !== productId) };
+          return { ...old, products: products.filter((p: any) => !isSameId(p, productId)) };
         }
       });
 
       // Function to update product list
       const updateProductList = (old: any) => {
         if (!old) return old;
+        
+        // If it's a single product object (e.g., queryKey: ['product', id])
+        if (typeof old === 'object' && !Array.isArray(old) && !old.pages) {
+          if (isSameId(old, productId)) {
+            return {
+              ...old,
+              likesCount: action === 'added' ? (old.likesCount || 0) + 1 : Math.max(0, (old.likesCount || 0) - 1)
+            };
+          }
+          return old;
+        }
+
         // If it's an array (standard useQuery)
         if (Array.isArray(old)) {
           return old.map((p: any) => {
-            if (p._id === productId || p.id === productId) {
+            if (isSameId(p, productId)) {
               return {
                 ...p,
                 likesCount: action === 'added' ? (p.likesCount || 0) + 1 : Math.max(0, (p.likesCount || 0) - 1)
@@ -106,7 +124,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             pages: old.pages.map((page: any) => ({
               ...page,
               data: page.data?.map((p: any) => {
-                if (p._id === productId || p.id === productId) {
+                if (isSameId(p, productId)) {
                   return {
                     ...p,
                     likesCount: action === 'added' ? (p.likesCount || 0) + 1 : Math.max(0, (p.likesCount || 0) - 1)
@@ -120,6 +138,9 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         return old;
       };
 
+      // Pessimistically cancel 'product' queries for this specific ID
+      await queryClient.cancelQueries({ queryKey: ['product', productId] });
+
       // Optimistically update all related queries
       queryClient.setQueriesData({ queryKey: ['products'] }, updateProductList);
       queryClient.setQueriesData({ queryKey: ['products-limited'] }, updateProductList);
@@ -127,8 +148,10 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       queryClient.setQueriesData({ queryKey: ['featured-products'] }, updateProductList);
       queryClient.setQueriesData({ queryKey: ['product-feed'] }, updateProductList);
       queryClient.setQueriesData({ queryKey: ['shop-products'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['my-products'] }, updateProductList);
+      queryClient.setQueriesData({ queryKey: ['product', productId] }, updateProductList);
 
-      return { previousProducts, previousFeed, previousWishlist, previousShopProducts };
+      return { previousProducts, previousFeed, previousWishlist, previousShopProducts, previousMyProducts };
     },
     onError: (error: any, productId, context) => {
       // Rollback on error
@@ -140,6 +163,9 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       }
       if (context?.previousShopProducts) {
         queryClient.setQueriesData({ queryKey: ['shop-products'] }, context.previousShopProducts);
+      }
+      if (context?.previousMyProducts) {
+        queryClient.setQueriesData({ queryKey: ['my-products'] }, context.previousMyProducts);
       }
       if (context?.previousWishlist) {
         queryClient.setQueryData(['wishlist'], context.previousWishlist);
@@ -156,7 +182,29 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       queryClient.invalidateQueries({ queryKey: ['product-feed'] });
       queryClient.invalidateQueries({ queryKey: ['shop-products'] });
     },
-    onSuccess: () => {}
+    onSuccess: (data, productId) => {
+      // Synchronize exact likesCount if backend returned it
+      if (data.likesCount !== undefined) {
+        const syncLikes = (old: any) => {
+          if (!old) return old;
+          const updateObj = (p: any) => {
+            if (isSameId(p, productId)) {
+              return { ...p, likesCount: data.likesCount };
+            }
+            return p;
+          };
+
+          if (Array.isArray(old)) return old.map(updateObj);
+          if (old.pages) return { ...old, pages: old.pages.map((page: any) => ({ ...page, data: page.data?.map(updateObj) })) };
+          if (typeof old === 'object') return updateObj(old);
+          return old;
+        };
+
+        queryClient.setQueriesData({ queryKey: ['products'] }, syncLikes);
+        queryClient.setQueriesData({ queryKey: ['product-feed'] }, syncLikes);
+        queryClient.setQueriesData({ queryKey: ['product', productId] }, syncLikes);
+      }
+    }
   });
 
   const removeMutation = useMutation({
@@ -192,8 +240,7 @@ export const WishlistProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const isInWishlist = (productId: string) => {
-    const pid = String(productId);
-    return wishlistItems.some((item: any) => String(item._id || item.id) === pid);
+    return wishlistItems.some((item: any) => isSameId(item, productId));
   };
 
   return (

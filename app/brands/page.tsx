@@ -35,12 +35,17 @@ const BrandsPage = () => {
   }, []);
 
   const normalizedShops = useMemo(() => {
-    return (shops || []).map((shop: any) => ({
-      ...shop,
-      productsCount: shop.productsCount || shop.products?.length || 0,
-      followersCount: shop.followersCount || shop.followers?.length || 0
-    }));
-  }, [shops]);
+    return (shops || []).map((shop: any) => {
+      const isFollowing = Boolean(shop.isFollowing) || (Array.isArray(shop.followers) && currentUser && shop.followers.some((f: any) => String(f._id || f) === String(currentUser?._id)));
+      
+      return {
+        ...shop,
+        isFollowing: isFollowing,
+        productsCount: shop.productsCount || shop.products?.length || 0,
+        followersCount: shop.followersCount || shop.followers?.length || 0
+      };
+    });
+  }, [shops, currentUser]);
 
   const filteredShops = useMemo(() => {
     return normalizedShops.filter((shop: any) => 
@@ -211,21 +216,18 @@ const BrandsPage = () => {
                       </button>
                     ) : (
                       <>
-                        {(!currentUser || (myShop && String(myShop._id || myShop.id) !== String(shop._id)) || (!myShop && shop.owner !== currentUser?._id)) && (
-                          <button 
-                            onClick={(e) => handleFollowToggle(e, shop._id)}
-                            disabled={followMutation.isPending && followMutation.variables === shop._id}
-                            className={`flex-1 h-11 rounded-xl text-xs font-black transition-all ${
-                              currentUser && shop.followers?.includes(currentUser._id)
-                                ? 'bg-muted text-foreground hover:bg-red-50 hover:text-red-600 hover:border-red-100'
-                                : 'bg-foreground text-background hover:bg-primary shadow-lg shadow-foreground/10'
-                            } disabled:opacity-50 disabled:cursor-not-allowed`}
-                          >
-                            {followMutation.isPending && followMutation.variables === shop._id ? '...' : (
-                              currentUser && shop.followers?.includes(currentUser._id) ? 'Following' : 'Follow'
-                            )}
-                          </button>
-                        )}
+                    {isMounted && (!currentUser || (myShop && String(myShop._id || myShop.id) !== String(shop._id)) || (!myShop && shop.owner !== currentUser?._id)) && (
+                      <button 
+                        onClick={(e) => handleFollowToggle(e, shop._id)}
+                        className={`flex-1 h-11 rounded-xl text-xs font-black transition-all ${
+                          shop.isFollowing
+                            ? 'bg-muted text-foreground hover:bg-red-50 hover:text-red-600 hover:border-red-100'
+                            : 'bg-foreground text-background hover:bg-primary shadow-lg shadow-foreground/10'
+                        }`}
+                      >
+                        {shop.isFollowing ? 'Following' : 'Follow'}
+                      </button>
+                    )}
                       </>
                     )}
                     <button className="w-11 h-11 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary transition-all group/btn shadow-sm">

@@ -21,13 +21,17 @@ import {
   Mail,
   BadgeCheck,
   LayoutDashboard,
-  CreditCard
+  CreditCard,
+  Plus
 } from "lucide-react";
 import SearchBar from "@/components/searchBar";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
+import { CreateChoiceModal } from "@/components/CreateChoiceModal";
+import { CreateUpdateModal } from "@/components/CreateUpdateModal";
+import { ProductCreateModal } from "@/components/ProductCreateModal";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -37,6 +41,9 @@ const Navbar = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showPremiumMenu, setShowPremiumMenu] = useState(false);
   const [showMobilePremiumMenu, setShowMobilePremiumMenu] = useState(false);
+  const [showCreateChoice, setShowCreateChoice] = useState(false);
+  const [showCreateUpdate, setShowCreateUpdate] = useState(false);
+  const [showCreateProduct, setShowCreateProduct] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
 
@@ -85,6 +92,7 @@ const Navbar = () => {
   const moreMenuItems = [
     { icon: <Info className="w-4 h-4" />, label: "About Us", href: "/about" },
     { icon: <Mail className="w-4 h-4" />, label: "Contact", href: "/contact" },
+    { icon: <Crown className="w-4 h-4 text-amber-500" />, label: "Premium", href: "/premium" },
     { icon: <Shield className="w-4 h-4" />, label: "Privacy Policy", href: "/privacy" },
     { icon: <FileText className="w-4 h-4" />, label: "Terms of Service", href: "/terms" },
     { icon: <Cookie className="w-4 h-4" />, label: "Cookie Policy", href: "/cookies" },
@@ -351,6 +359,15 @@ const Navbar = () => {
           <Store className="w-5 h-5" />
           <span>Shop</span>
         </Link>
+        <button
+          onClick={() => setShowCreateChoice(true)}
+          className="flex items-center p-2 transition-colors"
+        >
+          <div className="w-10 h-10 bg-secondary text-white rounded-full shadow-lg shadow-secondary/10 flex items-center justify-center">
+            <Plus className="w-6 h-6" />
+          </div>
+        </button>
+
         <Link
           href="/deals"
           className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/deals" ? "text-primary" : "hover:text-primary"}`}
@@ -358,58 +375,7 @@ const Navbar = () => {
           <Tag className="w-5 h-5" />
           <span>Deals</span>
         </Link>
-        {isPremium ? (
-          <div className="relative">
-            {showMobilePremiumMenu && (
-              <div 
-                id="mobile-premium-menu"
-                className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 w-48 bg-background rounded-[2rem] border border-border shadow-2xl animate-in slide-in-from-bottom-4 fade-in duration-300 overflow-hidden z-50"
-              >
-                <div className="p-4 bg-amber-500/10 border-b border-amber-500/20">
-                  <h3 className="text-[10px] font-black text-amber-700 uppercase tracking-widest text-center">Premium Access</h3>
-                </div>
-                <div className="p-2 grid grid-cols-1 gap-1">
-                  <Link
-                    href="/premium/dashboard"
-                    onClick={() => setShowMobilePremiumMenu(false)}
-                    className="flex items-center gap-3 p-3 rounded-2xl transition-colors hover:bg-muted group"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-                      <LayoutDashboard className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-foreground">Dashboard</span>
-                  </Link>
-                  <Link
-                    href="/premium"
-                    onClick={() => setShowMobilePremiumMenu(false)}
-                    className="flex items-center gap-3 p-3 rounded-2xl transition-colors hover:bg-muted group"
-                  >
-                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
-                      <CreditCard className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-bold text-foreground">Manage Plan</span>
-                  </Link>
-                </div>
-              </div>
-            )}
-            <button
-              id="mobile-premium-button"
-              onClick={() => setShowMobilePremiumMenu(!showMobilePremiumMenu)}
-              className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname.startsWith("/premium") ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
-            >
-              <Crown className={`w-5 h-5 ${pathname.startsWith("/premium") ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
-              <span className="font-bold">Premium</span>
-            </button>
-          </div>
-        ) : (
-          <Link
-            href="/premium"
-            className={`flex flex-col items-center gap-1 p-2 transition-colors ${pathname === "/premium" ? "text-amber-500" : "text-amber-600 hover:text-amber-500"}`}
-          >
-            <Crown className={`w-5 h-5 ${pathname === "/premium" ? "fill-amber-500/20" : "fill-amber-600/10"}`} />
-            <span className="font-bold">Premium</span>
-          </Link>
-        )}
+
         <button
           id="mobile-more-button"
           onClick={() => setShowMoreMenu(!showMoreMenu)}
@@ -420,6 +386,23 @@ const Navbar = () => {
         </button>
       </div>
     </div>
+
+    {/* Creation Modals */}
+    <CreateChoiceModal 
+      isOpen={showCreateChoice} 
+      onClose={() => setShowCreateChoice(false)} 
+      onSelectUpdate={() => setShowCreateUpdate(true)}
+      onSelectProduct={() => setShowCreateProduct(true)}
+    />
+    <CreateUpdateModal 
+      isOpen={showCreateUpdate} 
+      onClose={() => setShowCreateUpdate(false)} 
+    />
+    <ProductCreateModal 
+      isOpen={showCreateProduct} 
+      onClose={() => setShowCreateProduct(false)} 
+      shopName={user?.shopName}
+    />
     </>
   );
 };

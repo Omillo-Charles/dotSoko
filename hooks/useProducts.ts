@@ -11,7 +11,7 @@ export const useProducts = (params?: any) => {
       const data = response.data.data || [];
       return data.map((p: any) => ({
         ...p,
-        _id: p.id || p._id || `prod-${Math.random()}`
+        _id: p.id || p._id
       }));
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -28,7 +28,7 @@ export const useLimitedProducts = (limit: number, otherParams?: any) => {
       const data = response.data.data || [];
       return data.map((p: any) => ({
         ...p,
-        _id: p.id || p._id || `prod-${Math.random()}`
+        _id: p.id || p._id
       }));
     },
     staleTime: 1000 * 60 * 5,
@@ -46,7 +46,7 @@ export const useInfiniteProducts = (params?: any) => {
       if (data.data && Array.isArray(data.data)) {
         data.data = data.data.map((p: any) => ({
           ...p,
-          _id: p.id || p._id || `prod-${Math.random()}`
+          _id: p.id || p._id
         }));
       }
       return data;
@@ -70,7 +70,7 @@ export const useMyProducts = () => {
       const data = response.data.data || [];
       return data.map((p: any) => ({
         ...p,
-        _id: p.id || p._id || `prod-${Math.random()}`
+        _id: p.id || p._id
       }));
     },
   });
@@ -82,7 +82,7 @@ export const useProduct = (id: string) => {
     queryFn: async () => {
       const response = await api.get(`/products/${id}`);
       const product = response.data.data;
-      if (product && product.id && !product._id) {
+      if (product && !product._id) {
         product._id = product.id;
       }
       return product;
@@ -100,7 +100,7 @@ export const useFeaturedProducts = (limit: number = 4) => {
       const data = response.data.data || [];
       return data.map((p: any) => ({
         ...p,
-        _id: p.id || p._id || `prod-${Math.random()}`
+        _id: p.id || p._id
       }));
     },
     staleTime: 1000 * 60 * 15, // 15 minutes
@@ -115,7 +115,7 @@ export const usePersonalizedFeed = (limit: number = 12) => {
       const data = response.data.data || [];
       return data.map((p: any) => ({
         ...p,
-        _id: p.id || p._id || `prod-${Math.random()}`
+        _id: p.id || p._id
       }));
     },
     staleTime: 1000 * 60 * 5, // 5 minutes

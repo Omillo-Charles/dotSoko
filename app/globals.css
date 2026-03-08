@@ -140,6 +140,19 @@ body {
     animation: modal-pop 0.3s ease-out forwards;
   }
 
+  @keyframes bounce-subtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 3s ease-in-out infinite;
+  }
+
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: #e2e8f0 transparent;

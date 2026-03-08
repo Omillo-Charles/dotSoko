@@ -40,6 +40,8 @@ import { useSellerOrders } from "@/hooks/useSellerOrders";
 import { useMyProducts } from "@/hooks/useProducts";
 import { useMyShop } from "@/hooks/useShop";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
+import ProductCreateModal from "@/components/ProductCreateModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Dynamically import ApexCharts to avoid SSR issues
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
@@ -50,10 +52,12 @@ export default function PremiumDashboard() {
   const { data: shop, isLoading: shopLoading, error: shopError } = useMyShop();
   const { orders = [], isLoading: ordersLoading } = useSellerOrders();
   const { data: products = [], isLoading: productsLoading } = useMyProducts();
+  const queryClient = useQueryClient();
   
   const [mounted, setMounted] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab ] = useState('overview');
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -678,9 +682,12 @@ export default function PremiumDashboard() {
               <div className="bg-card border border-border rounded-[2.5rem] p-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center justify-between mb-8">
                   <h3 className="text-xl font-black text-foreground">Inventory Management</h3>
-                  <Link href="/account/seller/products?action=add" className="px-6 py-3 bg-amber-500 text-black rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20">
+                  <button 
+                    onClick={() => setShowProductModal(true)}
+                    className="px-6 py-3 bg-amber-500 text-black rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-amber-500/20"
+                  >
                     Add New Product
-                  </Link>
+                  </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {products.map((product: any) => (
@@ -787,6 +794,17 @@ export default function PremiumDashboard() {
           </div>
         </main>
       </div>
+      <ProductCreateModal 
+        isOpen={showProductModal}
+        onClose={() => setShowProductModal(false)}
+        onCreated={() => {
+          setShowProductModal(false);
+          // Invalidate multiple possible product queries to ensure the dashboard updates
+          queryClient.invalidateQueries({ queryKey: ["my-products"] });
+          queryClient.invalidateQueries({ queryKey: ["products"] });
+        }}
+        shopName={shop?.name}
+      />
     </div>
   );
 }
