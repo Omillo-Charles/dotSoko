@@ -4,11 +4,9 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { 
   CheckCircle2, 
-  Zap, 
-  ShieldCheck, 
-  TrendingUp, 
-  BadgeCheck, 
-  Star
+  X,
+  Star,
+  ArrowLeft,
 } from "lucide-react";
 import { PremiumUpgradeModal } from "@/components/PremiumUpgradeModal";
 import { useUser } from "@/hooks/useUser";
@@ -35,184 +33,89 @@ const PremiumPage = () => {
   const plans = [
     {
       name: "Free",
+      id: "free",
       price: { monthly: "0", annual: "0" },
-      description: "Basic features for individuals and new sellers",
+      description: "Essential tools for individuals",
       features: [
         "Unlimited product listings",
         "Standard seller dashboard",
-        "Basic analytics",
         "Community support",
+        "Basic analytics",
       ],
       buttonText: "Current Plan",
-      buttonVariant: "outline",
-      popular: false,
     },
     {
       name: "Premium",
+      id: "premium",
       price: { monthly: "350", annual: "3360" },
-      description: "Everything you need to grow your business faster",
+      description: "Professional power for growing shops",
       features: [
-        "Verification Checkmark (Gold Badge)",
+        "Verification Gold Badge",
         "Priority in search results",
-        "Advanced sales analytics",
+        "Get Paid to Sell (Monetization)",
         "Featured shop placement",
         "24/7 Priority support",
-        "Early access to new features",
+        "Lower transaction fees",
       ],
-      buttonText: "Upgrade to Premium (KES 350)",
-      buttonVariant: "primary",
+      buttonText: "Subscribe",
       popular: true,
     },
     {
       name: "Enterprise",
+      id: "enterprise",
       price: { monthly: "750", annual: "7200" },
-      description: "Dedicated tools for large scale operations",
+      description: "Scale your empire with professional tools",
       features: [
         "Everything in Premium",
         "Dedicated Account Manager",
-        "API access for automation",
         "Custom branding options",
         "Bulk inventory management",
         "Multi-user access (Teams)",
+        "Revenue sharing programs",
       ],
-      buttonText: `Upgrade to Enterprise (KES ${isAnnual ? "7200" : "750"})`,
-      buttonVariant: "outline",
-      popular: false,
+      buttonText: "Subscribe",
     },
   ];
 
-  const benefits = [
+  const comparison = [
     {
-      icon: <BadgeCheck className="w-6 h-6 text-blue-500" />,
-      title: "Verification Check",
-      description: "Build instant trust with a verified badge on your profile and products."
+      category: "Marketplace Presence",
+      features: [
+        { name: "Product Listings", free: true, premium: true, enterprise: true },
+        { name: "Verification Gold Badge", free: false, premium: true, enterprise: true },
+        { name: "Priority in Search", free: false, premium: true, enterprise: true },
+        { name: "Featured Shop Placement", free: false, premium: true, enterprise: true },
+      ]
     },
     {
-      icon: <TrendingUp className="w-6 h-6 text-green-500" />,
-      title: "Boosted Visibility",
-      description: "Premium shops appear higher in search results and category listings."
+      category: "Revenue & Analytics",
+      features: [
+        { name: "Get Paid to Sell", free: false, premium: "Tier 1", enterprise: "Tier 2" },
+        { name: "Standard Sales Data", free: true, premium: true, enterprise: true },
+        { name: "Revenue Sharing", free: false, premium: "5%", enterprise: "10%" },
+        { name: "Lower Transaction Fees", free: false, premium: true, enterprise: true },
+        { name: "Inventory Management", free: "Basic", premium: "Advanced", enterprise: "Bulk" },
+      ]
     },
     {
-      icon: <ShieldCheck className="w-6 h-6 text-blue-500" />,
-      title: "Buyer Protection",
-      description: "Enhanced security features and priority resolution for your customers."
-    },
-    {
-      icon: <Zap className="w-6 h-6 text-amber-500" />,
-      title: "Instant Payouts",
-      description: "Get your funds faster with our express settlement system for premium sellers."
+      category: "Support & Teams",
+      features: [
+        { name: "Community Support", free: true, premium: true, enterprise: true },
+        { name: "24/7 Priority Support", free: false, premium: true, enterprise: true },
+        { name: "Account Manager", free: false, premium: false, enterprise: true },
+        { name: "Multi-user Access", free: false, premium: false, enterprise: true },
+      ]
     }
   ];
 
+  const StatusIcon = ({ status }: { status: boolean | string }) => {
+    if (status === true) return <CheckCircle2 className="w-5 h-5 text-primary mx-auto" />;
+    if (status === false) return <X className="w-5 h-5 text-muted-foreground/30 mx-auto" />;
+    return <span className="text-[10px] font-black uppercase tracking-tight text-foreground/70 text-center block">{status}</span>;
+  };
+
   return (
-    <div className="min-h-screen bg-background pb-24 lg:pb-0 pt-0">
-      {/* Pricing Section */}
-      <div id="pricing" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-6">
-        <div className="text-center mb-10">
-          <h2 className="text-4xl font-black text-foreground mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-muted-foreground font-bold mb-8">Choose the plan that fits your growth stage</p>
-          
-          {/* Billing Toggle */}
-          <div className="flex items-center justify-center gap-6">
-            <button 
-              onClick={() => setIsAnnual(false)}
-              className={`text-sm font-black transition-all duration-300 px-4 py-2 rounded-xl ${!isAnnual ? 'text-primary bg-primary/10' : 'text-muted-foreground/60 hover:text-muted-foreground'}`}
-            >
-              Monthly
-            </button>
-            
-            <button 
-              onClick={() => setIsAnnual(!isAnnual)}
-              className={`w-16 h-8 rounded-full relative p-1 transition-all duration-500 shadow-inner group ${
-                isAnnual 
-                  ? 'bg-primary shadow-lg shadow-primary/30 ring-4 ring-primary/10' 
-                  : 'bg-muted hover:bg-muted/80'
-              }`}
-            >
-              <div className={`w-6 h-6 bg-background rounded-full shadow-lg transition-all duration-500 transform flex items-center justify-center ${isAnnual ? 'translate-x-8' : 'translate-x-0'}`}>
-                <div className={`w-1.5 h-1.5 rounded-full transition-all duration-500 ${isAnnual ? 'bg-primary scale-110' : 'bg-muted-foreground/30 scale-100'}`}></div>
-              </div>
-            </button>
-
-            <div className="flex items-center gap-3">
-              <button 
-                onClick={() => setIsAnnual(true)}
-                className={`text-sm font-black transition-all duration-300 px-4 py-2 rounded-xl ${isAnnual ? 'text-primary bg-primary/10' : 'text-muted-foreground/60 hover:text-muted-foreground'}`}
-              >
-                Annually
-              </button>
-              <span className="bg-amber-100 text-amber-600 text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider animate-bounce">
-                Save 20%
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {plans.map((plan, index) => {
-            const isCurrentPlan = user?.isPremium 
-              ? plan.name === (user.premiumPlan || "Premium")
-              : plan.name === "Free";
-
-            return (
-            <div 
-              key={index} 
-              className={`relative bg-background rounded-[3rem] p-10 border transition-all duration-500 ${
-                plan.popular 
-                ? "border-primary shadow-2xl shadow-primary/10 scale-105 z-10" 
-                : "border-border hover:border-border/50"
-              } ${isCurrentPlan ? "ring-2 ring-primary ring-offset-2" : ""}`}
-            >
-              {plan.popular && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-primary-foreground px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                  <Star className="w-3 h-3 fill-current" />
-                  Most Popular
-                </div>
-              )}
-
-              <div className="mb-8">
-                <h3 className="text-xl font-black text-foreground mb-2">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground/60 font-bold">{plan.description}</p>
-              </div>
-
-              <div className="flex items-baseline gap-1 mb-8">
-                <span className="text-4xl font-black text-foreground">
-                  KES {isAnnual ? plan.price.annual : plan.price.monthly}
-                </span>
-                <span className="text-muted-foreground/60 font-bold">
-                  {isAnnual ? "/year" : "/month"}
-                </span>
-              </div>
-
-              <div className="space-y-4 mb-10">
-                {plan.features.map((feature, fIndex) => (
-                  <div key={fIndex} className="flex items-start gap-3">
-                    <div className="mt-1 w-5 h-5 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
-                    </div>
-                    <span className="text-sm text-muted-foreground font-medium">{feature}</span>
-                  </div>
-                ))}
-              </div>
-
-              <button 
-                onClick={() => !isCurrentPlan && handleUpgradeClick(plan)}
-                disabled={isCurrentPlan}
-                className={`w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${
-                  isCurrentPlan
-                    ? "bg-muted text-muted-foreground cursor-not-allowed border border-border"
-                    : plan.buttonVariant === "primary"
-                    ? "bg-primary text-primary-foreground hover:scale-[1.02] shadow-lg shadow-primary/20"
-                    : "bg-background text-foreground border border-border hover:bg-muted"
-                }`}
-              >
-                {isCurrentPlan ? "Current Plan" : plan.buttonText}
-              </button>
-            </div>
-          )})}
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-background text-foreground space-y-20 pb-24">
       <PremiumUpgradeModal 
         isOpen={upgradeModal.isOpen}
         onClose={() => setUpgradeModal(prev => ({ ...prev, isOpen: false }))}
@@ -221,48 +124,170 @@ const PremiumPage = () => {
         isAnnual={isAnnual}
       />
 
-      {/* Benefits Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-black text-foreground mb-4">Why Go Premium?</h2>
-          <p className="text-muted-foreground font-bold">Everything you need to stand out in the marketplace</p>
+      {/* Simplified Header */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 px-6 xl:px-12 pt-10">
+        <div className="flex items-center gap-6">
+          <Link 
+            href="/account/seller" 
+            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
+          >
+            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+          </Link>
+          <div className="space-y-1">
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase leading-none">Premium Access</h1>
+            <p className="text-muted-foreground font-medium text-lg">Elevate your commerce experience with advanced protocols.</p>
+          </div>
         </div>
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {benefits.map((benefit, index) => (
-            <div key={index} className="bg-background p-8 rounded-[2rem] border border-border hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 transition-all group">
-              <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/5 transition-colors">
-                {benefit.icon}
-              </div>
-              <h3 className="text-lg font-black text-foreground mb-3">{benefit.title}</h3>
-              <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                {benefit.description}
-              </p>
-            </div>
-          ))}
+
+        {/* X-Style Toggle */}
+        <div className="inline-flex items-center p-1 bg-background border border-white/10 rounded-2xl shadow-xl relative self-start xl:self-center">
+          <div 
+            className={`absolute inset-y-1 transition-all duration-500 ease-out bg-primary rounded-xl shadow-lg shadow-primary/20 ${
+              isAnnual ? 'left-1/2 w-[48%] -ml-0.5' : 'left-1 w-[48%]'
+            }`}
+          />
+          <button 
+            onClick={() => setIsAnnual(false)}
+            className={`relative z-10 px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${!isAnnual ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Monthly
+          </button>
+          <button 
+            onClick={() => setIsAnnual(true)}
+            className={`relative z-10 px-6 py-2.5 text-[10px] font-black uppercase tracking-widest transition-colors duration-500 ${isAnnual ? 'text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Annual <span className="ml-1 opacity-60">-20%</span>
+          </button>
         </div>
       </div>
 
-      {/* Comparison Banner */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div className="bg-foreground rounded-[3rem] p-12 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-          <div className="relative z-10">
-            <h2 className="text-3xl font-black text-background mb-4">Still not sure?</h2>
-            <p className="text-background/60 font-medium mb-8 max-w-xl mx-auto">
-              Our support team is here to help you choose the best plan for your business. Schedule a demo or chat with us today.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button className="px-8 py-4 bg-background text-foreground rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-[1.02] transition-all">
-                Chat with Us
-              </button>
-              <button className="px-8 py-4 bg-background/10 text-background rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-background/20 transition-all">
-                View Full Comparison
-              </button>
-            </div>
-          </div>
+      {/* Pricing Cards Grid */}
+      <div className="w-full px-6 xl:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {plans.map((plan, index) => {
+            const isCurrentPlan = user?.isPremium 
+              ? plan.id === (user.premiumPlan?.toLowerCase() || "premium")
+              : plan.id === "free";
+
+            return (
+              <div 
+                key={index}
+                className={`group relative flex flex-col bg-background/40 backdrop-blur-3xl transition-all duration-500 rounded-[2.5rem] border ${
+                  plan.popular 
+                    ? 'border-primary ring-4 ring-primary/5 shadow-2xl shadow-primary/10' 
+                    : 'border-white/10 hover:border-white/20'
+                }`}
+              >
+                <div className="p-10 flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-8">
+                    <h3 className="text-2xl font-black uppercase tracking-tight italic text-foreground">{plan.name}</h3>
+                    {plan.popular && (
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[8px] font-black text-primary uppercase tracking-widest">
+                        <Star className="w-2.5 h-2.5 fill-current" />
+                        Popular
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-baseline gap-2 mb-4">
+                    <span className="text-4xl font-black tracking-tighter text-foreground">
+                      KES {isAnnual ? plan.price.annual : plan.price.monthly}
+                    </span>
+                    <span className="text-muted-foreground font-black text-[10px] uppercase tracking-widest opacity-40">
+                      / {isAnnual ? 'yr' : 'mo'}
+                    </span>
+                  </div>
+                  
+                  <p className="text-muted-foreground font-medium text-sm mb-10 leading-relaxed">
+                    {plan.description}
+                  </p>
+
+                  <div className="space-y-5 flex-1 mb-12">
+                    {plan.features.slice(0, 4).map((feature, fIndex) => (
+                      <div key={fIndex} className="flex items-start gap-3">
+                        <div className="mt-1 shrink-0">
+                          <CheckCircle2 className="w-4 h-4 text-primary opacity-60" />
+                        </div>
+                        <span className="text-xs font-black uppercase tracking-wide text-foreground/70">{feature}</span>
+                      </div>
+                    ))}
+                    {plan.features.length > 4 && (
+                      <p className="text-[10px] font-black uppercase text-primary/60 pl-7 tracking-widest">+ and more</p>
+                    )}
+                  </div>
+
+                  <button 
+                    onClick={() => !isCurrentPlan && handleUpgradeClick(plan)}
+                    disabled={isCurrentPlan}
+                    className={`w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all duration-500 ${
+                      isCurrentPlan
+                        ? "bg-white/5 text-muted-foreground border border-white/10 cursor-not-allowed"
+                        : plan.popular
+                        ? "bg-primary text-primary-foreground hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+                        : "bg-foreground text-background hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]"
+                    }`}
+                  >
+                    {isCurrentPlan ? "Active Protocol" : plan.buttonText}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
+
+      {/* Modern Comparison Table */}
+      <div className="w-full px-6 xl:px-12 max-w-7xl mx-auto">
+        <div className="text-center mb-16 space-y-2">
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic">Tier Comparison</h2>
+            <p className="text-muted-foreground font-black text-xs uppercase tracking-[0.3em]">Commercial Protocol Specifications</p>
+        </div>
+
+        <div className="overflow-x-auto custom-scrollbar pb-8">
+            <table className="w-full border-separate border-spacing-y-2">
+                <thead>
+                    <tr className="text-left">
+                        <th className="px-6 py-4 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">Privileges</th>
+                        <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground border-x border-white/5 w-40">Free</th>
+                        <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-primary w-40">Premium</th>
+                        <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground w-40">Enterprise</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {comparison.map((cat, cIdx) => (
+                        <React.Fragment key={cIdx}>
+                            <tr>
+                                <td colSpan={4} className="px-6 py-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                        <span className="text-[11px] font-black uppercase tracking-[0.4em] text-primary/50 whitespace-nowrap">{cat.category}</span>
+                                        <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                    </div>
+                                </td>
+                            </tr>
+                            {cat.features.map((feat, fIdx) => (
+                                <tr key={fIdx} className="group hover:bg-white/[0.02] transition-colors">
+                                    <td className="px-6 py-5 bg-background/20 rounded-l-3xl border-y border-l border-white/5">
+                                        <span className="text-xs font-black uppercase tracking-widest text-foreground/80">{feat.name}</span>
+                                    </td>
+                                    <td className="px-6 py-5 bg-background/20 border-y border-white/5 text-center">
+                                        <StatusIcon status={feat.free} />
+                                    </td>
+                                    <td className="px-6 py-5 bg-primary/5 border-y border-x border-primary/20 text-center">
+                                        <StatusIcon status={feat.premium} />
+                                    </td>
+                                    <td className="px-6 py-5 bg-background/20 rounded-r-3xl border-y border-r border-white/5 text-center">
+                                        <StatusIcon status={feat.enterprise} />
+                                    </td>
+                                </tr>
+                            ))}
+                        </React.Fragment>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+      </div>
+
     </div>
   );
 };
