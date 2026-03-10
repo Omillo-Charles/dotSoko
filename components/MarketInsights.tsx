@@ -49,9 +49,9 @@ export const MarketInsights = () => {
               <Link 
                 key={shop._id || shop.id}
                 href={`/shop/${shop.username ? `@${shop.username}` : shop._id}`}
-                className="group p-6 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-2xl hover:border-primary/30 transition-all duration-500 flex items-center gap-6"
+                className="group p-6 bg-background/60 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm dark:border-border/50 hover:shadow-2xl hover:border-primary/30 transition-all duration-500 flex items-center gap-6"
               >
-                <div className="w-16 h-16 rounded-2xl overflow-hidden border border-white/10 shrink-0">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm shrink-0">
                   <img 
                     src={shop.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${shop.name}`} 
                     alt={shop.name} 
@@ -97,15 +97,15 @@ export const MarketInsights = () => {
                <Link 
                  key={product._id || product.id}
                  href={`/product/${product._id || product.id}`}
-                 className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 p-5 hover:shadow-2xl hover:border-orange-500/30 transition-all duration-500"
+                 className="group relative overflow-hidden bg-background/60 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm p-5 hover:shadow-2xl hover:border-orange-500/30 transition-all duration-500"
                >
-                 <div className="aspect-square rounded-[2rem] overflow-hidden bg-muted mb-5 border border-white/5 relative">
+                 <div className="aspect-square rounded-[2rem] overflow-hidden bg-muted mb-5 border border-border/50 relative">
                    <img 
                      src={product.image || "/placeholder-product.png"} 
                      alt={product.name} 
                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                    />
-                   <div className="absolute top-4 right-4 px-3 py-1.5 bg-background/80 backdrop-blur-md rounded-full border border-white/10 text-[9px] font-black uppercase tracking-widest text-orange-500">
+                   <div className="absolute top-4 right-4 px-3 py-1.5 bg-background/80 backdrop-blur-md rounded-full border border-border shadow-sm text-[9px] font-black uppercase tracking-widest text-orange-500">
                      Hottest
                    </div>
                  </div>
@@ -120,7 +120,7 @@ export const MarketInsights = () => {
       </div>
 
       {/* Visual Quote / Motivation */}
-      <div className="relative overflow-hidden rounded-[3.5rem] border border-white/10 bg-background/40 backdrop-blur-3xl p-12 text-center group">
+      <div className="relative overflow-hidden rounded-[3.5rem] border border-border shadow-sm bg-background/40 backdrop-blur-3xl p-12 text-center group">
          <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5" />
          <ActivityIndicator className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 text-primary/5 pointer-events-none" />
          <div className="relative z-10">

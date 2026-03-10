@@ -74,13 +74,13 @@ const SecurityPage = () => {
       {/* Page Header */}
       <div className="relative group p-0.5">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-red-500/30 to-primary/30 blur-3xl opacity-50 transition-opacity duration-1000" />
-        <div className="relative overflow-hidden rounded-[3.5rem] border border-white/10 dark:border-white/5 bg-background/40 backdrop-blur-3xl shadow-2xl p-8 md:p-14">
+        <div className="relative overflow-hidden rounded-[3.5rem] border border-border shadow-sm dark:border-border/50 bg-background/40 backdrop-blur-3xl shadow-2xl p-8 md:p-14">
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-10">
             <div className="flex items-center gap-6 md:gap-12">
               <div className="relative shrink-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[3rem] blur-2xl opacity-40 group-hover:opacity-60 transition-all duration-700" />
                 <div className="relative w-24 h-24 md:w-32 md:h-32 p-2 rounded-[3.2rem] bg-gradient-to-br from-primary/30 to-secondary/30 backdrop-blur-md shadow-2xl">
-                  <div className="w-full h-full rounded-[2.8rem] bg-background border border-white/20 dark:border-white/5 grid place-items-center">
+                  <div className="w-full h-full rounded-[2.8rem] bg-background border border-border dark:border-border/50 grid place-items-center">
                     <ShieldCheck className="w-12 h-12 text-primary" />
                   </div>
                 </div>
@@ -111,7 +111,7 @@ const SecurityPage = () => {
             <h2 className="text-3xl font-black text-foreground tracking-tight">Credentials</h2>
           </div>
 
-          <div className="bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 p-8 md:p-10 shadow-2xl relative overflow-hidden group">
+          <div className="bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm p-8 md:p-10 shadow-2xl relative overflow-hidden group">
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
             
             <form onSubmit={handlePasswordChange} className="space-y-8 relative z-10">
@@ -123,7 +123,7 @@ const SecurityPage = () => {
                       type={showPassword ? "text" : "password"}
                       value={passwordData.currentPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                      className="w-full bg-background/50 border border-white/10 rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
+                      className="w-full bg-background/50 border border-border shadow-sm rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
                       placeholder="••••••••"
                       required
                     />
@@ -144,7 +144,7 @@ const SecurityPage = () => {
                       type="password"
                       value={passwordData.newPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                      className="w-full bg-background/50 border border-white/10 rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
+                      className="w-full bg-background/50 border border-border shadow-sm rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
                       placeholder="••••••••"
                       required
                     />
@@ -155,7 +155,7 @@ const SecurityPage = () => {
                       type="password"
                       value={passwordData.confirmPassword}
                       onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                      className="w-full bg-background/50 border border-white/10 rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
+                      className="w-full bg-background/50 border border-border shadow-sm rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-bold"
                       placeholder="••••••••"
                       required
                     />
@@ -206,7 +206,7 @@ const SecurityPage = () => {
 
           <div className="grid gap-8">
             {/* Quick Protection Summary */}
-            <div className="p-8 bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 shadow-xl overflow-hidden relative group">
+            <div className="p-8 bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm shadow-xl overflow-hidden relative group">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
               <div className="relative z-10 flex items-center gap-6">
                 <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-[1.5rem] flex items-center justify-center border border-emerald-500/10">
@@ -261,7 +261,7 @@ const SecurityPage = () => {
                   placeholder="Enter your password"
                   value={deleteData.password}
                   onChange={(e) => setDeleteData({ ...deleteData, password: e.target.value })}
-                  className="w-full bg-muted/30 border border-white/5 rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all font-bold"
+                  className="w-full bg-muted/30 border border-border/50 rounded-[2rem] px-8 py-5 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-red-500/30 transition-all font-bold"
                   required
                 />
                 <div className="flex gap-4">

@@ -64,6 +64,8 @@ export const AccountSidebar = ({
         { id: "overview", label: "Dashboard", icon: TrendingUp, href: "/account/seller" },
         { id: "shop", label: "Products", icon: Store, href: "/account/seller/products" },
         { id: "orders", label: "Order Management", icon: Package, href: "/account/seller/orders" },
+        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/seller/payment" },
+        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/seller/support" },
         { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/seller/settings" },
       ];
     }
@@ -95,7 +97,7 @@ export const AccountSidebar = ({
         ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
       `} onClick={() => setIsSidebarOpen(false)} />
       
-      <div className="relative w-72 lg:w-full h-full bg-background/60 backdrop-blur-3xl border border-white/10 dark:border-white/5 shadow-2xl rounded-[2.5rem] p-6 lg:p-8 pb-32 lg:pb-32 overflow-y-auto custom-scrollbar group/sidebar overscroll-contain">
+      <div className="relative w-72 lg:w-full h-full bg-background/60 backdrop-blur-3xl border border-border shadow-2xl rounded-[2.5rem] p-6 lg:p-8 pb-32 lg:pb-32 overflow-y-auto custom-scrollbar group/sidebar overscroll-contain">
         {/* Spotlight Effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-1000 pointer-events-none" />
         {/* Background Decorative Circles */}
@@ -138,7 +140,7 @@ export const AccountSidebar = ({
         </div>
 
         {/* Mode Switcher */}
-        <div className="flex p-1.5 bg-muted/50 rounded-2xl mb-8 border border-border">
+        <div className="flex p-1.5 bg-muted/50 rounded-2xl mb-8 border border-border/50">
           <button 
             onClick={() => handleTabChange("account")}
             className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === "account" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}

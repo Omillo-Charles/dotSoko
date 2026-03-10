@@ -55,7 +55,7 @@ const BuyerDashboard = () => {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Profile Header */}
-      <div className="relative group overflow-hidden rounded-[3rem] border border-white/10 dark:border-white/5 bg-background/40 backdrop-blur-3xl shadow-xl p-8 md:p-12">
+      <div className="relative group overflow-hidden rounded-[3rem] border border-border shadow-sm dark:border-border/50 bg-background/40 backdrop-blur-3xl shadow-xl p-8 md:p-12">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
         <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
           
@@ -102,7 +102,7 @@ const BuyerDashboard = () => {
           <Link
             key={idx}
             href={link.href}
-            className="group flex items-start gap-5 p-6 rounded-[2rem] bg-background/50 backdrop-blur-3xl border border-white/5 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300"
+            className="group flex items-start gap-5 p-6 rounded-[2rem] bg-background/50 backdrop-blur-3xl border border-border/50 shadow-sm hover:shadow-xl hover:border-primary/30 transition-all duration-300"
           >
             <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
               {link.icon}
@@ -119,7 +119,7 @@ const BuyerDashboard = () => {
       </div>
 
       {/* Recent Activity Mini-View */}
-      <div className="bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 p-8 shadow-xl space-y-6">
+      <div className="bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm p-8 shadow-xl space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-black text-foreground">Recent Orders</h2>
           <Link href="/account/orders" className="text-primary font-bold text-sm hover:underline">
@@ -142,7 +142,7 @@ const BuyerDashboard = () => {
             {orders.map((order: any) => (
               <div key={order._id} className="flex items-center justify-between p-4 rounded-[1.5rem] bg-muted/20 hover:bg-muted/40 transition-colors">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center border border-white/10">
+                  <div className="w-12 h-12 bg-background rounded-xl flex items-center justify-center border border-border shadow-sm">
                     <ShoppingBag className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>

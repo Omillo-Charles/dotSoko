@@ -170,7 +170,7 @@ export const SellerAnalytics = ({ orders, products, shopId }: SellerAnalyticsPro
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Revenue Chart */}
-        <div className="lg:col-span-2 bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 dark:border-white/5 p-8 shadow-2xl relative overflow-hidden group">
+        <div className="lg:col-span-2 bg-background/60 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm dark:border-border/50 p-8 shadow-2xl relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
           
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 relative z-10">
@@ -195,7 +195,7 @@ export const SellerAnalytics = ({ orders, products, shopId }: SellerAnalyticsPro
         </div>
 
         {/* Status Distribution */}
-        <div className="bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 dark:border-white/5 p-8 shadow-2xl flex flex-col items-center justify-center text-center group relative overflow-hidden">
+        <div className="bg-background/60 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm dark:border-border/50 p-8 shadow-2xl flex flex-col items-center justify-center text-center group relative overflow-hidden">
           <div className="absolute bottom-0 left-0 w-40 h-40 bg-secondary/5 rounded-full blur-[80px] pointer-events-none" />
           
           <div className="mb-8 w-full text-left">
@@ -214,11 +214,11 @@ export const SellerAnalytics = ({ orders, products, shopId }: SellerAnalyticsPro
           </div>
 
           <div className="mt-8 grid grid-cols-2 gap-4 w-full">
-            <div className="p-4 bg-muted/30 rounded-3xl border border-white/5">
+            <div className="p-4 bg-muted/30 rounded-3xl border border-border/50">
               <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Live Feed</p>
               <p className="text-xl font-black text-primary italic">ACTIVE</p>
             </div>
-            <div className="p-4 bg-muted/30 rounded-3xl border border-white/5">
+            <div className="p-4 bg-muted/30 rounded-3xl border border-border/50">
               <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Orders</p>
               <p className="text-xl font-black text-foreground">{orders.length}</p>
             </div>
@@ -229,7 +229,7 @@ export const SellerAnalytics = ({ orders, products, shopId }: SellerAnalyticsPro
       {/* Mini Stats Bar */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
          {metrics.map((item, idx) => (
-           <div key={idx} className="bg-background/40 backdrop-blur-md rounded-[2.2rem] border border-white/10 p-6 flex items-center gap-5 hover:border-primary/30 transition-all cursor-pointer group">
+           <div key={idx} className="bg-background/40 backdrop-blur-md rounded-[2.2rem] border border-border shadow-sm p-6 flex items-center gap-5 hover:border-primary/30 transition-all cursor-pointer group">
              <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center group-hover:scale-110 transition-transform">
                <item.icon className={`w-6 h-6 ${item.color}`} />
              </div>

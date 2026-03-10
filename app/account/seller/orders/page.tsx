@@ -82,7 +82,7 @@ export default function SellerOrdersPage() {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
+            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group"
           >
             <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
           </Link>
@@ -91,14 +91,14 @@ export default function SellerOrdersPage() {
             <p className="text-muted-foreground font-medium text-lg">Detailed transaction history and delivery logistics.</p>
           </div>
         </div>
-        <div className="bg-background/40 backdrop-blur-3xl border border-white/10 px-10 py-5 rounded-[2.5rem] shadow-2xl flex items-baseline gap-3">
+        <div className="bg-background/40 backdrop-blur-3xl border border-border shadow-sm px-10 py-5 rounded-[2.5rem] shadow-2xl flex items-baseline gap-3">
           <span className="text-4xl font-black text-primary leading-none">{orders.length}</span>
           <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">Total Transactions</span>
         </div>
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-background/20 backdrop-blur-3xl border-2 border-dashed border-white/10 rounded-[4rem] p-24 text-center shadow-2xl group transition-all hover:bg-white/[0.02] hover:border-white/20">
+        <div className="bg-background/20 backdrop-blur-3xl border-2 border-dashed border-border shadow-sm rounded-[4rem] p-24 text-center shadow-2xl group transition-all hover:bg-white/[0.02] hover:border-border">
           <div className="w-24 h-24 bg-muted/30 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 ring-4 ring-white/5">
             <Package className="w-12 h-12 text-muted-foreground/20" />
           </div>
@@ -124,7 +124,7 @@ export default function SellerOrdersPage() {
             return (
               <div 
                 key={order._id}
-                className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3.5rem] border border-white/10 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20"
+                className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3.5rem] border border-border shadow-sm transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20"
               >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                 
@@ -135,7 +135,7 @@ export default function SellerOrdersPage() {
                 <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px]">
                   
                   {/* Content Area */}
-                  <div className="p-8 md:p-12 space-y-10 border-r border-white/5">
+                  <div className="p-8 md:p-12 space-y-10 border-r border-border/50">
                     
                     {/* Header Info */}
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
@@ -174,8 +174,8 @@ export default function SellerOrdersPage() {
                       <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40 italic">Unit Breakdown</h5>
                       <div className="grid gap-4">
                         {order.items.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl bg-background/30 border border-white/5 hover:bg-white/5 transition-colors group/item">
-                            <div className="w-20 h-20 rounded-[1.5rem] bg-muted overflow-hidden border border-white/10 shrink-0 shadow-lg relative">
+                          <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl bg-background/30 border border-border/50 hover:bg-white/5 transition-colors group/item">
+                            <div className="w-20 h-20 rounded-[1.5rem] bg-muted overflow-hidden border border-border shadow-sm shrink-0 shadow-lg relative">
                               {item.image ? (
                                 <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-700" />
                               ) : (
@@ -192,8 +192,8 @@ export default function SellerOrdersPage() {
                                <div className="flex items-center gap-4 mt-2">
                                  <span className="text-primary font-black text-sm italic">KES {item.price.toLocaleString()}</span>
                                  <div className="flex items-center gap-2 flex-wrap">
-                                   {item.size && <span className="text-[9px] font-black text-muted-foreground/50 uppercase border border-white/10 px-2 py-0.5 rounded-md">Size: {item.size}</span>}
-                                   {item.color && <span className="text-[9px] font-black text-muted-foreground/50 uppercase border border-white/10 px-2 py-0.5 rounded-md">Hex: {item.color}</span>}
+                                   {item.size && <span className="text-[9px] font-black text-muted-foreground/50 uppercase border border-border shadow-sm px-2 py-0.5 rounded-md">Size: {item.size}</span>}
+                                   {item.color && <span className="text-[9px] font-black text-muted-foreground/50 uppercase border border-border shadow-sm px-2 py-0.5 rounded-md">Hex: {item.color}</span>}
                                  </div>
                                </div>
                             </div>
@@ -203,7 +203,7 @@ export default function SellerOrdersPage() {
                     </div>
 
                     {/* Financial Summary Overlay */}
-                    <div className="pt-8 border-t border-white/5 flex flex-wrap gap-10">
+                    <div className="pt-8 border-t border-border/50 flex flex-wrap gap-10">
                        <div className="space-y-1">
                           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-50">Operational Subtotal</p>
                           <p className="font-black text-foreground italic">KES {subtotal.toLocaleString()}</p>
@@ -221,7 +221,7 @@ export default function SellerOrdersPage() {
                     {/* Shipping Cluster */}
                     <div className="space-y-6">
                       <div className="flex items-center gap-3">
-                         <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
+                         <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-border shadow-sm">
                            <Truck className="w-5 h-5 text-muted-foreground" />
                          </div>
                          <h3 className="text-sm font-black text-white uppercase tracking-[0.2em] italic">Logistics Hub</h3>
@@ -245,7 +245,7 @@ export default function SellerOrdersPage() {
                     </div>
 
                     {/* Governance Cluster */}
-                    <div className="space-y-6 pt-6 border-t border-white/5">
+                    <div className="space-y-6 pt-6 border-t border-border/50">
                       <div className="space-y-3">
                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] opacity-40">Status Governance</p>
                          <div className="relative group/sel">
@@ -253,7 +253,7 @@ export default function SellerOrdersPage() {
                              value={order.status}
                              onChange={(e) => updateStatus({ orderId: order._id, status: e.target.value })}
                              disabled={isUpdating}
-                             className="w-full px-6 py-4 rounded-2xl bg-background shadow-2xl border border-white/10 text-foreground font-black text-xs uppercase tracking-widest appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer disabled:opacity-50"
+                             className="w-full px-6 py-4 rounded-2xl bg-background shadow-2xl border border-border shadow-sm text-foreground font-black text-xs uppercase tracking-widest appearance-none focus:outline-none focus:ring-4 focus:ring-primary/10 transition-all cursor-pointer disabled:opacity-50"
                            >
                              {statuses.map(s => (
                                <option key={s} value={s} className="capitalize">{s}</option>

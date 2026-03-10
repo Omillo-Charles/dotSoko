@@ -68,7 +68,7 @@ const SellerDashboard = () => {
   if (!shop) {
     return (
       <div className="w-full max-w-3xl mx-auto py-12 px-4">
-        <div className="relative overflow-hidden bg-background/40 backdrop-blur-3xl p-10 rounded-[3rem] border border-white/10 dark:border-white/5 text-center shadow-2xl">
+        <div className="relative overflow-hidden bg-background/40 backdrop-blur-3xl p-10 rounded-[3rem] border border-border shadow-sm dark:border-border/50 text-center shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
           <div className="relative z-10">
             <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] grid place-items-center mx-auto mb-8 shadow-2xl shadow-primary/30 rotate-3 transform transition-transform hover:rotate-0 duration-700">
@@ -116,8 +116,8 @@ const SellerDashboard = () => {
 
   const quickActions = [
     { label: "Add Product", icon: <Plus className="w-5 h-5" />, action: () => setShowProductModal(true), color: "bg-primary text-primary-foreground shadow-xl shadow-primary/20" },
-    { label: "Storefront", icon: <Store className="w-5 h-5" />, href: `/shop/${shop.username ? `@${shop.username}` : shop._id}`, color: "bg-background/80 backdrop-blur-md text-foreground border border-white/10 shadow-xl" },
-    { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-background/80 backdrop-blur-md text-foreground border border-white/10 shadow-xl" },
+    { label: "Storefront", icon: <Store className="w-5 h-5" />, href: `/shop/${shop.username ? `@${shop.username}` : shop._id}`, color: "bg-background/80 backdrop-blur-md text-foreground border border-border shadow-sm shadow-xl" },
+    { label: "Settings", icon: <Settings className="w-5 h-5" />, href: "/account/seller/settings", color: "bg-background/80 backdrop-blur-md text-foreground border border-border shadow-sm shadow-xl" },
   ];
 
   return (
@@ -126,7 +126,7 @@ const SellerDashboard = () => {
       {/* Premium Dashboard Header */}
       <div className="relative group p-0.5">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-secondary/30 to-primary/30 blur-3xl opacity-50 group-hover:opacity-100 transition-opacity duration-1000" />
-        <div className="relative overflow-hidden rounded-[3.5rem] border border-white/10 dark:border-white/5 bg-background/40 backdrop-blur-3xl shadow-2xl p-8 md:p-14">
+        <div className="relative overflow-hidden rounded-[3.5rem] border border-border shadow-sm dark:border-border/50 bg-background/40 backdrop-blur-3xl shadow-2xl p-8 md:p-14">
           
           <div className="relative flex flex-col lg:flex-row lg:items-center justify-between gap-10">
             <div className="flex items-center gap-6 md:gap-12">
@@ -134,7 +134,7 @@ const SellerDashboard = () => {
               <div className="relative shrink-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[3rem] blur-2xl opacity-40 group-hover:opacity-60 transition-all duration-700" />
                 <div className="relative w-24 h-24 md:w-40 md:h-40 p-2 rounded-[3rem] bg-gradient-to-br from-primary/50 to-secondary/50 backdrop-blur-md shadow-2xl">
-                  <div className="w-full h-full rounded-[2.6rem] overflow-hidden bg-background border border-white/20 dark:border-white/5">
+                  <div className="w-full h-full rounded-[2.6rem] overflow-hidden bg-background border border-border dark:border-border/50">
                     <img
                       src={shop?.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${shop?.name || "Shop"}`}
                       alt={shop?.name}
@@ -195,7 +195,7 @@ const SellerDashboard = () => {
         {stats.map((stat, idx) => (
           <div
             key={idx}
-            className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 dark:border-white/5 p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
+            className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm dark:border-border/50 p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
           >
             <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${stat.light} blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000`} />
             <div className="relative z-10">
@@ -244,7 +244,7 @@ const SellerDashboard = () => {
 
           <div className="grid gap-5">
             {orders.length === 0 ? (
-              <div className="bg-background/20 border-2 border-dashed border-white/10 p-20 rounded-[3.5rem] text-center space-y-6">
+              <div className="bg-background/20 border-2 border-dashed border-border shadow-sm p-20 rounded-[3.5rem] text-center space-y-6">
                 <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto ring-4 ring-white/5">
                   <Clock className="w-10 h-10 text-muted-foreground/30" />
                 </div>
@@ -252,9 +252,9 @@ const SellerDashboard = () => {
               </div>
             ) : (
               orders.slice(0, 5).map((o) => (
-                <div key={o._id} className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8">
+                <div key={o._id} className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8">
                   <div className="flex items-center gap-8 flex-1 min-w-0">
-                    <div className="w-24 h-24 bg-muted/50 rounded-[1.8rem] flex items-center justify-center border border-white/5 group-hover:bg-primary/10 transition-colors duration-500 shrink-0">
+                    <div className="w-24 h-24 bg-muted/50 rounded-[1.8rem] flex items-center justify-center border border-border/50 group-hover:bg-primary/10 transition-colors duration-500 shrink-0">
                       <LayoutDashboard className="w-10 h-10 text-primary/30 group-hover:text-primary transition-colors duration-500" />
                     </div>
                     <div className="min-w-0 flex-1">
@@ -303,7 +303,7 @@ const SellerDashboard = () => {
 
           <div className="grid gap-5">
               {products.length === 0 ? (
-                <div className="bg-background/20 border-2 border-dashed border-white/10 p-20 rounded-[3.5rem] text-center space-y-6">
+                <div className="bg-background/20 border-2 border-dashed border-border shadow-sm p-20 rounded-[3.5rem] text-center space-y-6">
                   <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto ring-4 ring-white/5">
                     <Package className="w-10 h-10 text-muted-foreground/30" />
                   </div>
@@ -313,10 +313,10 @@ const SellerDashboard = () => {
                 products.slice(0, 5).map((p: any) => (
                   <div
                     key={p._id || p.id}
-                    className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8"
+                    className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8"
                    >
                     <div className="flex items-center gap-8 flex-1 min-w-0">
-                      <div className="w-24 h-24 rounded-[1.8rem] bg-muted overflow-hidden border border-white/10 shrink-0 shadow-lg">
+                      <div className="w-24 h-24 rounded-[1.8rem] bg-muted overflow-hidden border border-border shadow-sm shrink-0 shadow-lg">
                         <img src={p.image || "/placeholder-product.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                       </div>
                       <div className="min-w-0 flex-1">
@@ -346,7 +346,7 @@ const SellerDashboard = () => {
               {products.length > 5 && (
                 <Link 
                   href="/account/seller/products"
-                  className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] hover:bg-primary/5 rounded-[2.5rem] transition-all duration-500 border border-white/10"
+                  className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] hover:bg-primary/5 rounded-[2.5rem] transition-all duration-500 border border-border shadow-sm"
                 >
                   Expand Vault ({products.length})
                 </Link>

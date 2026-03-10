@@ -122,7 +122,7 @@ const SellerProductsContent = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-white/10 dark:border-white/5 shadow-xl group"
+            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group"
           >
             <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
           </Link>
@@ -149,7 +149,7 @@ const SellerProductsContent = () => {
             <input 
               type="text"
               placeholder="Query product name or category..."
-              className="w-full pl-16 pr-8 py-6 bg-background/40 backdrop-blur-3xl border border-white/10 dark:border-white/5 rounded-[2.5rem] focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-black text-lg text-foreground placeholder:text-muted-foreground/30 shadow-2xl"
+              className="w-full pl-16 pr-8 py-6 bg-background/40 backdrop-blur-3xl border border-border shadow-sm dark:border-border/50 rounded-[2.5rem] focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary/30 transition-all font-black text-lg text-foreground placeholder:text-muted-foreground/30 shadow-2xl"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -158,7 +158,7 @@ const SellerProductsContent = () => {
 
         {/* Dynamic Products Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="bg-background/20 backdrop-blur-3xl rounded-[4rem] border-2 border-dashed border-white/10 p-24 text-center shadow-2xl transition-all hover:bg-white/[0.02] hover:border-white/20">
+          <div className="bg-background/20 backdrop-blur-3xl rounded-[4rem] border-2 border-dashed border-border shadow-sm p-24 text-center shadow-2xl transition-all hover:bg-white/[0.02] hover:border-border">
             <div className="w-24 h-24 bg-muted/30 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 ring-4 ring-white/5">
               <ShoppingBag className="w-12 h-12 text-muted-foreground/20" />
             </div>
@@ -181,12 +181,12 @@ const SellerProductsContent = () => {
             {filteredProducts.map((product: any) => (
               <div 
                 key={product._id}
-                className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-white/10 p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20 hover:-translate-y-1"
+                className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20 hover:-translate-y-1"
               >
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                 
                 {/* Visual Asset */}
-                <div className="w-full md:w-48 aspect-square rounded-[2rem] overflow-hidden bg-muted/30 shrink-0 relative shadow-2xl border border-white/10">
+                <div className="w-full md:w-48 aspect-square rounded-[2rem] overflow-hidden bg-muted/30 shrink-0 relative shadow-2xl border border-border shadow-sm">
                   <img 
                     src={product.image} 
                     alt={product.name}
@@ -227,7 +227,7 @@ const SellerProductsContent = () => {
                         {product.price?.toLocaleString()}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2.5 px-4 py-2 bg-background/40 rounded-2xl border border-white/5 shadow-inner">
+                    <div className="flex items-center gap-2.5 px-4 py-2 bg-background/40 rounded-2xl border border-border/50 shadow-inner">
                       <Package className={`w-5 h-5 ${product.stock > 0 ? 'text-emerald-500' : 'text-red-500'}`} />
                       <span className={`text-sm font-black uppercase tracking-widest ${product.stock > 0 ? 'text-muted-foreground' : 'text-red-500'}`}>
                         {product.stock} Units
@@ -237,10 +237,10 @@ const SellerProductsContent = () => {
                 </div>
 
                 {/* Terminal Actions */}
-                <div className="flex items-center gap-4 w-full md:w-auto md:border-l border-white/10 md:pl-8">
+                <div className="flex items-center gap-4 w-full md:w-auto md:border-l border-border shadow-sm md:pl-8">
                   <Link 
                     href={`/account/seller/products/edit/${product._id}`}
-                    className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-white/10 text-primary rounded-[1.5rem] hover:bg-primary hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest"
+                    className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-border shadow-sm text-primary rounded-[1.5rem] hover:bg-primary hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest"
                   >
                     <Edit2 className="w-5 h-5" />
                     <span className="md:hidden">Modify</span>
@@ -248,7 +248,7 @@ const SellerProductsContent = () => {
                   <button 
                     onClick={() => handleDelete(product._id)}
                     disabled={isDeleting === product._id}
-                    className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-white/10 text-red-500 rounded-[1.5rem] hover:bg-red-500 hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest disabled:opacity-50"
+                    className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-border shadow-sm text-red-500 rounded-[1.5rem] hover:bg-red-500 hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest disabled:opacity-50"
                   >
                     {isDeleting === product._id ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
