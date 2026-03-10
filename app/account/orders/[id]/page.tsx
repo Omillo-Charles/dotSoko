@@ -76,7 +76,7 @@ export default function OrderDetailsPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="bg-card border-b border-border sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center gap-4">
+        <div className="h-16 flex items-center gap-4">
           <button 
             onClick={() => router.back()}
             className="p-2 hover:bg-accent rounded-xl transition-colors"
@@ -90,7 +90,7 @@ export default function OrderDetailsPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <div className="py-6 space-y-6">
         {/* Status Card */}
         <div className="bg-card rounded-3xl p-6 shadow-sm border border-border">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

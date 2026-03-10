@@ -72,6 +72,7 @@ export const AccountSidebar = ({
   const handleTabChange = (tab: Tab) => {
     if (onTabChange) {
       onTabChange(tab);
+      if (isSidebarOpen) setIsSidebarOpen(false);
     }
   };
 
@@ -188,6 +189,9 @@ export const AccountSidebar = ({
               <Link
                 key={item.id}
                 href={item.href}
+                onClick={() => {
+                  if (isSidebarOpen) setIsSidebarOpen(false);
+                }}
                 className={`
                   w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-300 relative overflow-hidden group/item
                   ${isActive 

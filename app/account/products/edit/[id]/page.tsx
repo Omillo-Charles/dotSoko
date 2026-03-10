@@ -182,7 +182,7 @@ const EditProductPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="">
       <button 
         onClick={() => router.back()}
         className="flex items-center gap-2 text-muted-foreground hover:text-foreground font-bold mb-6 transition-colors"
