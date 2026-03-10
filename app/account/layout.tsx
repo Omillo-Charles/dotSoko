@@ -19,10 +19,10 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false);
 
   // Determine which tab is active based on pathname
-  // Buyer-only paths (i.e. paths that don't exist in the new seller routing)
-  const buyerOnlyPaths = ["/account/orders"];
-  const isOnBuyerSection = buyerOnlyPaths.some(p => pathname.startsWith(p)) && !pathname.startsWith("/account/seller-orders");
-  const activeTab = isOnBuyerSection ? "account" : "seller";
+  const isSellerPath = pathname.startsWith("/account/seller") || 
+                       pathname.startsWith("/account/products") || 
+                       pathname.startsWith("/account/settings");
+  const activeTab = isSellerPath ? "seller" : "account";
 
   useEffect(() => {
     setMounted(true);
@@ -38,9 +38,9 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
 
   const handleTabChange = (tab: "account" | "seller") => {
     if (tab === "account") {
-      router.push("/account/orders");
-    } else {
       router.push("/account");
+    } else {
+      router.push("/account/seller");
     }
   };
 
@@ -53,7 +53,7 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] dark:bg-[#020617] transition-colors duration-500">
+    <div className="min-h-screen bg-background text-foreground transition-colors duration-500">
       <LogoutConfirmation 
         isOpen={showLogoutConfirm} 
         onClose={() => setShowLogoutConfirm(false)} 
@@ -65,7 +65,7 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
         <button onClick={() => setIsSidebarOpen(true)} className="p-2 -ml-2 text-foreground">
           <Menu className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-bold">Seller Console</h1>
+        <h1 className="text-lg font-bold">{activeTab === "account" ? "Account Overview" : "Seller Console"}</h1>
         <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary p-[2px]">
           <div className="w-full h-full rounded-full bg-background grid place-items-center">
             <User className="w-5 h-5 text-primary" />

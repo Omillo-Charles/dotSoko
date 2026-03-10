@@ -17,7 +17,9 @@ import {
   HelpCircle,
   X,
   TrendingUp,
-  LogOut
+  LogOut,
+  MapPin,
+  CreditCard
 } from "lucide-react";
 import { GoldCheck } from "./GoldCheck";
 
@@ -49,11 +51,17 @@ export const AccountSidebar = ({
   const menuItems = useMemo(() => {
     if (activeTab === "account") {
       return [
+        { id: "overview", label: "Account Overview", icon: UserCog, href: "/account" },
         { id: "orders", label: "My Orders", icon: ShoppingBag, href: "/account/orders" },
+        { id: "addresses", label: "Saved Addresses", icon: MapPin, href: "/account/addresses" },
+        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/payment" },
+        { id: "security", label: "Security & Privacy", icon: ShieldCheck, href: "/account/security" },
+        { id: "notifications", label: "Notifications", icon: Bell, href: "/account/notifications" },
+        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/support" },
       ];
     } else {
       return [
-        { id: "overview", label: "Dashboard", icon: TrendingUp, href: "/account" },
+        { id: "overview", label: "Dashboard", icon: TrendingUp, href: "/account/seller" },
         { id: "shop", label: "Products", icon: Store, href: "/account/products" },
         { id: "orders", label: "Order Management", icon: Package, href: "/account/seller-orders" },
         { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/settings" },
@@ -129,7 +137,7 @@ export const AccountSidebar = ({
         </div>
 
         {/* Mode Switcher */}
-        <div className="flex p-1.5 bg-muted/50 rounded-2xl mb-8">
+        <div className="flex p-1.5 bg-muted/50 rounded-2xl mb-8 border border-border">
           <button 
             onClick={() => handleTabChange("account")}
             className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${activeTab === "account" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
