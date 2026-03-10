@@ -8,15 +8,14 @@ import {
   Package, 
   BarChart3, 
   Plus, 
-  TrendingUp,
-  Store,
-  Settings,
-  ArrowRight,
-  ExternalLink,
-  ChevronRight,
-  ShieldCheck,
-  Zap,
-  Clock,
+  Store, 
+  Settings, 
+  ArrowRight, 
+  ExternalLink, 
+  ChevronRight, 
+  ShieldCheck, 
+  Zap, 
+  Clock, 
   LayoutDashboard
 } from "lucide-react";
 
@@ -26,7 +25,8 @@ import { useMyProducts } from "@/hooks/useProducts";
 import { useSellerOrders } from "@/hooks/useSellerOrders";
 import { RegisterShopModal } from "@/components/RegisterShopModal";
 import { ProductCreateModal } from "@/components/ProductCreateModal";
-import { CreateUpdateModal } from "@/components/CreateUpdateModal";
+import { SellerAnalytics } from "@/components/SellerAnalytics";
+
 
 // Force Next.js Fast Refresh
 const SellerDashboard = () => {
@@ -38,7 +38,6 @@ const SellerDashboard = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -217,10 +216,17 @@ const SellerDashboard = () => {
         ))}
       </div>
 
+      {/* Analytics Insights */}
+      <SellerAnalytics 
+        orders={orders} 
+        products={products} 
+        shopId={shop._id} 
+      />
+
       {/* Main Activity Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-[1fr_420px] gap-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         
-        {/* Left Column: Recent Orders */}
+        {/* Left Column: Recent Activity */}
         <div className="space-y-8">
           <div className="flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
@@ -245,17 +251,17 @@ const SellerDashboard = () => {
               </div>
             ) : (
               orders.slice(0, 5).map((o) => (
-                <div key={o._id} className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-6">
-                  <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-primary/10 transition-colors duration-500">
-                      <LayoutDashboard className="w-7 h-7 text-primary/30 group-hover:text-primary transition-colors duration-500" />
+                <div key={o._id} className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8">
+                  <div className="flex items-center gap-8 flex-1 min-w-0">
+                    <div className="w-24 h-24 bg-muted/50 rounded-[1.8rem] flex items-center justify-center border border-white/5 group-hover:bg-primary/10 transition-colors duration-500 shrink-0">
+                      <LayoutDashboard className="w-10 h-10 text-primary/30 group-hover:text-primary transition-colors duration-500" />
                     </div>
-                    <div>
-                      <h4 className="font-black text-foreground text-xl tracking-tight leading-none italic uppercase">TRX-{o._id.slice(-6)}</h4>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-black text-foreground text-2xl tracking-tighter leading-none italic uppercase truncate group-hover:text-primary transition-colors duration-500">TRX-{o._id.slice(-6)}</h4>
                       <div className="flex items-center gap-3 text-[11px] font-black text-muted-foreground uppercase tracking-widest mt-3 opacity-60">
                         <span>{new Date(o.createdAt).toLocaleDateString()}</span>
                         <span className="w-1.5 h-1.5 bg-primary/30 rounded-full" />
-                        <span>{o.items.length} Multi-Units</span>
+                        <span>{o.items.length} Units</span>
                       </div>
                     </div>
                   </div>
@@ -279,104 +285,86 @@ const SellerDashboard = () => {
           </div>
         </div>
 
-        {/* Right Column: Inventory & Updates */}
-        <div className="space-y-10">
-          <div className="space-y-6">
-            <div className="flex items-center justify-between px-4">
-              <h2 className="text-2xl font-black text-foreground tracking-tight italic">Storefront Pulse</h2>
-              <Link href="/account/products" className="text-muted-foreground font-black text-xs uppercase tracking-[0.2em] hover:text-primary transition-colors">
-                Inventory
-              </Link>
+        {/* Right Column: Storefront Pulse */}
+        <div className="space-y-8">
+          <div className="flex items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                <ShoppingBag className="w-6 h-6 text-primary" />
+              </div>
+              <h2 className="text-3xl font-black text-foreground tracking-tight">Storefront Pulse</h2>
             </div>
+            <Link href="/account/products" className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all">
+              Inventory
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
 
-            <div className="bg-background/40 backdrop-blur-3xl rounded-[3.5rem] border border-white/10 p-4 space-y-4 shadow-2xl">
+          <div className="grid gap-5">
               {products.length === 0 ? (
-                <div className="p-16 text-center space-y-4">
-                  <div className="w-16 h-16 bg-muted/30 rounded-full flex items-center justify-center mx-auto opacity-30 ring-4 ring-white/5">
-                    <Package className="w-8 h-8" />
+                <div className="bg-background/20 border-2 border-dashed border-white/10 p-20 rounded-[3.5rem] text-center space-y-6">
+                  <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto ring-4 ring-white/5">
+                    <Package className="w-10 h-10 text-muted-foreground/30" />
                   </div>
                   <p className="text-muted-foreground text-sm font-black uppercase tracking-widest">Digital Shelf Empty</p>
                 </div>
               ) : (
                 products.slice(0, 5).map((p: any) => (
-                  <Link
+                  <div
                     key={p._id || p.id}
-                    href={`/account/products`}
-                    className="flex items-center gap-5 p-4 rounded-[2.5rem] hover:bg-muted/50 transition-all group border border-transparent hover:border-border"
-                  >
-                    <div className="w-24 h-24 rounded-[1.8rem] bg-muted overflow-hidden border border-white/10 shrink-0 shadow-lg">
-                      <img src={p.image || "/placeholder-product.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h5 className="font-black text-foreground text-base tracking-tight truncate group-hover:text-primary transition-colors duration-500">{p.name}</h5>
-                      <div className="flex items-center gap-3 mt-2">
-                        <span className="text-primary font-black text-lg italic">KES {p.price?.toLocaleString?.() || "—"}</span>
+                    className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-white/10 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8"
+                   >
+                    <div className="flex items-center gap-8 flex-1 min-w-0">
+                      <div className="w-24 h-24 rounded-[1.8rem] bg-muted overflow-hidden border border-white/10 shrink-0 shadow-lg">
+                        <img src={p.image || "/placeholder-product.png"} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
                       </div>
-                      <div className="flex items-center gap-2 mt-3">
-                         <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-                         <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">High Velocity</span>
+                      <div className="min-w-0 flex-1">
+                        <h5 className="font-black text-foreground text-2xl tracking-tighter italic truncate group-hover:text-primary transition-colors duration-500">{p.name}</h5>
+                        <div className="flex items-center gap-2 mt-3 opacity-60">
+                           <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
+                           <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">High Velocity</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="p-3 bg-background/40 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-500 border border-white/5">
-                      <ExternalLink className="w-4 h-4 text-primary" />
+                    <div className="flex items-center justify-between md:text-right gap-8">
+                       <div>
+                        <div className="text-2xl font-black text-primary tracking-tighter italic">KES {p.price?.toLocaleString?.() || "—"}</div>
+                        <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/10 text-primary border border-primary/20">
+                          <div className="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)] animate-pulse" />
+                          Listed
+                        </div>
+                      </div>
+                      <Link href={`/account/products`} className="p-4 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-2xl transition-all duration-500 shadow-lg border border-border">
+                        <ChevronRight className="w-6 h-6" />
+                      </Link>
                     </div>
-                  </Link>
+                  </div>
                 ))
               )}
               
               {products.length > 5 && (
                 <Link 
                   href="/account/products"
-                  className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] border-t border-border hover:bg-primary/5 rounded-b-[2.5rem] transition-all duration-500"
+                  className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] hover:bg-primary/5 rounded-[2.5rem] transition-all duration-500 border border-white/10"
                 >
                   Expand Vault ({products.length})
                 </Link>
               )}
             </div>
           </div>
-
-          {/* Premium Stories Card */}
-          <div className="bg-gradient-to-br from-indigo-700 via-purple-700 to-indigo-900 rounded-[3.5rem] p-10 text-white relative overflow-hidden shadow-[0_30px_60px_rgba(79,70,229,0.3)] group cursor-pointer border border-white/10 dark:border-white/5">
-             <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-white/10 rounded-full blur-[80px] group-hover:scale-150 transition-transform duration-1000" />
-             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl" />
-             <div className="relative z-10 space-y-6">
-               <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-[1.5rem] flex items-center justify-center ring-1 ring-white/20 shadow-2xl">
-                 <TrendingUp className="w-8 h-8 text-white" />
-               </div>
-               <div>
-                 <h4 className="text-2xl font-black italic tracking-tighter leading-tight">Master the Feed</h4>
-                 <p className="text-white/70 text-base font-medium mt-4 leading-relaxed">High-engagement sellers use Updates to drive <span className="text-white font-black underline decoration-primary">32% more traffic</span>. Broadcast your vibe now.</p>
-               </div>
-               <button 
-                 onClick={(e) => {
-                   e.preventDefault();
-                   setShowUpdateModal(true);
-                 }}
-                 className="w-full py-5 bg-white text-indigo-700 rounded-[1.8rem] font-black text-xs tracking-[0.2em] uppercase hover:shadow-[0_15px_30px_rgba(255,255,255,0.3)] hover:-translate-y-1 transition-all duration-500"
-               >
-                 LAUNCH STORY
-               </button>
-             </div>
-          </div>
         </div>
+
+        <ProductCreateModal
+          isOpen={showProductModal}
+          onClose={() => setShowProductModal(false)}
+          onCreated={() => {
+            setShowProductModal(false);
+            refetchProducts();
+          }}
+          shopName={shop?.name}
+        />
       </div>
-
-      <ProductCreateModal
-        isOpen={showProductModal}
-        onClose={() => setShowProductModal(false)}
-        onCreated={() => {
-          setShowProductModal(false);
-          refetchProducts();
-        }}
-        shopName={shop?.name}
-      />
-
-      <CreateUpdateModal 
-        isOpen={showUpdateModal}
-        onClose={() => setShowUpdateModal(false)}
-      />
-    </div>
-  );
+    );
 };
 
 export default SellerDashboard;

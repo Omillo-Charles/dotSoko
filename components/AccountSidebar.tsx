@@ -85,7 +85,7 @@ export const AccountSidebar = ({
 
   return (
     <aside className={`
-      fixed inset-0 z-50 lg:sticky lg:top-[128px] lg:block lg:w-72 lg:h-[calc(100vh-160px)] shrink-0
+      fixed inset-0 z-50 lg:z-0 lg:sticky lg:top-[128px] lg:block lg:w-72 lg:h-[calc(100vh-160px)] shrink-0
       transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
       ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
     `}>
