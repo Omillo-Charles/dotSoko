@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Image as ImageIcon, Layers, Plus } from "lucide-react";
+import { X, Image as ImageIcon, Layers, Plus, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
+import imageCompression from "browser-image-compression";
 
 type Props = {
   isOpen: boolean;
@@ -79,13 +80,27 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
       return;
     }
 
-    filesToAdd.forEach((file) => {
-      setImageFiles((prev) => [...prev, file]);
+    filesToAdd.forEach(async (file) => {
+      let finalFile = file;
+      
+      // Compress image
+      try {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+        };
+        finalFile = await imageCompression(file, options);
+      } catch (err) {
+        console.error("Compression failed", err);
+      }
+
+      setImageFiles((prev) => [...prev, finalFile]);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviews((prev) => [...prev, reader.result as string]);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(finalFile);
     });
   };
 
@@ -170,37 +185,47 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" onClick={handleClose}>
-      <div className="absolute inset-0 bg-background/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div
-        className="relative w-full max-w-lg max-h-[90vh] flex flex-col bg-background rounded-[2.5rem] shadow-2xl overflow-hidden border border-border animate-modal-pop"
+        className="relative w-full max-w-5xl max-h-[90vh] flex flex-col bg-background rounded-[2.5rem] shadow-2xl overflow-hidden border border-border animate-modal-pop"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="relative p-6 border-b border-border shrink-0">
-          <button
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <h3 className="text-lg font-bold leading-tight text-foreground">Create Listing</h3>
-          <p className="text-muted-foreground text-xs font-medium mt-1">Drafting in {shopName || "Your Shop"}</p>
-        </div>
+        <div className="relative flex flex-col h-full overflow-hidden">
+          {/* Header */}
+          <div className="relative p-8 border-b border-border shrink-0 flex items-center justify-between">
+            <div>
+              <h3 className="text-2xl font-black text-foreground uppercase tracking-widest flex items-center gap-3">
+                <ShoppingBag className="w-6 h-6 text-primary" />
+                Post Product
+              </h3>
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1 ml-9">
+                Listing to <span className="text-primary">{shopName || "your shop"}</span>
+              </p>
+            </div>
+            <button
+              onClick={handleClose}
+              disabled={isSubmitting}
+              className="w-12 h-12 rounded-2xl bg-muted border border-border flex items-center justify-center text-muted-foreground hover:bg-red-500 hover:text-white hover:border-red-500 transition-all active:scale-95 disabled:opacity-50"
+              aria-label="Close modal"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-          <form onSubmit={handleSubmit} className="w-full space-y-8">
-            {/* Product Media */}
-            <div className="space-y-4">
+          {/* Content */}
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 custom-scrollbar">
+            {/* Visual Identity */}
+            <div className="space-y-6">
               <div className="flex items-center justify-between ml-2">
-                <label className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-                  Product Media ({imageFiles.length}/10)
-                </label>
+                <div className="flex flex-col">
+                  <label className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em]">Visual Identity</label>
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">
+                    {imageFiles.length}/10 Images Selected
+                  </span>
+                </div>
                 {imageFiles.length < 10 && imageFiles.length > 0 && (
-                  <label className="text-[10px] font-black text-primary uppercase tracking-widest cursor-pointer hover:underline">
-                    Add more
+                  <label className="text-[10px] items-center flex gap-1 font-black text-primary uppercase tracking-widest cursor-pointer hover:underline">
+                    <ImageIcon className="w-3 h-3" /> Add Image
                     <input 
                       type="file" 
                       accept="image/jpeg,image/jpg,image/png,image/webp" 
@@ -257,21 +282,23 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
                   ))}
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed border-border rounded-2xl bg-muted hover:bg-background hover:border-primary/30 transition-all cursor-pointer group">
-                  <input 
-                    type="file" 
-                    accept="image/jpeg,image/jpg,image/png,image/webp" 
-                    multiple 
-                    onChange={handleImageChange} 
-                    className="hidden" 
-                    disabled={isSubmitting}
-                  />
-                  <div className="w-16 h-16 bg-background rounded-3xl shadow-sm border border-border flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-xl transition-all duration-500">
-                    <ImageIcon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                  <span className="text-xs font-black text-foreground uppercase tracking-widest">Click to upload photos</span>
-                  <span className="text-[10px] font-bold text-muted-foreground mt-2 uppercase tracking-tighter">Up to 10 high quality JPG, PNG or WebP (max 5MB each)</span>
-                </label>
+                <div className="w-full">
+                  <label className="flex flex-col items-center justify-center w-full aspect-video border-2 border-dashed border-border rounded-2xl bg-muted hover:bg-background hover:border-primary/30 transition-all cursor-pointer group">
+                    <input 
+                      type="file" 
+                      accept="image/jpeg,image/jpg,image/png,image/webp" 
+                      multiple 
+                      onChange={handleImageChange} 
+                      className="hidden" 
+                      disabled={isSubmitting}
+                    />
+                    <div className="w-16 h-16 bg-background rounded-3xl shadow-sm border border-border flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-xl transition-all duration-500">
+                      <ImageIcon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                    <span className="text-xs font-black text-foreground uppercase tracking-widest text-center">Add Photos</span>
+                    <span className="text-[10px] font-bold text-muted-foreground mt-2 uppercase tracking-tighter text-center max-w-[80%]">Up to 10 JPG, PNG (max 5MB)</span>
+                  </label>
+                </div>
               )}
             </div>
 

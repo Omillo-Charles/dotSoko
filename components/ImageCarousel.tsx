@@ -70,7 +70,7 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, alt }) => 
       {/* Scrollable Container */}
       <div 
         ref={scrollContainerRef}
-        className="w-full h-full flex overflow-x-auto snap-x snap-mandatory no-scrollbar"
+        className={`w-full h-full flex ${validImages.length > 1 ? 'overflow-x-auto md:overflow-hidden snap-x snap-mandatory' : 'overflow-hidden'} no-scrollbar`}
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {validImages.map((src, index) => (
@@ -80,8 +80,13 @@ export const ImageCarousel: React.FC<ImageCarouselProps> = ({ images, alt }) => 
           >
             <img 
               src={src} 
+              alt={`${alt} - Image Background ${index + 1}`} 
+              className="absolute inset-0 w-full h-full object-cover blur-xl opacity-50 scale-110 pointer-events-none" 
+            />
+            <img 
+              src={src} 
               alt={`${alt} - Image ${index + 1}`} 
-              className="w-full h-full object-cover" 
+              className="relative w-full h-full object-contain z-10" 
             />
           </div>
         ))}

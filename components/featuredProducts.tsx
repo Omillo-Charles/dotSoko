@@ -122,26 +122,48 @@ const FeaturedProducts = () => {
                 {(() => {
                   const src = p.image || "/placeholder-product.jpg";
                   const allowed = typeof src === 'string' && /^https?:\/\/(ik\.imagekit\.io|api\.dicebear\.com)\//.test(src);
+                  
+                  // Dual-layer Twitter style image approach
                   if (allowed) {
                     return (
-                      <Image
-                        src={src}
-                        alt={p.name || "Product"}
-                        fill
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        priority={false}
-                      />
+                      <>
+                        <Image
+                          src={src}
+                          alt={p.name || "Product Background"}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="object-cover blur-xl opacity-40 scale-110"
+                          priority={false}
+                        />
+                        <Image
+                          src={src}
+                          alt={p.name || "Product"}
+                          fill
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="object-contain transition-transform duration-700 group-hover:scale-110 z-0"
+                          priority={false}
+                        />
+                      </>
                     );
                   }
                   return (
-                    <img
-                      src={src}
-                      alt={p.name || "Product"}
-                      className="w-full h-full object-cover"
-                    />
+                    <>
+                      <img
+                        src={src}
+                        alt={p.name || "Product Background"}
+                        className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110"
+                      />
+                      <img
+                        src={src}
+                        alt={p.name || "Product"}
+                        className="relative w-full h-full object-contain z-0 transition-transform duration-700 group-hover:scale-110"
+                      />
+                    </>
                   );
                 })()}
+
+
+
                 <button 
                   onClick={(e) => handleAddToCart(e, p)}
                   className="absolute top-2 left-2 bg-background/80 hover:bg-background rounded-full p-2 shadow transition-all hover:scale-110 active:scale-95 z-10"

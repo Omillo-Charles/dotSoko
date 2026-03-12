@@ -68,13 +68,18 @@ const ProductDetailsPage = () => {
 
   const productImages = React.useMemo(() => {
     if (!product) return [];
+    
+    let media: string[] = [];
+    
     if (product.variantOptions && product.variantOptions.length > 0) {
-      return product.variantOptions.map((v: any) => v.image);
+      media = [...media, ...product.variantOptions.map((v: any) => v.image)];
+    } else if (product.images && Array.isArray(product.images) && product.images.length > 0) {
+      media = [...media, ...product.images];
+    } else if (product.image) {
+      media = [...media, product.image];
     }
-    if (product.images && Array.isArray(product.images) && product.images.length > 0) {
-      return product.images;
-    }
-    return product.image ? [product.image] : [];
+    
+    return media;
   }, [product]);
 
   useEffect(() => {
@@ -232,29 +237,39 @@ const ProductDetailsPage = () => {
                 {/* 2. Photo Section */}
                 <div className="px-4 md:px-8 py-2 space-y-4">
                   <div className="aspect-square w-full max-h-[550px] rounded-[1.25rem] overflow-hidden bg-muted/50 border border-border group relative flex items-center justify-center cursor-zoom-in">
-                    <img 
-                      src={productImages[activeImageIndex] || product.image} 
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
-                      <span className="text-primary font-black text-xs">{formatPrice(product.price)}</span>
-                    </div>
+                    {(() => {
+                      const src = productImages[activeImageIndex] || product.image;
+                      return (
+                        <>
+                          <img 
+                            src={src} 
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          />
+                          <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end z-10 pointer-events-none">
+                            <span className="text-primary font-black text-xs">{formatPrice(product.price)}</span>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
 
                   {productImages.length > 1 && (
                     <div className="flex gap-3 overflow-x-auto pb-2 custom-scrollbar">
-                      {productImages.map((img: string, idx: number) => (
-                        <button
-                          key={idx}
-                          onClick={() => setActiveImageIndex(idx)}
-                          className={`relative w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all shrink-0 group ${
-                            activeImageIndex === idx ? 'border-primary shadow-lg shadow-primary/10' : 'border-border hover:border-muted-foreground/30'
-                          }`}
-                        >
-                          <img src={img} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                        </button>
-                      ))}
+                      {productImages.map((src: string, idx: number) => {
+                        const isVideo = src && (src.toLowerCase().endsWith('.mp4') || src.toLowerCase().endsWith('.webm') || src.toLowerCase().endsWith('.mov'));
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => setActiveImageIndex(idx)}
+                            className={`relative w-20 aspect-square rounded-xl overflow-hidden border-2 transition-all shrink-0 group ${
+                              activeImageIndex === idx ? 'border-primary shadow-lg shadow-primary/10' : 'border-border hover:border-muted-foreground/30'
+                            }`}
+                          >
+                            <img src={src} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

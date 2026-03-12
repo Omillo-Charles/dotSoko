@@ -65,6 +65,7 @@ export const AccountSidebar = ({
         { id: "shop", label: "Products", icon: Store, href: "/account/seller/products" },
         { id: "orders", label: "Order Management", icon: Package, href: "/account/seller/orders" },
         { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/seller/payment" },
+        { id: "notifications", label: "Notifications", icon: Bell, href: "/account/seller/notifications" },
         { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/seller/support" },
         { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/seller/settings" },
       ];

@@ -189,8 +189,13 @@ const SellerProductsContent = () => {
                 <div className="w-full md:w-48 aspect-square rounded-[2rem] overflow-hidden bg-muted/30 shrink-0 relative shadow-2xl border border-border shadow-sm">
                   <img 
                     src={product.image} 
+                    alt={`${product.name} Background`}
+                    className="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none"
+                  />
+                  <img 
+                    src={product.image} 
                     alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                    className="relative w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000 z-10"
                   />
                   {product.stock <= 5 && product.stock > 0 && (
                     <div className="absolute top-3 left-3 bg-amber-500/90 backdrop-blur-md text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">

@@ -768,10 +768,10 @@ const ShopContent = () => {
                         {(product.images?.[0] || product.image) && (
                           <div className="rounded-[1.25rem] overflow-hidden border border-border mb-3 bg-muted relative aspect-[4/5] sm:aspect-square flex items-center justify-center">
                             <ImageCarousel 
-                              images={product.images?.length > 0 ? product.images : [product.image]} 
+                              images={product.images?.length > 0 ? product.images : (product.image ? [product.image] : [])} 
                               alt={product.name} 
                             />
-                            <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
+                            <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end z-20 pointer-events-none">
                               <span className="text-primary font-black text-sm">KES {product.price.toLocaleString()}</span>
                               {product.averageRating > 0 && (
                                 <div className="flex items-center gap-1 mt-0.5">

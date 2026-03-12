@@ -9,7 +9,7 @@ import {
   DollarSign, 
   Info,
   ChevronLeft,
-  Image as ImageIcon,
+  ImageIcon,
   Layers,
   CheckCircle2,
   Plus,
@@ -20,6 +20,7 @@ import {
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
+import imageCompression from "browser-image-compression";
 
 const categories = allCategories.filter(c => c.value !== 'all');
 
@@ -92,39 +93,40 @@ const EditProductPage = () => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    const remainingSlots = 3 - imagePreviews.length;
+    const remainingSlots = 10 - imagePreviews.length;
     if (remainingSlots <= 0) {
-      toast.error("You can only upload up to 3 images");
+      toast.error("You can only upload up to 10 images");
       return;
     }
 
     const filesToAdd = files.slice(0, remainingSlots);
     
-    filesToAdd.forEach(file => {
-      setImageFiles(prev => [...prev, file]);
+    filesToAdd.forEach(async (file) => {
+      let finalFile = file;
+
+      // Compress image
+      try {
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1200,
+          useWebWorker: true,
+        };
+        finalFile = await imageCompression(file, options);
+      } catch (err) {
+        console.error("Compression failed", err);
+      }
+
+      setImageFiles(prev => [...prev, finalFile]);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviews(prev => [...prev, reader.result as string]);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(finalFile);
     });
   };
 
   const removeImage = (index: number) => {
-    // If it's a new file being uploaded
-    const previewToRemove = imagePreviews[index];
-    const isNewFile = previewToRemove.startsWith('data:');
-    
-    if (isNewFile) {
-      // Find which file it corresponds to in imageFiles
-      // This is a bit tricky if multiple files are uploaded, but we can manage
-      // For simplicity, let's just clear the specific index from both
-      // We'll need to keep track of which preview belongs to which file
-    }
-
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
-    // When removing, we might need to filter imageFiles too if it was a new file
-    // But for now let's just keep it simple and filter both
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -148,7 +150,7 @@ const EditProductPage = () => {
         submitData.append("image", file);
       });
 
-      // We might also need to send the existing images that were kept
+      // Send existing media
       const existingImages = imagePreviews.filter(p => !p.startsWith('data:'));
       submitData.append("existingImages", JSON.stringify(existingImages));
 
@@ -313,13 +315,14 @@ const EditProductPage = () => {
               <div className="space-y-6 md:col-span-2 pt-4 border-t border-border">
                 <h2 className="text-lg font-black text-foreground flex items-center gap-2">
                   <ImageIcon className="w-5 h-5 text-primary" />
-                  Product Media ({imagePreviews.length}/3)
+                  Product Media ({imagePreviews.length}/10 Images)
                 </h2>
                 
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    {/* Render Images */}
                     {imagePreviews.map((preview, index) => (
-                      <div key={index} className="relative group rounded-2xl overflow-hidden border-2 border-border bg-muted aspect-square">
+                      <div key={`img-${index}`} className="relative group rounded-2xl overflow-hidden border-2 border-border bg-muted aspect-square">
                         <img 
                           src={preview} 
                           alt={`Preview ${index + 1}`} 
@@ -328,23 +331,28 @@ const EditProductPage = () => {
                         <button 
                           type="button"
                           onClick={() => removeImage(index)}
-                          className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-red-500 text-primary-foreground rounded-full flex items-center justify-center transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100"
+                          className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all backdrop-blur-sm opacity-0 group-hover:opacity-100 z-10"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                         {!preview.startsWith('data:') && (
-                          <div className="absolute bottom-2 left-2 bg-background/60 backdrop-blur-sm px-2 py-1 rounded-md">
-                            <p className="text-[8px] font-black text-foreground uppercase tracking-widest">Existing</p>
+                          <div className="absolute bottom-2 right-2 bg-background/80 backdrop-blur-sm px-2 py-1 rounded-md z-10">
+                            <p className="text-[8px] font-black text-foreground uppercase tracking-widest">Saved</p>
+                          </div>
+                        )}
+                        {preview.startsWith('data:') && (
+                          <div className="absolute bottom-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-md z-10">
+                            <p className="text-[8px] font-black text-white uppercase tracking-widest">New</p>
                           </div>
                         )}
                       </div>
                     ))}
                     
-                    {imagePreviews.length < 3 && (
+                    {imagePreviews.length < 10 && (
                       <label className="relative flex flex-col items-center justify-center aspect-square border-2 border-dashed border-border rounded-2xl bg-muted hover:bg-background hover:border-primary/30 transition-all cursor-pointer group">
                         <input
                           type="file"
-                          accept="image/*"
+                          accept="image/jpeg,image/jpg,image/png,image/webp"
                           multiple
                           onChange={handleImageChange}
                           className="hidden"
@@ -352,7 +360,7 @@ const EditProductPage = () => {
                         <div className="w-10 h-10 bg-background rounded-xl shadow-sm flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                           <Plus className="w-5 h-5 text-primary" />
                         </div>
-                        <p className="text-[10px] font-black text-foreground uppercase">Add Photo</p>
+                        <p className="text-[10px] font-black text-foreground uppercase text-center">Add Photo<br/><span className="text-muted-foreground font-medium normal-case tracking-tight">max 10</span></p>
                       </label>
                     )}
                   </div>
