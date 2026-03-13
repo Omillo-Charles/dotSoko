@@ -88,7 +88,7 @@ export const AccountSidebar = ({
 
   return (
     <aside className={`
-      fixed inset-0 z-50 lg:z-0 lg:sticky lg:top-[128px] lg:block lg:w-72 lg:h-[calc(100vh-160px)] shrink-0
+      fixed top-[80px] left-0 right-0 bottom-0 z-40 lg:z-0 lg:sticky lg:top-[128px] lg:block lg:w-72 lg:h-[calc(100vh-160px)] shrink-0
       transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
       ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
     `}>
@@ -98,7 +98,7 @@ export const AccountSidebar = ({
         ${isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}
       `} onClick={() => setIsSidebarOpen(false)} />
       
-      <div className="relative w-72 lg:w-full h-full bg-background/60 backdrop-blur-3xl border border-border shadow-2xl rounded-[2.5rem] p-6 lg:p-8 pb-32 lg:pb-32 overflow-y-auto custom-scrollbar group/sidebar overscroll-contain">
+      <div className="relative w-72 lg:w-full h-full bg-background/60 backdrop-blur-3xl border border-border shadow-2xl rounded-2xl p-6 lg:p-8 pb-32 lg:pb-32 overflow-y-auto custom-scrollbar group/sidebar overscroll-contain">
         {/* Spotlight Effect */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover/sidebar:opacity-100 transition-opacity duration-1000 pointer-events-none" />
         {/* Background Decorative Circles */}

@@ -119,12 +119,12 @@ export default function OrderDetailsPage() {
               <div className="px-6 py-4 border-b border-border bg-accent/30">
                 <h2 className="font-bold text-foreground flex items-center gap-2">
                   <Package className="w-5 h-5 text-primary" />
-                  Order Items ({order.items.length})
+                  Order Items ({order.items?.length || 0})
                 </h2>
               </div>
               <div className="divide-y divide-border">
-                {order.items.map((item) => (
-                  <div key={item._id} className="p-6 flex gap-4">
+                {order.items?.map((item, idx) => (
+                  <div key={item._id || idx} className="p-6 flex gap-4">
                     <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-accent flex-shrink-0">
                       <Image
                         src={item.image || "/placeholder.png"}
@@ -167,7 +167,7 @@ export default function OrderDetailsPage() {
                   <span className="text-muted-foreground font-medium">Subtotal</span>
                   <span className="text-foreground font-semibold">
                     KES {(() => {
-                      const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                      const subtotal = order.items?.reduce((sum, item: any) => sum + (item.price * item.quantity), 0) || 0;
                       return subtotal.toLocaleString();
                     })()}
                   </span>
@@ -180,15 +180,15 @@ export default function OrderDetailsPage() {
                     return shippingFee <= 0;
                   })() ? "text-green-600 dark:text-green-400 font-bold" : "text-foreground font-semibold"}>
                     {(() => {
-                      const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-                      const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
-                      return shippingFee <= 0 ? "FREE" : `KES ${shippingFee.toLocaleString()}`;
+                    const subtotal = order.items?.reduce((sum, item: any) => sum + (item.price * item.quantity), 0) || 0;
+                    const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
+                    return shippingFee <= 0 ? "FREE" : `KES ${shippingFee.toLocaleString()}`;
                     })()}
                   </span>
                 </div>
                 <div className="pt-3 border-t border-border flex justify-between items-center">
                   <span className="font-bold text-foreground">Total</span>
-                  <span className="text-xl font-black text-primary">KES {order.totalAmount.toLocaleString()}</span>
+                  <span className="text-xl font-black text-primary">KES {order.totalAmount?.toLocaleString() || 0}</span>
                 </div>
               </div>
             </div>
@@ -209,7 +209,7 @@ export default function OrderDetailsPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Recipient</p>
-                    <p className="text-sm font-bold text-foreground">{order.shippingAddress.name}</p>
+                    <p className="text-sm font-bold text-foreground">{order.shippingAddress?.name || "N/A"}</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -218,7 +218,7 @@ export default function OrderDetailsPage() {
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Phone</p>
-                    <p className="text-sm font-bold text-foreground">{order.shippingAddress.phone}</p>
+                    <p className="text-sm font-bold text-foreground">{order.shippingAddress?.phone || "N/A"}</p>
                   </div>
                 </div>
                 <div className="flex gap-3">
@@ -228,8 +228,8 @@ export default function OrderDetailsPage() {
                   <div>
                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Address</p>
                     <p className="text-sm font-bold text-foreground leading-relaxed">
-                      {order.shippingAddress.street},<br />
-                      {order.shippingAddress.city}
+                      {order.shippingAddress?.street || "No street information"},<br />
+                      {order.shippingAddress?.city || "No city information"}
                     </p>
                   </div>
                 </div>
@@ -246,16 +246,6 @@ export default function OrderDetailsPage() {
                 <div>
                   <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Method</p>
                   <p className="text-sm font-bold text-foreground">{order.paymentMethod}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Status</p>
-                  <span className={`inline-flex mt-1 px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                    order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 
-                    order.paymentStatus === 'failed' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 
-                    'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                  }`}>
-                    {order.paymentStatus}
-                  </span>
                 </div>
               </div>
             </div>

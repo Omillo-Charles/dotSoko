@@ -11,7 +11,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onCreated?: () => void;
+  onUpdated?: () => void;
   shopName?: string;
+  mode?: "create" | "edit";
+  product?: any;
 };
 
 const categories = allCategories.filter((c) => c.value !== "all");
@@ -24,11 +27,39 @@ const initialFormData = {
   stock: "1",
 };
 
-export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated, shopName }) => {
+export const ProductCreateModal: React.FC<Props> = ({ 
+  isOpen, 
+  onClose, 
+  onCreated, 
+  onUpdated,
+  shopName, 
+  mode = "create", 
+  product 
+}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(initialFormData);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
+
+  // Initialize form when product changes or mode changes
+  React.useEffect(() => {
+    if (isOpen) {
+      if (mode === "edit" && product) {
+        setFormData({
+          name: product.name || "",
+          description: product.description || "",
+          price: product.price?.toString() || "",
+          category: product.category || "",
+          stock: product.stock?.toString() || "1",
+        });
+        setExistingImages(product.images || (product.image ? [product.image] : []));
+        setImagePreviews(product.images || (product.image ? [product.image] : []));
+      } else {
+        resetForm();
+      }
+    }
+  }, [isOpen, mode, product]);
 
   if (!isOpen) return null;
 
@@ -36,6 +67,7 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
     setFormData(initialFormData);
     setImageFiles([]);
     setImagePreviews([]);
+    setExistingImages([]);
   };
 
   const handleClose = () => {
@@ -105,7 +137,18 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
   };
 
   const removeImage = (index: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    const previewToRemove = imagePreviews[index];
+    
+    // Check if it's an existing image (from API) or a new one
+    if (existingImages.includes(previewToRemove)) {
+      setExistingImages((prev) => prev.filter((url) => url !== previewToRemove));
+    } else {
+      // It's a new image, find its index in imageFiles
+      // We need to be careful with indexing since previews combine both
+      const relativeIndex = imagePreviews.slice(0, index).filter(p => p.startsWith('data:')).length;
+      setImageFiles((prev) => prev.filter((_, i) => i !== relativeIndex));
+    }
+    
     setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
@@ -113,7 +156,7 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
     e.preventDefault();
     
     // Validation
-    if (imageFiles.length === 0) {
+    if (imageFiles.length === 0 && existingImages.length === 0) {
       toast.error("Please select at least one product image");
       return;
     }
@@ -156,27 +199,40 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
       submitData.append("category", formData.category);
       submitData.append("stock", formData.stock);
       
+      if (mode === "edit") {
+        submitData.append("existingImages", JSON.stringify(existingImages));
+      }
+      
       imageFiles.forEach((file) => {
         submitData.append("image", file);
       });
 
-      const response = await api.post("/products", submitData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      let response;
+      if (mode === "edit" && product) {
+        response = await api.put(`/products/${product.id || product._id}`, submitData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await api.post("/products", submitData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
 
       if (response.data.success) {
-        toast.success("Product created successfully!");
+        toast.success(mode === "edit" ? "Product updated successfully!" : "Product created successfully!");
         resetForm();
-        onCreated?.();
+        if (mode === "edit") {
+          onUpdated?.();
+        } else {
+          onCreated?.();
+        }
         onClose();
       } else {
-        throw new Error(response.data.message || "Failed to create product");
+        throw new Error(response.data.message || `Failed to ${mode} product`);
       }
     } catch (error: any) {
-      console.error("Product creation error:", error);
-      const message = error?.response?.data?.message || error?.message || "An error occurred while creating the product";
+      console.error(`Product ${mode} error:`, error);
+      const message = error?.response?.data?.message || error?.message || `An error occurred while ${mode === "edit" ? "updating" : "creating"} the product`;
       toast.error(message);
     } finally {
       setIsSubmitting(false);
@@ -196,10 +252,10 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
             <div>
               <h3 className="text-2xl font-black text-foreground uppercase tracking-widest flex items-center gap-3">
                 <ShoppingBag className="w-6 h-6 text-primary" />
-                Post Product
+                {mode === "edit" ? "Modify Product" : "Post Product"}
               </h3>
               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1 ml-9">
-                Listing to <span className="text-primary">{shopName || "your shop"}</span>
+                {mode === "edit" ? "Updating entry in" : "Listing to"} <span className="text-primary">{shopName || "your shop"}</span>
               </p>
             </div>
             <button
@@ -406,18 +462,18 @@ export const ProductCreateModal: React.FC<Props> = ({ isOpen, onClose, onCreated
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting || !formData.name.trim() || !formData.description.trim() || !formData.category || imageFiles.length === 0}
+                disabled={isSubmitting || !formData.name.trim() || !formData.description.trim() || !formData.category || (imageFiles.length === 0 && existingImages.length === 0)}
                 className="bg-primary text-primary-foreground px-8 py-3 rounded-2xl font-bold text-sm uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-primary/90 active:scale-95 inline-flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <>
                     <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    <span>Publishing...</span>
+                    <span>{mode === "edit" ? "Saving..." : "Publishing..."}</span>
                   </>
                 ) : (
                   <>
-                    <Plus className="w-5 h-5" />
-                    <span>Post Listing</span>
+                    {mode === "edit" ? <Plus className="w-5 h-5 rotate-45" /> : <Plus className="w-5 h-5" />}
+                    <span>{mode === "edit" ? "Update Details" : "Post Listing"}</span>
                   </>
                 )}
               </button>

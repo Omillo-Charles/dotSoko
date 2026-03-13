@@ -17,8 +17,8 @@ import { usePopularShops } from "@/hooks/useShop";
 import { useProducts } from "@/hooks/useProducts";
 
 export const MarketInsights = () => {
-  const { data: popularShops = [], isLoading: isShopsLoading } = usePopularShops(4);
-  const { data: trendingProducts = [], isLoading: isProductsLoading } = useProducts({ limit: 4, sort: '-views' });
+  const { data: popularShops = [], isLoading: isShopsLoading } = usePopularShops(2);
+  const { data: trendingProducts = [], isLoading: isProductsLoading } = useProducts({ limit: 2, sort: '-views' });
 
   if (isShopsLoading || isProductsLoading) {
     return (
@@ -45,7 +45,7 @@ export const MarketInsights = () => {
           </div>
 
           <div className="grid gap-5">
-            {popularShops.slice(0, 4).map((shop: any) => (
+            {popularShops.slice(0, 2).map((shop: any) => (
               <Link 
                 key={shop._id || shop.id}
                 href={`/shop/${shop.username ? `@${shop.username}` : shop._id}`}
@@ -93,7 +93,7 @@ export const MarketInsights = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-             {trendingProducts.slice(0, 4).map((product: any) => (
+             {trendingProducts.slice(0, 2).map((product: any) => (
                <Link 
                  key={product._id || product.id}
                  href={`/product/${product._id || product.id}`}

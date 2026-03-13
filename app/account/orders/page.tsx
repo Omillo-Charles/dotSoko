@@ -149,7 +149,7 @@ const OrdersPage = () => {
             {/* Order Items */}
             <div className="p-4 md:p-6">
               <div className="space-y-4">
-                {order.items.map((item: any, idx: number) => (
+                {order.items?.map((item: any, idx: number) => (
                   <div key={idx} className="flex items-center gap-4">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border flex-shrink-0 bg-muted">
                       <Image 

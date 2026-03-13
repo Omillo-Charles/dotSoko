@@ -50,11 +50,12 @@ export const useSellerOrders = () => {
         user: o.user ? {
           ...o.user,
           _id: o.user.id || o.user._id
-        } : null,
+        } : { name: "Unknown User" },
         items: (o.items || []).map((i: any) => ({
           ...i,
           _id: i.id || i._id
-        }))
+        })),
+        shippingAddress: o.shippingAddress || {}
       })) as Order[];
     }
   });

@@ -251,7 +251,7 @@ const SellerDashboard = () => {
                 <p className="text-muted-foreground text-lg font-bold tracking-tight">Listening for customer activity...</p>
               </div>
             ) : (
-              orders.slice(0, 5).map((o) => (
+              orders.slice(0, 2).map((o) => (
                 <div key={o._id} className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8">
                   <div className="flex items-center gap-8 flex-1 min-w-0">
                     <div className="w-24 h-24 bg-muted/50 rounded-[1.8rem] flex items-center justify-center border border-border/50 group-hover:bg-primary/10 transition-colors duration-500 shrink-0">
@@ -310,7 +310,7 @@ const SellerDashboard = () => {
                   <p className="text-muted-foreground text-sm font-black uppercase tracking-widest">Digital Shelf Empty</p>
                 </div>
               ) : (
-                products.slice(0, 5).map((p: any) => (
+                products.slice(0, 2).map((p: any) => (
                   <div
                     key={p._id || p.id}
                     className="group flex flex-col md:flex-row md:items-center justify-between p-8 bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-8"
@@ -343,7 +343,7 @@ const SellerDashboard = () => {
                 ))
               )}
               
-              {products.length > 5 && (
+              {products.length > 2 && (
                 <Link 
                   href="/account/seller/products"
                   className="block w-full text-center py-6 text-xs font-black text-primary uppercase tracking-[0.3em] hover:bg-primary/5 rounded-[2.5rem] transition-all duration-500 border border-border shadow-sm"

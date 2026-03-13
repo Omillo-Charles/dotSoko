@@ -43,7 +43,11 @@ export const useOrders = () => {
       const data = response.data.data || [];
       return data.map((o: any) => ({
         ...o,
-        _id: o.id || o._id || `order-${Math.random()}`
+        _id: o.id || o._id || `order-${Math.random()}`,
+        items: (o.items || []).map((i: any) => ({
+          ...i,
+          _id: i.id || i._id
+        }))
       })) as Order[];
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -56,8 +60,13 @@ export const useOrderDetails = (orderId: string) => {
     queryFn: async () => {
       const response = await api.get(`/orders/${orderId}`);
       const order = response.data.data;
-      if (order && order.id && !order._id) {
-        order._id = order.id;
+      if (order) {
+        if (order.id && !order._id) order._id = order.id;
+        order.items = (order.items || []).map((i: any) => ({
+          ...i,
+          _id: i.id || i._id
+        }));
+        if (!order.shippingAddress) order.shippingAddress = {};
       }
       return order as Order;
     },

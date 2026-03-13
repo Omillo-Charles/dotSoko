@@ -6,17 +6,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
 
 interface Product {
+  id?: string;
   _id: string;
   name: string;
   price: number;
   image: string;
   images?: string[];
   shop?: {
+    id?: string;
+    _id?: string;
     name: string;
   };
 }
 
 interface CartItem {
+  id?: string;
   _id: string;
   product: Product;
   quantity: number;

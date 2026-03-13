@@ -118,7 +118,7 @@ export default function SellerOrdersPage() {
         <div className="space-y-8">
           {orders.map((order) => {
             const StatusIcon = statusIcons[order.status] || Clock;
-            const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = order.items?.reduce((sum, item: any) => sum + (item.price * item.quantity), 0) || 0;
             const shippingFee = order.shippingFee ?? calculateShippingFee(subtotal);
             
             return (
@@ -156,15 +156,14 @@ export default function SellerOrdersPage() {
                            </div>
                            <div className="w-1.5 h-1.5 bg-primary/30 rounded-full" />
                            <div className="flex items-center gap-2">
-                             <UserIcon className="w-4 h-4" />
-                             {order.user.name}
+                             {order.user?.name || "Unknown"}
                            </div>
                         </div>
                       </div>
                       <div className="text-right">
                          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mb-1 opacity-50">Transaction Total</p>
                          <h3 className="text-4xl font-black text-primary tracking-tighter italic leading-none">
-                           KES {order.totalAmount.toLocaleString()}
+                           KES {order.totalAmount?.toLocaleString() || 0}
                          </h3>
                       </div>
                     </div>
@@ -173,7 +172,7 @@ export default function SellerOrdersPage() {
                     <div className="space-y-6">
                       <h5 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.3em] opacity-40 italic">Unit Breakdown</h5>
                       <div className="grid gap-4">
-                        {order.items.map((item, idx) => (
+                        {order.items?.map((item, idx) => (
                           <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl bg-background/30 border border-border/50 hover:bg-white/5 transition-colors group/item">
                             <div className="w-20 h-20 rounded-[1.5rem] bg-muted overflow-hidden border border-border shadow-sm shrink-0 shadow-lg relative">
                               {item.image ? (
@@ -231,14 +230,14 @@ export default function SellerOrdersPage() {
                           <MapPin className="w-5 h-5 text-primary shrink-0 mt-1" />
                           <div className="space-y-1">
                             <p className="text-xs font-black text-muted-foreground uppercase tracking-widest opacity-50">Base of Delivery</p>
-                            <p className="text-sm font-black text-foreground leading-tight italic">{order.shippingAddress.street}, {order.shippingAddress.city}</p>
+                             <p className="text-sm font-black text-foreground leading-tight italic">{order.shippingAddress?.street || "N/A"}, {order.shippingAddress?.city || ""}</p>
                           </div>
                         </div>
                         <div className="flex gap-4">
                           <Phone className="w-5 h-5 text-emerald-500 shrink-0 mt-1" />
                           <div className="space-y-1">
                             <p className="text-xs font-black text-muted-foreground uppercase tracking-widest opacity-50">Comm Protocol</p>
-                            <p className="text-sm font-black text-foreground italic">{order.shippingAddress.phone}</p>
+                             <p className="text-sm font-black text-foreground italic">{order.shippingAddress?.phone || "N/A"}</p>
                           </div>
                         </div>
                       </div>
@@ -264,16 +263,6 @@ export default function SellerOrdersPage() {
                          <p className="text-[9px] text-muted-foreground uppercase font-black tracking-tighter opacity-30 px-2 italic">
                            Updating status triggers user notification protocols.
                          </p>
-                      </div>
-
-                      <div className="flex flex-col gap-3">
-                        <Link 
-                          href={`/account/orders/${order._id}`}
-                          className="flex items-center justify-center gap-3 w-full py-5 rounded-[1.5rem] bg-foreground text-background font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-105 active:scale-95 transition-all"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          Full Insight
-                        </Link>
                       </div>
                     </div>
 

@@ -34,6 +34,7 @@ const SellerProductsContent = () => {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [shop, setShop] = useState<any>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<any>(null);
 
   const fetchProducts = async () => {
     try {
@@ -52,7 +53,7 @@ const SellerProductsContent = () => {
       if (res.data.success) {
         const mappedProducts = (res.data.data || []).map((p: any) => ({
           ...p,
-          _id: p.id || p._id || `prod-${Math.random()}`
+          _id: p.id || p._id
         }));
         setProducts(mappedProducts);
       }
@@ -183,7 +184,7 @@ const SellerProductsContent = () => {
                 key={product._id}
                 className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border shadow-sm p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20 hover:-translate-y-1"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
                 
                 {/* Visual Asset */}
                 <div className="w-full md:w-48 aspect-square rounded-[2rem] overflow-hidden bg-muted/30 shrink-0 relative shadow-2xl border border-border shadow-sm">
@@ -243,13 +244,16 @@ const SellerProductsContent = () => {
 
                 {/* Terminal Actions */}
                 <div className="flex items-center gap-4 w-full md:w-auto md:border-l border-border shadow-sm md:pl-8">
-                  <Link 
-                    href={`/account/seller/products/edit/${product._id}`}
+                  <button 
+                    onClick={() => {
+                      setEditingProduct(product);
+                      setShowCreateModal(true);
+                    }}
                     className="flex-1 md:flex-none p-5 bg-background shadow-xl border border-border shadow-sm text-primary rounded-[1.5rem] hover:bg-primary hover:text-white transition-all duration-500 flex items-center justify-center gap-3 font-black text-xs uppercase tracking-widest"
                   >
                     <Edit2 className="w-5 h-5" />
                     <span className="md:hidden">Modify</span>
-                  </Link>
+                  </button>
                   <button 
                     onClick={() => handleDelete(product._id)}
                     disabled={isDeleting === product._id}
@@ -271,9 +275,19 @@ const SellerProductsContent = () => {
 
       <ProductCreateModal
         isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
+        onClose={() => {
+          setShowCreateModal(false);
+          setEditingProduct(null);
+        }}
+        mode={editingProduct ? "edit" : "create"}
+        product={editingProduct}
         onCreated={() => {
           setShowCreateModal(false);
+          fetchProducts();
+        }}
+        onUpdated={() => {
+          setShowCreateModal(false);
+          setEditingProduct(null);
           fetchProducts();
         }}
         shopName={shop?.name || "Your Shop"}

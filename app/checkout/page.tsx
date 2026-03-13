@@ -27,6 +27,11 @@ const CheckoutPage = () => {
   const { user, isLoading: isUserLoading } = useUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -73,8 +78,10 @@ const CheckoutPage = () => {
           street: formData.street,
         },
         items: cartItems.map(item => ({
-          product: item.product._id,
-          shop: typeof item.product.shop === 'object' && item.product.shop !== null && '_id' in item.product.shop ? item.product.shop._id : item.product.shop,
+          product: item.product.id || item.product._id,
+          shop: typeof item.product.shop === 'object' && item.product.shop !== null && ('id' in item.product.shop || '_id' in item.product.shop) 
+            ? (item.product.shop as any).id || (item.product.shop as any)._id 
+            : item.product.shop,
           name: item.product.name,
           price: item.product.price,
           quantity: item.quantity,
@@ -103,7 +110,7 @@ const CheckoutPage = () => {
     }
   };
 
-  if (isCartLoading || isUserLoading) {
+  if (!isMounted || isCartLoading || isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -268,7 +275,7 @@ const CheckoutPage = () => {
               
               <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                 {cartItems.map((item) => (
-                  <div key={item._id} className="flex gap-4">
+                  <div key={item.id || item._id} className="flex gap-4">
                     <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border flex-shrink-0">
                       <Image 
                         src={item.image || item.product.image || "/placeholder-product.png"} 
