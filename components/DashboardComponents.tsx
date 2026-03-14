@@ -60,8 +60,7 @@ export const DashboardHeader = ({
         {/* Identity Section */}
         <div className="relative shrink-0">
           <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
-          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-[2.5rem] bg-gradient-to-br from-primary/50 to-secondary/50 p-1 shadow-2xl">
-            <div className="w-full h-full rounded-[2.4rem] bg-background border border-border overflow-hidden flex items-center justify-center">
+          <div className="relative w-32 h-32 md:w-40 md:h-40 shadow-2xl rounded-[2.4rem] overflow-hidden bg-background flex items-center justify-center">
               {image ? (
                 <img src={image} alt="Profile" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
               ) : (
@@ -69,7 +68,6 @@ export const DashboardHeader = ({
                   {initials || "U"}
                 </span>
               )}
-            </div>
           </div>
           {isPremium && (
             <div className="absolute -bottom-2 -right-2 bg-background p-1.5 rounded-full shadow-lg border border-border">

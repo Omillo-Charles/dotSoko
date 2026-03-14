@@ -123,10 +123,8 @@ export const AccountSidebar = ({
         {/* Profile Brief */}
         <div className="mb-10 text-center lg:text-left">
           <div className="relative inline-block lg:block">
-            <div className="w-20 h-20 rounded-[1.8rem] bg-gradient-to-br from-primary to-secondary p-0.5 mx-auto lg:mx-0">
-              <div className="w-full h-full rounded-[1.7rem] bg-background grid place-items-center">
-                <User className="w-10 h-10 text-primary" />
-              </div>
+            <div className="w-20 h-20 mx-auto lg:mx-0">
+              <img src="/defaultAvatar.jpeg" alt="Profile" className="w-full h-full rounded-[1.8rem] object-cover" />
             </div>
             {user?.isPremium && (
               <div className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-background border border-border shadow-md flex items-center justify-center">

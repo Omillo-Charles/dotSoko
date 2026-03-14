@@ -60,7 +60,7 @@ const BuyerDashboard = () => {
     <DashboardShell>
       {/* Profile Header */}
       <DashboardHeader
-        initials={user?.name?.charAt(0).toUpperCase()}
+        image="/defaultAvatar.jpeg"
         isPremium={user?.isPremium}
         statusBadge={{
           label: "Buyer Account",

@@ -68,10 +68,8 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
           <Menu className="w-6 h-6" />
         </button>
         <h1 className="text-lg font-bold">{activeTab === "account" ? "Account Overview" : "Seller Console"}</h1>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-secondary p-[2px]">
-          <div className="w-full h-full rounded-full bg-background grid place-items-center">
-            <User className="w-5 h-5 text-primary" />
-          </div>
+        <div className="w-10 h-10">
+          <img src="/defaultAvatar.jpeg" alt="Profile" className="w-full h-full rounded-full object-cover" />
         </div>
       </div>
 
