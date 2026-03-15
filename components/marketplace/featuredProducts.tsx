@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useFeaturedProducts, usePersonalizedFeed, useTrackActivity } from "@/hooks/useProducts";
-import { UniversalShareModal } from "./UniversalShareModal";
-import FeedbackModal from "./FeedbackModal";
-import CommentModal from "./CommentModal";
+import { UniversalShareModal } from "../modals/UniversalShareModal";
+import FeedbackModal from "../modals/FeedbackModal";
+import CommentModal from "../modals/CommentModal";
 
 const FeaturedProducts = () => {
   const router = useRouter();
@@ -82,7 +82,7 @@ const FeaturedProducts = () => {
     const id = p._id || p.id;
     if (id) {
       trackActivity({
-        type: 'cart',
+        type: "@/components/marketplace/cart",
         productId: id,
         category: p.category
       });

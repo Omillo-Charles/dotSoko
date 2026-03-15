@@ -21,7 +21,7 @@ import {
   MapPin,
   CreditCard
 } from "lucide-react";
-import { GoldCheck } from "./CommonUI";
+import { GoldCheck } from "../ui/CommonUI";
 
 type Tab = "account" | "seller";
 

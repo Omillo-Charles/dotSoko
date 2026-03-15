@@ -24,7 +24,7 @@ import {
   Repeat2
 } from "lucide-react";
 import Link from "next/link";
-import { GoldCheck, ProductRating } from "@/components/CommonUI";
+import { GoldCheck, ProductRating } from "@/components/ui/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
@@ -32,8 +32,8 @@ import { useComments } from "@/hooks/useComments";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useProduct, useProducts } from "@/hooks/useProducts";
 import { categories as allCategories } from "@/constants/categories";
-import { UniversalShareModal } from "@/components/UniversalShareModal";
-import CommentModal from "@/components/CommentModal";
+import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
+import CommentModal from "@/components/modals/CommentModal";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();

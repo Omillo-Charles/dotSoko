@@ -16,7 +16,7 @@ import {
   History
 } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
-import { SettingsPageHeader } from "@/components/SettingsPageHeader";
+import { SettingsPageHeader } from "@/components/dashboard/SettingsPageHeader";
 
 const SecurityPage = () => {
   const { user, updatePassword, isUpdatingPassword, deleteAccount, isDeletingAccount } = useUser();

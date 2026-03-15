@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import { Search, X, Store, CheckCircle2, ArrowRight, User } from "lucide-react";
-import { GoldCheck } from "@/components/CommonUI";
+import { GoldCheck } from "@/components/ui/CommonUI";
 import { useRouter, useSearchParams } from "next/navigation";
 import { usePopularShops } from "@/hooks/useShop";
 

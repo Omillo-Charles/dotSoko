@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Carousel from './Carousel';
+import Carousel from "../media/Carousel";
 
 const slides = [
   {

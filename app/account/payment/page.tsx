@@ -13,7 +13,7 @@ import {
   Trash2,
   Lock
 } from "lucide-react";
-import { SettingsPageHeader } from "@/components/SettingsPageHeader";
+import { SettingsPageHeader } from "@/components/dashboard/SettingsPageHeader";
 
 const PaymentMethodsPage = () => {
   const savedCards = [

@@ -26,14 +26,14 @@ import {
   Camera,
   ShoppingBag
 } from "lucide-react";
-import SearchBar from "@/components/searchBar";
-import { ThemeToggle, GoldCheck } from "@/components/CommonUI";
+import SearchBar from "@/components/marketplace/searchBar";
+import { ThemeToggle, GoldCheck } from "@/components/ui/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useUser } from "@/hooks/useUser";
-import ChoiceModal from "@/components/ChoiceModal";
-import { CreateUpdateModal } from "@/components/CreateUpdateModal";
-import { ProductCreateModal } from "@/components/ProductCreateModal";
+import ChoiceModal from "@/components/modals/ChoiceModal";
+import { CreateUpdateModal } from "@/components/modals/CreateUpdateModal";
+import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
 
 const Navbar = () => {
   const pathname = usePathname();

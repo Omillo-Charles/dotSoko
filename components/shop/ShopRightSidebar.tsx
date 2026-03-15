@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShoppingBag, Plus, Send } from "lucide-react";
-import { GoldCheck } from "@/components/CommonUI";
+import { GoldCheck } from "@/components/ui/CommonUI";
 
 interface ShopRightSidebarProps {
   popularShops: any[];

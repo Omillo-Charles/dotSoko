@@ -5,8 +5,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { Menu, User, X } from "lucide-react";
 import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
-import { AccountSidebar } from "@/components/AccountSidebar";
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 const AccountLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();

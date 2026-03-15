@@ -23,17 +23,17 @@ import {
   Send
 } from "lucide-react";
 import Link from "next/link";
-import { GoldCheck } from "@/components/CommonUI";
+import { GoldCheck } from "@/components/ui/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop, useShopReviews } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
-import FeedbackModal from "@/components/FeedbackModal";
-import { UniversalShareModal } from "@/components/UniversalShareModal";
-import CommentModal from "@/components/CommentModal";
-import ChoiceModal from "@/components/ChoiceModal";
-import { ImageCarousel } from "@/components/ImageCarousel";
+import FeedbackModal from "@/components/modals/FeedbackModal";
+import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
+import CommentModal from "@/components/modals/CommentModal";
+import ChoiceModal from "@/components/modals/ChoiceModal";
+import { ImageCarousel } from "@/components/media/ImageCarousel";
 
 const ShopProfilePage = () => {
   const params = useParams();

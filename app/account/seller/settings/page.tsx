@@ -19,7 +19,7 @@ import Link from "next/link";
 import api from "@/lib/api";
 import imageCompression from 'browser-image-compression';
 import { useQueryClient } from "@tanstack/react-query";
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 const SellerSettingsPage = () => {
   const router = useRouter();

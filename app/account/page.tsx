@@ -20,7 +20,7 @@ import {
   DashboardStatCard, 
   DashboardSection, 
   DashboardListCard 
-} from "@/components/DashboardComponents";
+} from "@/components/dashboard/DashboardComponents";
 
 const BuyerDashboard = () => {
   const router = useRouter();

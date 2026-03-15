@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Plus, X, MoreHorizontal } from 'lucide-react
 import { toast } from 'sonner';
 import api from '@/lib/api';
 import { useUser } from '@/hooks/useUser';
-import { CreateUpdateModal } from './CreateUpdateModal';
+import { CreateUpdateModal } from "../modals/CreateUpdateModal";
 import { formatDistanceToNow } from '@/lib/formatters';
 
 // Remove static mock data

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Zap, Truck, ShieldCheck, Headphones, ChevronRight } from "lucide-react";
-import Categories from "@/components/categories";
-import FeaturedProducts from "@/components/featuredProducts";
-import Footer from "@/components/footer";
-import { Updates } from "@/components/Updates";
-import { BannerCarousel } from "@/components/BannerCarousel";
+import Categories from "@/components/marketplace/categories";
+import FeaturedProducts from "@/components/marketplace/featuredProducts";
+import Footer from "@/components/layout/footer";
+import { Updates } from "@/components/dashboard/Updates";
+import { BannerCarousel } from "@/components/media/BannerCarousel";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

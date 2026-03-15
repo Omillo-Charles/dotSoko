@@ -23,8 +23,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
-import { ProductCreateModal } from "@/components/ProductCreateModal";
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 const SellerProductsContent = () => {
   const router = useRouter();

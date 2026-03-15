@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
-import Navbar from "@/components/nav";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import Navbar from "@/components/layout/nav";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
-import QueryProvider from "@/components/QueryProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "sonner";
 import "./globals.css";
 

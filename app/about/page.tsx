@@ -6,9 +6,9 @@ import {
   Users, 
   Loader2
 } from "lucide-react";
-import Footer from "@/components/footer";
+import Footer from "@/components/layout/footer";
 import { useStats } from "@/hooks/useStats";
-import LegalLayout from "@/components/LegalLayout";
+import LegalLayout from "@/components/layout/LegalLayout";
 import { LEGAL_PAGES } from "@/constants/legal";
 
 const AboutPage = () => {

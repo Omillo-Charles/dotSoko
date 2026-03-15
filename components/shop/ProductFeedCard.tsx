@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { 
   Star, MessageCircle, Repeat2, Heart, Share2, ShoppingCart, Send 
 } from "lucide-react";
-import { GoldCheck } from "@/components/CommonUI";
-import { ImageCarousel } from "@/components/ImageCarousel";
+import { GoldCheck } from "@/components/ui/CommonUI";
+import { ImageCarousel } from "@/components/media/ImageCarousel";
 
 interface ProductFeedCardProps {
   product: any;

@@ -13,7 +13,7 @@ import {
   CheckCircle2
 } from "lucide-react";
 import Link from "next/link";
-import { SettingsPageHeader } from "@/components/SettingsPageHeader";
+import { SettingsPageHeader } from "@/components/dashboard/SettingsPageHeader";
 
 const MOCK_ADDRESSES = [
   { id: "1", type: "home", name: "John Doe", phone: "+254 712 345 678", city: "Nairobi", street: "Kilimani, Argwings Kodhek Rd", isDefault: true },

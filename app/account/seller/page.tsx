@@ -19,17 +19,17 @@ import { useUser } from "@/hooks/useUser";
 import { useMyShop } from "@/hooks/useShop";
 import { useMyProducts } from "@/hooks/useProducts";
 import { useSellerOrders } from "@/hooks/useSellerOrders";
-import { RegisterShopModal } from "@/components/RegisterShopModal";
-import { ProductCreateModal } from "@/components/ProductCreateModal";
-import { SellerAnalytics } from "@/components/SellerAnalytics";
-import { MarketInsights } from "@/components/MarketInsights";
+import { RegisterShopModal } from "@/components/modals/RegisterShopModal";
+import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
+import { SellerAnalytics } from "@/components/dashboard/SellerAnalytics";
+import { MarketInsights } from "@/components/dashboard/MarketInsights";
 import { 
   DashboardShell, 
   DashboardHeader, 
   DashboardStatCard, 
   DashboardSection, 
   DashboardListCard 
-} from "@/components/DashboardComponents";
+} from "@/components/dashboard/DashboardComponents";
 
 const SellerDashboard = () => {
   const router = useRouter();

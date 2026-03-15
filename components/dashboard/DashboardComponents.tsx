@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, LucideIcon } from "lucide-react";
-import { GoldCheck } from "@/components/CommonUI";
+import { GoldCheck } from "@/components/ui/CommonUI";
 
 /**
  * DashboardShell: A consistent container for dashboard pages with animations.

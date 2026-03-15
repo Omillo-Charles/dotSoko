@@ -19,13 +19,13 @@ import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity 
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
-import FeedbackModal from "@/components/FeedbackModal";
-import { UniversalShareModal } from "@/components/UniversalShareModal";
-import CommentModal from "@/components/CommentModal";
-import ShopSearchModal from "@/components/ShopSearchModal";
-import ChoiceModal from "@/components/ChoiceModal";
-import { CreateUpdateModal } from "@/components/CreateUpdateModal";
-import ProductCreateModal from "@/components/ProductCreateModal";
+import FeedbackModal from "@/components/modals/FeedbackModal";
+import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
+import CommentModal from "@/components/modals/CommentModal";
+import ShopSearchModal from "@/components/modals/ShopSearchModal";
+import ChoiceModal from "@/components/modals/ChoiceModal";
+import { CreateUpdateModal } from "@/components/modals/CreateUpdateModal";
+import ProductCreateModal from "@/components/modals/ProductCreateModal";
 
 import { ShopLeftSidebar } from "@/components/shop/ShopLeftSidebar";
 import { ShopRightSidebar } from "@/components/shop/ShopRightSidebar";
@@ -167,7 +167,7 @@ const ShopContent = () => {
   const handleAddToCart = (e: React.MouseEvent, p: any) => {
     e.stopPropagation();
     const id = p._id || p.id;
-    if (id) { trackActivity({ type: 'cart', productId: id, category: p.category }); addToCart(id); }
+    if (id) { trackActivity({ type: "@/components/marketplace/cart", productId: id, category: p.category }); addToCart(id); }
   };
 
   const handleWishlist = (e: React.MouseEvent, p: any) => {

@@ -8,7 +8,7 @@ import {
   Star,
   ArrowLeft,
 } from "lucide-react";
-import { PremiumUpgradeModal } from "@/components/PremiumUpgradeModal";
+import { PremiumUpgradeModal } from "@/components/modals/PremiumUpgradeModal";
 import { useUser } from "@/hooks/useUser";
 
 const PremiumPage = () => {

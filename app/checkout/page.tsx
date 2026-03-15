@@ -20,7 +20,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { calculateShippingFee } from "@/lib/shipping";
-import { ConfirmationModal } from "@/components/ConfirmationModal";
+import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
 const CheckoutPage = () => {
   const router = useRouter();

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import LegalLayout from "@/components/LegalLayout";
+import LegalLayout from "@/components/layout/LegalLayout";
 import { LEGAL_PAGES } from "@/constants/legal";
 
 const ReturnsPage = () => {
