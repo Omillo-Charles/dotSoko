@@ -117,9 +117,9 @@ const FeaturedProducts = () => {
         </div>
         <div className="mt-6 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 items-start">
           {(products || []).map((p: any) => (
-            <div key={p._id || Math.random()} className="group relative flex flex-col gap-2">
+            <div key={p._id || Math.random()} className="group relative flex flex-col bg-background rounded-[1.25rem] border border-border overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all h-full">
               <div 
-                className="relative inline-block max-w-full rounded-[1.25rem] border border-border overflow-hidden cursor-pointer" 
+                className="relative w-full aspect-square overflow-hidden cursor-pointer bg-muted/10 border-b border-border" 
                 onClick={() => handleProductClick(p)}
               >
                 {(() => {
@@ -133,7 +133,7 @@ const FeaturedProducts = () => {
                         alt={p.name || "Product"}
                         width={400} // providing a reasonable default for standard layout
                         height={400}
-                        className="w-full max-h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                         priority={false}
                       />
                     );
@@ -142,7 +142,7 @@ const FeaturedProducts = () => {
                     <img
                       src={src}
                       alt={p.name || "Product"}
-                      className="w-full max-h-[400px] object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                     />
                   );
@@ -216,7 +216,7 @@ const FeaturedProducts = () => {
                   />
                 </div>
               </div>
-              <div className="pt-1 px-1">
+              <div className="p-3 flex flex-col flex-1">
                 <div className="flex items-center gap-1 mb-1">
                   {[1, 2, 3, 4, 5].map((s) => (
                     <Star 
@@ -236,7 +236,7 @@ const FeaturedProducts = () => {
                 <p className="text-xs text-muted-foreground line-clamp-2 mt-1 min-h-[32px] font-medium">
                   {p.description || "No description available"}
                 </p>
-                <div className="mt-3 flex items-center justify-between">
+                <div className="mt-auto pt-3 flex items-center justify-between">
                   <span className="text-lg font-black text-primary">
                     KES {p.price?.toLocaleString()}
                   </span>
