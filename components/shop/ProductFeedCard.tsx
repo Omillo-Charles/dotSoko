@@ -176,11 +176,11 @@ export const ProductFeedCard = ({
                 }
               }}
               className="flex items-center gap-0 group transition-colors hover:text-primary"
+              aria-label="Add to Cart"
             >
               <div className="p-1.5 rounded-full group-hover:bg-primary/10 transition-colors">
                 <ShoppingCart className="w-[18px] h-[18px]" />
               </div>
-              <span className="text-xs font-bold">Add to Cart</span>
             </button>
 
             <button
