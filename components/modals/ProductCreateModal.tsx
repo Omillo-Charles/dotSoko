@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Image as ImageIcon, Layers, Plus, ShoppingBag, PenSquare, Tag, Camera, CheckCircle2, Loader2 } from "lucide-react";
+import { X, Image as ImageIcon, Layers, Plus, ShoppingBag, PenSquare, Tag, Camera, CheckCircle2, Loader2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import api from "@/lib/api";
 import { categories as allCategories } from "@/constants/categories";
@@ -223,15 +223,15 @@ export const ProductCreateModal: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm" onClick={handleClose}>
       <div
-        className="bg-background w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-border max-h-[90vh] flex flex-col animate-modal-pop"
+        className="bg-background w-full max-w-md rounded-[2.5rem] shadow-2xl border border-border max-h-[90vh] flex flex-col animate-modal-pop"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative p-6 border-b border-border shrink-0">
+        <div className="relative p-6 border-b border-border shrink-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5">
           <button onClick={handleClose} disabled={isSubmitting} className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors disabled:opacity-50" aria-label="Close">
             <X className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-primary/10 rounded-2xl grid place-items-center">
+            <div className="w-12 h-12 bg-primary/10 rounded-2xl grid place-items-center shadow-inner">
               <ShoppingBag className="w-6 h-6 text-primary" />
             </div>
             <div>
@@ -248,7 +248,7 @@ export const ProductCreateModal: React.FC<Props> = ({
         <div className="p-4 pt-3 space-y-4 overflow-y-auto custom-scrollbar">
           <div className="bg-muted/40 p-1.5 rounded-xl flex items-center gap-1 overflow-x-auto">
             {steps.map((s, i) => (
-              <div key={i} className={`flex-1 min-w-[80px] text-center px-3 py-2 rounded-lg ${step === i + 1 ? "bg-background shadow-sm" : ""}`}>
+              <div key={i} className={`flex-1 min-w-[80px] text-center px-3 py-2 rounded-lg transition-all ${step === i + 1 ? "bg-background shadow-sm scale-[1.02]" : ""}`}>
                 <p className={`text-[11px] font-bold ${step > i + 1 ? "text-primary" : step === i + 1 ? "text-foreground" : "text-muted-foreground"}`}>{s.title}</p>
               </div>
             ))}
@@ -421,15 +421,16 @@ export const ProductCreateModal: React.FC<Props> = ({
                       (step === 1 && (!formData.name.trim() || !formData.category)) ||
                       (step === 2 && (!formData.description.trim() || !formData.price || !formData.stock))
                     } 
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-semibold shadow-sm hover:bg-primary/90 disabled:opacity-50"
+                    className="px-6 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     Next
+                    <ChevronRight className="w-4 h-4 ml-1" />
                   </button>
                 ) : (
                   <button
                     type="submit"
                     disabled={isSubmitting || imagePreviews.length === 0}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-semibold shadow-sm hover:bg-primary/90 disabled:opacity-50 inline-flex items-center gap-2"
+                    className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                     {isSubmitting ? (mode === "edit" ? "Saving..." : "Creating...") : (mode === "edit" ? "Update Details" : "Publish")}

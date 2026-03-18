@@ -154,7 +154,7 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm" onClick={onClose}>
       <div
-        className="bg-background w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-border max-h-[90vh] flex flex-col"
+        className="bg-background w-full max-w-md rounded-[2.5rem] shadow-2xl border border-border max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative p-6 border-b border-border shrink-0">
