@@ -47,11 +47,11 @@ export const BannerCarousel = () => {
             variant="fade"
             aspectRatio="h-full"
             renderItem={(slide) => (
-              <div className="relative w-full h-full">
+              <Link href={slide.href} className="block relative w-full h-full group/slide">
                 <img 
                   src={slide.image} 
                   alt={slide.title} 
-                  className="w-full h-full object-cover" 
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover/slide:scale-105" 
                 />
                 <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center p-8">
                   <h2 className="text-4xl md:text-5xl font-black text-white mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -60,13 +60,11 @@ export const BannerCarousel = () => {
                   <p className="text-lg md:text-xl text-white/80 mb-8 animate-in fade-in slide-in-from-bottom-6 duration-700">
                     {slide.subtitle}
                   </p>
-                  <Link href={slide.href}>
-                    <button className="bg-primary text-primary-foreground font-bold px-8 py-3 rounded-full shadow-lg hover:scale-110 active:scale-95 transition-all">
-                      {slide.buttonText}
-                    </button>
-                  </Link>
+                  <div className="bg-primary text-primary-foreground font-bold px-8 py-3 rounded-full shadow-lg group-hover/slide:scale-110 active:scale-95 transition-all">
+                    {slide.buttonText}
+                  </div>
                 </div>
-              </div>
+              </Link>
             )}
           />
         </div>
