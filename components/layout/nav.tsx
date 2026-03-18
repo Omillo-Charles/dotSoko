@@ -34,6 +34,7 @@ import { useUser } from "@/hooks/useUser";
 import ChoiceModal from "@/components/modals/ChoiceModal";
 import { CreateUpdateModal } from "@/components/modals/CreateUpdateModal";
 import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -57,6 +58,29 @@ const Navbar = () => {
   const isPremium = mounted ? !!user?.isPremium : false;
   const cartCount = mounted ? totalItems : 0;
   const wishlistCount = mounted ? wishlistItems.length : 0;
+
+  const handleCreateClick = () => {
+    if (!isLoggedIn) {
+      toast.error("Access Protected", {
+        description: "Please log in to create posts or products.",
+      });
+      return;
+    }
+
+    const hasShop = user?.accountType === 'seller' || !!user?.shop;
+    if (!hasShop) {
+      toast.info("Seller Account Required", {
+        description: "Please switch to a seller account to start posting.",
+        action: {
+          label: "Create Shop",
+          onClick: () => window.location.href = "/account/settings?tab=shop"
+        }
+      });
+      return;
+    }
+
+    setShowCreateChoice(true);
+  };
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -362,7 +386,7 @@ const Navbar = () => {
           <span>Shop</span>
         </Link>
         <button
-          onClick={() => setShowCreateChoice(true)}
+          onClick={handleCreateClick}
           className="flex items-center p-2 transition-colors"
         >
           <div className="w-10 h-10 bg-secondary text-white rounded-full shadow-lg shadow-secondary/10 flex items-center justify-center">

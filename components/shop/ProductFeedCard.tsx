@@ -182,7 +182,6 @@ export const ProductFeedCard = ({
                 <ShoppingCart className="w-[18px] h-[18px]" />
               </div>
             </button>
-
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -193,17 +192,6 @@ export const ProductFeedCard = ({
             >
               <div className="p-2 rounded-full group-hover:bg-muted transition-colors">
                 <Share2 className="w-[18px] h-[18px]" />
-              </div>
-            </button>
-
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="flex items-center gap-2 group transition-colors hover:text-primary"
-            >
-              <div className="p-2 rounded-full group-hover:bg-primary/10 transition-colors">
-                <Send className="w-[18px] h-[18px]" />
               </div>
             </button>
           </div>
