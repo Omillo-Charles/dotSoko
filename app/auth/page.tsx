@@ -24,6 +24,9 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const GoogleIcon = () => (
   <svg
@@ -57,10 +60,65 @@ const AuthContent = () => {
   const searchParams = useSearchParams();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
+  // --- Zod Schemas ---
+  const loginSchema = z.object({
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(1, "Password is required"),
+  });
+
+  const registerSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+  });
+
+  const forgotSchema = z.object({
+    email: z.string().email("Invalid email address"),
+  });
+
+  const resetSchema = z.object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+  });
+
+  const verifySchema = z.object({
+    otp: z.string().length(6, "OTP must be exactly 6 digits"),
+  });
+
+  type LoginForm = z.infer<typeof loginSchema>;
+  type RegisterForm = z.infer<typeof registerSchema>;
+  type ForgotForm = z.infer<typeof forgotSchema>;
+  type ResetForm = z.infer<typeof resetSchema>;
+  type VerifyForm = z.infer<typeof verifySchema>;
+
+  // --- React Hook Form Initializations ---
+  const loginForm = useForm<LoginForm>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
+
+  const registerForm = useForm<RegisterForm>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { name: "", email: "", password: "" },
+  });
+
+  const forgotForm = useForm<ForgotForm>({
+    resolver: zodResolver(forgotSchema),
+    defaultValues: { email: "" },
+  });
+
+  const resetFormHook = useForm<ResetForm>({
+    resolver: zodResolver(resetSchema),
+    defaultValues: { password: "" },
+  });
+
+  const verifyForm = useForm<VerifyForm>({
+    resolver: zodResolver(verifySchema),
+    defaultValues: { otp: "" },
+  });
+
   const [mode, setMode] = useState<AuthMode>("login");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState<string>("");
   const [resetToken, setResetToken] = useState<string>("");
 
   useEffect(() => {
@@ -115,106 +173,110 @@ const AuthContent = () => {
       if (t) setResetToken(t);
     } else if (m === "verify") {
       setMode("verify");
-      if (t) setFormData(prev => ({ ...prev, otp: t }));
-    } else if (m === "forgot") {
-      setMode("forgot");
-    } else if (m === "register") {
-      setMode("register");
+      if (t) verifyForm.setValue("otp", t);
     } else if (m === "login") {
       setMode("login");
     }
   }, [searchParams]);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    otp: "",
-  });
+  const [pendingEmail, setPendingEmail] = useState<string>("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const onLoginSubmit = async (data: LoginForm) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/auth/sign-in`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || "Login failed");
+      
+      localStorage.setItem("accessToken", result.data.accessToken);
+      localStorage.setItem("user", JSON.stringify(result.data.user));
+      
+      toast.success("Login successful! Redirecting...");
+      setTimeout(() => router.push("/account"), 1500);
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onRegisterSubmit = async (data: RegisterForm) => {
     setIsLoading(true);
-
     try {
-      let response;
-      let data;
+      const response = await fetch(`${apiUrl}/auth/sign-up`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || "Registration failed");
+      
+      setPendingEmail(data.email);
+      setMode("verify");
+      toast.success("Account created! Please check your email for the verification code.");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-      switch (mode) {
-        case "login":
-          response = await fetch(`${apiUrl}/auth/sign-in`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: formData.email, password: formData.password }),
-          });
-          data = await response.json();
-          if (!response.ok) throw new Error(data.message || data.error || "Login failed");
-          
-          // Store token in localStorage
-          localStorage.setItem("accessToken", data.data.accessToken);
-          localStorage.setItem("user", JSON.stringify(data.data.user));
-          
-          toast.success("Login successful! Redirecting...");
-          setTimeout(() => router.push("/account"), 1500);
-          break;
+  const onVerifySubmit = async (data: VerifyForm) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/auth/verify-email`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: pendingEmail, otp: data.otp }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || "Verification failed");
+      
+      toast.success("Email verified successfully! You can now sign in.");
+      setTimeout(() => setMode("login"), 2000);
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        case "register":
-          response = await fetch(`${apiUrl}/auth/sign-up`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: formData.name, email: formData.email, password: formData.password }),
-          });
-          data = await response.json();
-          if (!response.ok) throw new Error(data.message || data.error || "Registration failed");
-          
-          setPendingEmail(formData.email);
-          setMode("verify");
-          toast.success("Account created! Please check your email for the verification code.");
-          break;
+  const onForgotSubmit = async (data: ForgotForm) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/auth/forgot-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || "Request failed");
+      
+      toast.success("Password reset link sent to your email!");
+    } catch (err: any) {
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-        case "verify":
-          response = await fetch(`${apiUrl}/auth/verify-email`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: pendingEmail || formData.email, otp: formData.otp }),
-          });
-          data = await response.json();
-          if (!response.ok) throw new Error(data.message || data.error || "Verification failed");
-          
-          toast.success("Email verified successfully! You can now sign in.");
-          setTimeout(() => setMode("login"), 2000);
-          break;
-
-        case "forgot":
-          response = await fetch(`${apiUrl}/auth/forgot-password`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: formData.email }),
-          });
-          data = await response.json();
-          if (!response.ok) throw new Error(data.message || data.error || "Request failed");
-          
-          toast.success("Password reset link sent to your email!");
-          break;
-
-        case "reset":
-          response = await fetch(`${apiUrl}/auth/reset-password/${resetToken}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: formData.password }),
-          });
-          data = await response.json();
-          if (!response.ok) throw new Error(data.message || data.error || "Reset failed");
-          
-          toast.success("Password reset successful! You can now sign in.");
-          setTimeout(() => setMode("login"), 2000);
-          break;
-      }
+  const onResetSubmit = async (data: ResetForm) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/auth/reset-password/${resetToken}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || result.error || "Reset failed");
+      
+      toast.success("Password reset successful! You can now sign in.");
+      setTimeout(() => setMode("login"), 2000);
     } catch (err: any) {
       toast.error(err.message || "Something went wrong");
     } finally {
@@ -230,7 +292,11 @@ const AuthContent = () => {
   };
 
   const resetForm = () => {
-    setFormData({ name: "", email: "", password: "", otp: "" });
+    loginForm.reset();
+    registerForm.reset();
+    forgotForm.reset();
+    resetFormHook.reset();
+    verifyForm.reset();
   };
 
   const switchMode = (newMode: AuthMode) => {
@@ -253,18 +319,18 @@ const AuthContent = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={verifyForm.handleSubmit(onVerifySubmit)} className="space-y-5">
               <div className="relative group">
                 <input
                   type="text"
-                  name="otp"
-                  required
-                  value={formData.otp}
-                  onChange={handleInputChange}
                   placeholder="Enter verification code"
-                  className="w-full px-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-center text-lg tracking-widest text-foreground placeholder:text-muted-foreground/50"
+                  className={`w-full px-4 py-4 bg-muted border ${verifyForm.formState.errors.otp ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-center text-lg tracking-widest text-foreground placeholder:text-muted-foreground/50`}
                   maxLength={6}
+                  {...verifyForm.register("otp")}
                 />
+                {verifyForm.formState.errors.otp && (
+                  <p className="text-red-500 text-xs mt-1 font-bold ml-1">{verifyForm.formState.errors.otp.message}</p>
+                )}
               </div>
 
               <button
@@ -307,18 +373,18 @@ const AuthContent = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={forgotForm.handleSubmit(onForgotSubmit)} className="space-y-5">
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${forgotForm.formState.errors.email ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
                 <input
                   type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
                   placeholder="Email Address"
-                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
+                  className={`w-full pl-12 pr-4 py-4 bg-muted border ${forgotForm.formState.errors.email ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                  {...forgotForm.register("email")}
                 />
+                {forgotForm.formState.errors.email && (
+                  <p className="text-red-500 text-xs mt-1 font-bold ml-1">{forgotForm.formState.errors.email.message}</p>
+                )}
               </div>
 
               <button
@@ -361,17 +427,14 @@ const AuthContent = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={resetFormHook.handleSubmit(onResetSubmit)} className="space-y-5">
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${resetFormHook.formState.errors.password ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
                 <input
                   type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
                   placeholder="New Password"
-                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
+                  className={`w-full pl-12 pr-12 py-4 bg-muted border ${resetFormHook.formState.errors.password ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                  {...resetFormHook.register("password")}
                 />
                 <button
                   type="button"
@@ -384,6 +447,9 @@ const AuthContent = () => {
                     <Eye className="w-5 h-5" />
                   )}
                 </button>
+                {resetFormHook.formState.errors.password && (
+                  <p className="text-red-500 text-xs mt-1 font-bold ml-1">{resetFormHook.formState.errors.password.message}</p>
+                )}
               </div>
 
               <button
@@ -442,46 +508,87 @@ const AuthContent = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form 
+              onSubmit={
+                mode === "login" 
+                  ? loginForm.handleSubmit(onLoginSubmit) 
+                  : registerForm.handleSubmit(onRegisterSubmit)
+              } 
+              className="space-y-5"
+            >
               {mode === "register" && (
                 <div className="relative group">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                  <User className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${registerForm.formState.errors.name ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
                   <input
                     type="text"
-                    name="name"
-                    required
-                    value={formData.name}
-                    onChange={handleInputChange}
                     placeholder="Full Name"
-                    className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
+                    className={`w-full pl-12 pr-4 py-4 bg-muted border ${registerForm.formState.errors.name ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                    {...registerForm.register("name")}
                   />
+                  {registerForm.formState.errors.name && (
+                    <p className="text-red-500 text-xs mt-1 font-bold ml-1">{registerForm.formState.errors.name.message}</p>
+                  )}
                 </div>
               )}
 
               <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder="Email Address"
-                  className="w-full pl-12 pr-4 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
-                />
+                {mode === "login" ? (
+                  <>
+                    <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${loginForm.formState.errors.email ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      className={`w-full pl-12 pr-4 py-4 bg-muted border ${loginForm.formState.errors.email ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                      {...loginForm.register("email")}
+                    />
+                    {loginForm.formState.errors.email && (
+                      <p className="text-red-500 text-xs mt-1 font-bold ml-1">{loginForm.formState.errors.email.message}</p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Mail className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${registerForm.formState.errors.email ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      className={`w-full pl-12 pr-4 py-4 bg-muted border ${registerForm.formState.errors.email ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                      {...registerForm.register("email")}
+                    />
+                    {registerForm.formState.errors.email && (
+                      <p className="text-red-500 text-xs mt-1 font-bold ml-1">{registerForm.formState.errors.email.message}</p>
+                    )}
+                  </>
+                )}
               </div>
 
               <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  required
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Password"
-                  className="w-full pl-12 pr-12 py-4 bg-muted border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50"
-                />
+                {mode === "login" ? (
+                  <>
+                    <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${loginForm.formState.errors.password ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      className={`w-full pl-12 pr-12 py-4 bg-muted border ${loginForm.formState.errors.password ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                      {...loginForm.register("password")}
+                    />
+                    {loginForm.formState.errors.password && (
+                      <p className="text-red-500 text-xs mt-1 font-bold ml-1">{loginForm.formState.errors.password.message}</p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Lock className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${registerForm.formState.errors.password ? 'text-red-500' : 'text-muted-foreground group-focus-within:text-primary'} transition-colors`} />
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      className={`w-full pl-12 pr-12 py-4 bg-muted border ${registerForm.formState.errors.password ? 'border-red-500' : 'border-border'} rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-medium text-foreground placeholder:text-muted-foreground/50`}
+                      {...registerForm.register("password")}
+                    />
+                    {registerForm.formState.errors.password && (
+                      <p className="text-red-500 text-xs mt-1 font-bold ml-1">{registerForm.formState.errors.password.message}</p>
+                    )}
+                  </>
+                )}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
