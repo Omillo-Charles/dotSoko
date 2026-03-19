@@ -86,7 +86,7 @@ export const ProductFeedCard = ({
                   @{product.shop?.username || product.vendor?.handle?.replace('@', '')}
                 </span>
               )}
-              <span className="text-muted-foreground/60 text-xs shrink-0">
+              <span className="text-muted-foreground text-xs shrink-0">
                 · {product.time || new Date(product.createdAt).toLocaleDateString()}
               </span>
             </div>
@@ -96,7 +96,7 @@ export const ProductFeedCard = ({
                   e.stopPropagation();
                   onRatingOpen(productId, product.name, product.rating);
                 }}
-                className="text-muted-foreground/40 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-500/10 transition-all"
+                className="text-muted-foreground/70 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-500/10 transition-all"
                 title="Rate Product"
               >
                 <Star className="w-4 h-4" />
@@ -105,7 +105,7 @@ export const ProductFeedCard = ({
           </div>
 
           {/* Description */}
-          <p className="text-foreground/90 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
+          <p className="text-foreground/80 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
             {product.description || product.content}
           </p>
 

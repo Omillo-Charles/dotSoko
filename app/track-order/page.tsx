@@ -119,7 +119,7 @@ const TrackOrderPage = () => {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 md:px-8 -mt-8">
+      <section className="container mx-auto px-4 md:px-8 mt-8 md:-mt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Tracking Form Area */}
           <div className="lg:col-span-8 space-y-8">

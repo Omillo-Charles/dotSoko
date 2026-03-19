@@ -33,7 +33,7 @@ import FeedbackModal from "@/components/modals/FeedbackModal";
 import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
 import CommentModal from "@/components/modals/CommentModal";
 import ChoiceModal from "@/components/modals/ChoiceModal";
-import { ImageCarousel } from "@/components/media/ImageCarousel";
+import { ProductFeedCard } from "@/components/shop/ProductFeedCard";
 
 const ShopProfilePage = () => {
   const params = useParams();
@@ -237,7 +237,7 @@ const ShopProfilePage = () => {
             </button>
 
             <div className="space-y-4 pt-4">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Store Sections</h3>
+              <h3 className="text-[11px] font-black text-foreground/50 uppercase tracking-[0.2em] px-2">Store Sections</h3>
               <div className="space-y-1">
                 {[
                   { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
@@ -279,7 +279,7 @@ const ShopProfilePage = () => {
               <ChevronLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-lg font-black text-foreground leading-none">{shop.name}</h1>
+              <h1 className="text-lg font-bold text-foreground/90 leading-none">{shop.name}</h1>
               <p className="text-xs font-bold text-muted-foreground mt-1">{products.length} products</p>
             </div>
           </div>
@@ -357,7 +357,7 @@ const ShopProfilePage = () => {
 
               <div className="space-y-1">
                 <div className="flex items-center gap-0.5">
-                  <h2 className="text-xl font-black text-foreground dark:text-white">{shop.name}</h2>
+                  <h2 className="text-xl font-bold text-foreground/90">{shop.name}</h2>
                   {shop.isVerified && <GoldCheck className="w-5 h-5" />}
                 </div>
                 <div className="flex items-center gap-3">
@@ -365,28 +365,37 @@ const ShopProfilePage = () => {
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Followers')}
-                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
+                    className="group"
                   >
-                    {shop?.followersCount ?? shop?.followers?.length ?? 0} <span className="text-muted-foreground">Followers</span>
+                    <span className="text-sm font-bold text-foreground/90 group-hover:underline">
+                      {shop?.followersCount ?? shop?.followers?.length ?? 0}
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground ml-1 group-hover:underline">Followers</span>
                   </button>
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Following')}
-                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
+                    className="group"
                   >
-                    {shop?.followingCount ?? shop?.following?.length ?? 0} <span className="text-muted-foreground">Following</span>
+                    <span className="text-sm font-bold text-foreground/90 group-hover:underline">
+                      {shop?.followingCount ?? shop?.following?.length ?? 0}
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground ml-1 group-hover:underline">Following</span>
                   </button>
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Products')}
-                    className="text-sm font-bold text-foreground dark:text-white hover:underline"
+                    className="group"
                   >
-                    {productsCount} <span className="text-muted-foreground">Products</span>
+                    <span className="text-sm font-bold text-foreground/90 group-hover:underline">
+                      {products?.length || 0}
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground ml-1 group-hover:underline">Products</span>
                   </button>
                 </div>
               </div>
 
-              <p className="mt-4 text-[13px] text-muted-foreground font-medium leading-relaxed max-w-2xl">
+              <p className="mt-4 text-[13px] text-foreground/70 font-medium leading-relaxed max-w-2xl">
                 {shop.description}
               </p>
             </div>
@@ -404,166 +413,29 @@ const ShopProfilePage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="divide-y divide-border">
+                <div className="divide-y divide-border bg-background">
                   {products.map((product: any) => (
-                    <div 
-                      key={product._id} 
-                      onClick={() => router.push(`/shop/product/${product._id}`)}
-                      className="p-4 md:p-6 hover:bg-muted/50 transition-colors cursor-pointer"
-                    >
-                      <div className="flex gap-3 md:gap-4 mt-2">
-                        {/* Profile Image (Small in feed) */}
-                        <div className="shrink-0">
-                          <div className="w-10 h-10 rounded-full overflow-hidden border border-border bg-muted">
-                            <img 
-                              src={shop.avatar || '/defaultAvatar.jpeg'} 
-                              alt={shop.name} 
-                              className="w-full h-full object-cover" 
-                            />
-                          </div>
-                        </div>
-
-                        {/* Content Area */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 mb-1">
-                            <div className="flex items-center gap-1.5 min-w-0">
-                              <span className="text-sm font-black text-foreground dark:text-white truncate flex items-center gap-0.5">
-                                {shop.name}
-                                {shop.isVerified && <GoldCheck className="w-3.5 h-3.5" />}
-                              </span>
-                              <span className="text-muted-foreground text-xs truncate">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <button 
-                                onClick={(e) => { 
-                                  e.stopPropagation(); 
-                                  setRatingModal({
-                                    isOpen: true,
-                                    productId: product._id,
-                                    productName: product.name,
-                                    initialRating: product.rating
-                                  });
-                                }}
-                                className="text-muted-foreground/30 hover:text-amber-500 p-1.5 rounded-full hover:bg-amber-50 dark:hover:bg-amber-500/10 transition-all"
-                                title="Rate Product"
-                              >
-                                <Star className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </div>
-
-                          <p className="text-foreground dark:text-slate-300 text-[13px] leading-relaxed mb-3 whitespace-pre-wrap">
-                            {product.description}
-                          </p>
-
-                          {(product.images?.length > 0 || product.image) && (
-                            <div className="relative inline-block max-w-full mt-3 mb-3 group/img">
-                              <ImageCarousel 
-                                images={product.images?.length > 0 ? product.images : [product.image]} 
-                                alt={product.name} 
-                              />
-                              <div className="absolute bottom-3 right-3 bg-background/90 backdrop-blur-md px-4 py-2 rounded-2xl border border-border shadow-xl shadow-foreground/5 flex flex-col items-end">
-                                <span className="text-primary font-black text-sm">KES {product.price?.toLocaleString()}</span>
-                                {product.rating > 0 && (
-                                  <div className="flex items-center gap-1 mt-0.5">
-                                    <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                    <span className="text-[10px] font-black text-amber-600">{product.rating.toFixed(1)}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between max-w-md text-muted-foreground -ml-2">
-                            <button onClick={(e) => {
-                              e.stopPropagation();
-                              setCommentModal({
-                                isOpen: true,
-                                productId: product._id,
-                                productName: product.name
-                              });
-                            }} className="flex items-center gap-0 group hover:text-primary transition-colors">
-                              <div className="p-2 rounded-full group-hover:bg-primary/10">
-                                <MessageCircle className="w-[18px] h-[18px]" />
-                              </div>
-                              <span className="text-xs font-bold">{product.commentsCount || 0}</span>
-                            </button>
-                            <button onClick={(e) => {
-                              e.stopPropagation();
-                              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-                              setRepostPopover({
-                                isOpen: repostPopover.productId !== product._id,
-                                productId: product._id,
-                                position: {
-                                  top: rect.bottom + window.scrollY + 5,
-                                  left: rect.right + window.scrollX - 140,
-                                },
-                              });
-                            }} className="flex items-center gap-0 group hover:text-green-500 transition-colors">
-                              <div className="p-2 rounded-full group-hover:bg-green-500/10">
-                                <Repeat2 className="w-[18px] h-[18px]" />
-                              </div>
-                              <span className="text-xs font-bold">{product.repostsCount || 0}</span>
-                            </button>
-                            <button 
-                              onClick={async (e) => {
-                                e.stopPropagation();
-                                await toggleWishlist(product._id);
-                              }} 
-                              className={`flex items-center gap-0 group transition-colors ${
-                                isInWishlist(product._id) ? 'text-pink-500' : 'hover:text-pink-500'
-                              }`}
-                            >
-                              <div className={`p-2 rounded-full transition-colors ${
-                                isInWishlist(product._id) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
-                              }`}>
-                                <Heart className={`w-[18px] h-[18px] ${isInWishlist(product._id) ? 'fill-current' : ''}`} />
-                              </div>
-                              <span className="text-xs font-bold">{product.likesCount || 0}</span>
-                            </button>
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (product.sizes?.length > 0 || product.colors?.length > 0) {
-                                  router.push(`/shop/product/${product._id}`);
-                                } else {
-                                  addToCart(product._id);
-                                }
-                              }} 
-                              className="flex items-center gap-0 group hover:text-primary transition-colors"
-                            >
-                              <div className="p-2 rounded-full group-hover:bg-primary/10">
-                                <ShoppingCart className="w-[18px] h-[18px]" />
-                              </div>
-                              <span className="text-xs font-bold">Add to Cart</span>
-                            </button>
-                            <button 
-                              onClick={(e) => { 
-                                e.stopPropagation();
-                                const productUrl = `${window.location.origin}/shop/product/${product._id}`;
-                                setShareModal({
-                                  isOpen: true,
-                                  url: productUrl,
-                                  title: product.name
-                                });
-                              }}
-                              className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
-                            >
-                              <Share2 className="w-[18px] h-[18px]" />
-                            </button>
-                            <button 
-                              onClick={(e) => { 
-                                e.stopPropagation();
-                                // Placeholder for future functionality
-                              }}
-                              className="p-2 rounded-full hover:bg-primary/10 hover:text-primary transition-colors"
-                            >
-                              <Send className="w-[18px] h-[18px]" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <ProductFeedCard
+                      key={product._id || product.id}
+                      product={{ ...product, shop: shop }} // Ensure shop info is passed
+                      isInWishlist={isInWishlist}
+                      repostPopover={repostPopover}
+                      onProductClick={(p) => router.push(`/shop/product/${p._id || p.id}`)}
+                      onAddToCart={(e, p) => addToCart(p._id || p.id)}
+                      onWishlist={(e, p) => toggleWishlist(p._id || p.id)}
+                      onRatingOpen={(productId, productName, initialRating) => setRatingModal({ isOpen: true, productId, productName, initialRating })}
+                      onCommentOpen={(productId, productName) => setCommentModal({ isOpen: true, productId, productName })}
+                      onRepostToggle={(e, productId) => {
+                        e.stopPropagation();
+                        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                        setRepostPopover({
+                          isOpen: repostPopover.productId !== productId,
+                          productId: productId,
+                          position: { top: rect.bottom + window.scrollY + 5, left: rect.right + window.scrollX - 100 },
+                        });
+                      }}
+                      onShareOpen={(url, title) => setShareModal({ isOpen: true, url, title })}
+                    />
                   ))}
                 </div>
               )
@@ -609,7 +481,7 @@ const ShopProfilePage = () => {
                     {/* Review Stats Header */}
                     <div className="p-6 bg-muted/30 flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="text-4xl font-black text-foreground">{(shop?.rating || 0).toFixed(1)}</div>
+                        <div className="text-4xl font-black text-foreground dark:text-white">{(shop?.rating || 0).toFixed(1)}</div>
                         <div>
                           <div className="flex gap-0.5 mb-1">
                             {[1, 2, 3, 4, 5].map(i => (
@@ -648,7 +520,7 @@ const ShopProfilePage = () => {
                               </div>
                               <div>
                                 <p className="text-sm font-black text-foreground">{review.user?.name}</p>
-                                <p className="text-xs font-bold text-muted-foreground/60">
+                                <p className="text-xs font-bold text-muted-foreground">
                                   {review.user?.username ? `@${review.user.username}` : 'Customer'}
                                 </p>
                               </div>
@@ -659,7 +531,7 @@ const ShopProfilePage = () => {
                                   <Star key={i} className={`w-3 h-3 ${ review.rating >= i ? "text-amber-500 fill-amber-500" : "text-muted-foreground/20"}`} />
                                 ))}
                               </div>
-                              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tighter">
+                              <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
                                 {new Date(review.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
                               </p>
                             </div>
@@ -704,7 +576,7 @@ const ShopProfilePage = () => {
                         </div>
                         <div>
                           <p className="text-sm font-black text-foreground leading-none mb-1">{follower.name}</p>
-                          <p className="text-xs font-bold text-muted-foreground/60">{follower.username ? `@${follower.username}` : `@${(follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}`}</p>
+                          <p className="text-xs font-bold text-muted-foreground">{follower.username ? `@${follower.username}` : `@${(follower.name || 'user').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
                     </div>
@@ -746,13 +618,13 @@ const ShopProfilePage = () => {
                         </div>
                         <div>
                           <div className="flex items-center gap-0.5">
-                            <p className="font-black text-foreground text-sm">{followedShop.name || 'Unknown Shop'}</p>
+                            <p className="font-black text-foreground dark:text-white text-sm">{followedShop.name || 'Unknown Shop'}</p>
                             {followedShop.isVerified && <GoldCheck className="w-3 h-3" />}
                           </div>
-                          <p className="text-xs font-bold text-muted-foreground/60">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
+                          <p className="text-xs font-bold text-muted-foreground">{followedShop.username ? `@${followedShop.username}` : `@${(followedShop.name || 'shop').toLowerCase().replace(/\s+/g, "_")}`}</p>
                         </div>
                       </div>
-                      <button className="px-4 py-1.5 bg-muted text-foreground rounded-full text-xs font-black hover:bg-muted/80 transition-all">
+                      <button className="px-4 py-1.5 bg-muted text-slate-900 dark:text-white rounded-full text-xs font-black hover:bg-muted/80 transition-all">
                         View Shop
                       </button>
                     </div>
@@ -762,7 +634,7 @@ const ShopProfilePage = () => {
             ) : (
               <div className="p-8 md:p-12 space-y-8">
                 <div>
-                  <h3 className="text-lg font-black text-foreground mb-4">About {shop.name}</h3>
+                  <h3 className="text-lg font-black text-foreground dark:text-white mb-4">About {shop.name}</h3>
                   <p className="text-muted-foreground leading-relaxed font-medium">
                     {shop.description || "No description provided."}
                   </p>
@@ -770,7 +642,7 @@ const ShopProfilePage = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 bg-muted/50 rounded-2xl border border-border">
-                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Contact Details</h4>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest mb-4">Contact Details</h4>
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm font-bold text-foreground/80">
                         <Phone className="w-4 h-4 text-primary" />
@@ -788,7 +660,7 @@ const ShopProfilePage = () => {
                   </div>
                   
                   <div className="p-6 bg-muted/50 rounded-2xl border border-border">
-                    <h4 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4">Store Stats</h4>
+                    <h4 className="text-xs font-black text-foreground/60 uppercase tracking-widest mb-4">Store Stats</h4>
                     <div className="space-y-3">
                       <div className="flex justify-between items-center text-sm font-bold">
                         <span className="text-muted-foreground">Member Since</span>
@@ -907,21 +779,21 @@ const ShopProfilePage = () => {
                     />
                   ))}
                 </button>
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Rating</p>
+                <p className="text-[9px] font-black text-foreground/50 uppercase tracking-widest">Rating</p>
               </div>
               <div className="bg-muted/50 p-4 rounded-2xl border border-border text-center">
                 <p className="text-lg font-black text-foreground">{shop?.followersCount ?? shop?.followers?.length ?? 0}</p>
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mt-2">Followers</p>
+                <p className="text-[9px] font-black text-foreground/60 uppercase tracking-widest mt-2">Followers</p>
               </div>
             </div>
 
             {/* Contact Information */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Filters</h3>
+              <h3 className="text-[11px] font-black text-foreground/50 uppercase tracking-[0.2em] px-2">Filters</h3>
               <div className="bg-muted/50 rounded-2xl border border-border p-4 space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight">Price Range</p>
+                    <p className="text-[10px] font-black text-foreground/50 uppercase tracking-tight">Price Range</p>
                     {(priceRange.min || priceRange.max) && (
                       <button 
                         onClick={() => setPriceRange({ min: '', max: '' })}
@@ -933,23 +805,23 @@ const ShopProfilePage = () => {
                   </div>
                   <div className="flex gap-2">
                     <div className="relative flex-1">
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/50">KES</span>
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-foreground/60">KES</span>
                       <input 
                         type="number" 
                         value={priceRange.min}
                         onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
                         placeholder="Min" 
-                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/60 transition-all" 
                       />
                     </div>
                     <div className="relative flex-1">
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground/50">KES</span>
+                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] font-bold text-foreground/60">KES</span>
                       <input 
                         type="number" 
                         value={priceRange.max}
                         onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
                         placeholder="Max" 
-                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/30 transition-all" 
+                        className="w-full bg-background border border-border rounded-xl py-2 pl-8 pr-2 text-xs font-bold focus:ring-1 focus:ring-primary/20 text-foreground placeholder:text-muted-foreground/60 transition-all" 
                       />
                     </div>
                   </div>
@@ -964,27 +836,27 @@ const ShopProfilePage = () => {
 
             {/* Contact Information */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Information</h3>
+              <h3 className="text-[11px] font-black text-foreground/50 uppercase tracking-[0.2em] px-2">Information</h3>
               <div className="bg-muted/50 rounded-2xl border border-border p-4 space-y-4">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                  <MapPin className="w-4 h-4 text-primary mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Location</p>
-                    <p className="text-xs font-bold text-foreground dark:text-slate-300 leading-snug">{shop.address}</p>
+                    <p className="text-[10px] font-black text-foreground/50 uppercase tracking-tight mb-0.5">Location</p>
+                    <p className="text-[13px] font-bold text-foreground/90 leading-snug">{shop.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Phone className="w-4 h-4 text-muted-foreground mt-0.5" />
+                  <Phone className="w-4 h-4 text-primary mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Phone</p>
-                    <p className="text-xs font-bold text-foreground dark:text-slate-300">{shop.phone}</p>
+                    <p className="text-[10px] font-black text-foreground/50 uppercase tracking-tight mb-0.5">Phone</p>
+                    <p className="text-[13px] font-bold text-foreground/90">{shop.phone}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Mail className="w-4 h-4 text-muted-foreground mt-0.5" />
+                  <Mail className="w-4 h-4 text-primary mt-0.5" />
                   <div>
-                    <p className="text-[10px] font-black text-muted-foreground uppercase tracking-tight mb-0.5">Email</p>
-                    <p className="text-xs font-bold text-foreground dark:text-slate-300 truncate">{shop.email}</p>
+                    <p className="text-[10px] font-black text-foreground/50 uppercase tracking-tight mb-0.5">Email</p>
+                    <p className="text-[13px] font-bold text-foreground/90 truncate">{shop.email}</p>
                   </div>
                 </div>
               </div>
@@ -992,7 +864,7 @@ const ShopProfilePage = () => {
 
             {/* Popular Stores */}
             <div className="space-y-4">
-              <h3 className="text-[11px] font-black text-muted-foreground uppercase tracking-[0.2em] px-2">Popular Stores</h3>
+              <h3 className="text-[11px] font-black text-foreground/50 uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
                 {popularShops
                   .filter((s: any) => s.id !== shop?._id) // Filter out the current shop
@@ -1014,7 +886,7 @@ const ShopProfilePage = () => {
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
-                          <span className="text-muted-foreground/30">·</span>
+                          <span className="text-muted-foreground/60">·</span>
                           <p className="text-muted-foreground text-[11px] font-bold">{vendor.followers} followers</p>
                         </div>
                       </div>
