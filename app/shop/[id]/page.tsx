@@ -873,7 +873,7 @@ const ShopProfilePage = () => {
                   <div 
                     key={vendor.id} 
                     onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
-                    className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center justify-between gap-3 rounded-xl group"
+                    className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center gap-3 rounded-xl group"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted dark:bg-slate-800 border border-border shrink-0">
@@ -881,19 +881,14 @@ const ShopProfilePage = () => {
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-0.5">
-                          <p className="font-bold text-foreground dark:text-white text-sm truncate">{vendor.name}</p>
+                          <p className="font-bold text-foreground/90 text-sm truncate">{vendor.name}</p>
                           {vendor.verified && <GoldCheck className="w-3 h-3" />}
                         </div>
                         <div className="flex items-center gap-2">
                           <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
-                          <span className="text-muted-foreground/60">·</span>
-                          <p className="text-muted-foreground text-[11px] font-bold">{vendor.followers} followers</p>
                         </div>
                       </div>
                     </div>
-                    <button className="bg-foreground dark:bg-white text-background dark:text-slate-900 text-[11px] font-black px-4 py-1.5 rounded-full hover:bg-primary dark:hover:bg-primary dark:hover:text-white transition-all shrink-0">
-                      View
-                    </button>
                   </div>
                 ))}
               </div>
