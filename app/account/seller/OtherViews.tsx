@@ -2,28 +2,41 @@
 
 import React, { useState } from "react";
 import { 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Instagram, 
-  Facebook, 
-  Linkedin, 
-  Send, 
-  Loader2, 
+  Store, 
+  Bell, 
+  CreditCard, 
+  LifeBuoy,
+  Phone,
+  Mail,
   Globe,
-  ArrowLeft,
-  LifeBuoy
+  Instagram,
+  Facebook,
+  Linkedin,
+  Send,
+  Loader2,
+  MapPin,
+  ArrowLeft
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
-const XIcon = () => (
-  <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
+export const NotificationsView = () => (
+  <div className="p-20 text-center bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border animate-in fade-in duration-700">
+    <Bell className="w-16 h-16 text-primary/20 mx-auto mb-6" />
+    <h2 className="text-2xl font-black text-foreground">Notifications</h2>
+    <p className="text-muted-foreground mt-2">Notification center coming soon...</p>
+  </div>
 );
 
-export default function SupportPage() {
+export const PaymentsView = () => (
+  <div className="p-20 text-center bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border animate-in fade-in duration-700">
+    <CreditCard className="w-16 h-16 text-primary/20 mx-auto mb-6" />
+    <h2 className="text-2xl font-black text-foreground">Payments</h2>
+    <p className="text-muted-foreground mt-2">Payment gateway coming soon...</p>
+  </div>
+);
+
+export const SupportView = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: "",
@@ -76,31 +89,37 @@ export default function SupportPage() {
     }
   };
 
+  const XIcon = () => (
+    <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
         <div className="flex items-center gap-6">
           <Link 
-            href="/account?view=overview" 
+            href="/account/seller?view=overview" 
             className="p-3 hover:bg-muted rounded-xl transition-all text-muted-foreground hover:text-foreground border border-border group"
           >
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Support</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Seller Support</h1>
             <p className="text-muted-foreground text-sm font-medium flex items-center gap-2">
                <LifeBuoy className="w-4 h-4 text-emerald-500" />
-               Need help? Send us a message or find our contact details below.
+               Need help with your shop? Send us a message below.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
         {/* Contact Form Column */}
-        <div className="lg:col-span-8">
+        <div className="xl:col-span-8">
           <div className="bg-background/40 backdrop-blur-3xl border border-border rounded-3xl p-8 relative overflow-hidden group">
             <div className="flex items-center gap-4 mb-8">
               <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
@@ -186,7 +205,7 @@ export default function SupportPage() {
         </div>
 
         {/* Sidebar Column */}
-        <div className="lg:col-span-4 space-y-8">
+        <div className="xl:col-span-4 space-y-8">
           
           {/* Direct Contact Card */}
           <div className="bg-background/40 backdrop-blur-3xl border border-border rounded-3xl p-8 space-y-6">
@@ -222,7 +241,7 @@ export default function SupportPage() {
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-sm font-bold text-foreground leading-relaxed">
+                <p className="text-sm font-bold text-foreground leading-relaxed text-balance">
                   Innovation District, Nairobi, Kenya<br />
                   Central Business Complex, Hub 44
                 </p>
@@ -255,4 +274,4 @@ export default function SupportPage() {
       </div>
     </div>
   );
-}
+};

@@ -79,7 +79,7 @@ export const DashboardHeader = ({
         {/* Info Section */}
         <div className="space-y-4 flex-1">
           {statusBadge && (
-            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary uppercase tracking-[0.2em] ${statusBadge.className || ""}`}>
+            <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-black text-primary ${statusBadge.className || ""}`}>
               {statusBadge.icon}
               {statusBadge.label}
             </div>
@@ -155,7 +155,7 @@ export const DashboardStatCard = ({
         {icon}
       </div>
       <div className="space-y-2 flex-1">
-        <p className="text-muted-foreground text-[11px] font-black uppercase tracking-[0.3em]">{label}</p>
+        <p className="text-muted-foreground text-[11px] font-black">{label}</p>
         {value && <h3 className="text-3xl font-black text-foreground tracking-tight">{value}</h3>}
         {desc && <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>}
       </div>
@@ -228,7 +228,7 @@ export const DashboardSection = ({ title, icon, action, children }: DashboardSec
       {action && (
         <Link 
           href={action.href} 
-          className="group flex items-center gap-2.5 text-primary font-black text-xs uppercase tracking-[0.2em] hover:gap-4 transition-all"
+          className="group flex items-center gap-2.5 text-primary font-black text-xs hover:gap-4 transition-all"
         >
           {action.label}
           <ArrowRight className="w-4 h-4" />
@@ -276,23 +276,22 @@ export const DashboardListCard = ({
           </div>
         )}
       </div>
-      <div className="min-w-0 flex-1">
-        <h4 className="font-black text-foreground text-xl tracking-tighter leading-none italic uppercase truncate group-hover:text-primary transition-colors duration-500">
+       <div className="min-w-0 flex-1">
+        <h4 className="font-black text-foreground text-xl tracking-tighter leading-none truncate group-hover:text-primary transition-colors duration-500">
           {title}
         </h4>
-        <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-2 opacity-60">
+        <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground mt-2 opacity-60">
           <span>{subtitle}</span>
         </div>
       </div>
     </div>
-    
-    <div className="flex items-center justify-between md:text-right gap-6">
+        <div className="flex items-center justify-between md:text-right gap-6">
       <div>
         {amount && (
-          <div className="text-xl font-black text-primary tracking-tighter italic">{amount}</div>
+          <div className="text-xl font-black text-primary tracking-tighter">{amount}</div>
         )}
         {status && (
-          <div className={`mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+          <div className={`mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black ${
             statusVariant === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
           }`}>
             <div className={`w-1.5 h-1.5 rounded-full ${statusVariant === 'success' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'} animate-pulse`} />

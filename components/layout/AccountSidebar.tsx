@@ -2,7 +2,7 @@
 
 import React, { useMemo } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { 
   User, 
   Store, 
@@ -19,7 +19,8 @@ import {
   TrendingUp,
   LogOut,
   MapPin,
-  CreditCard
+  CreditCard,
+  Layout
 } from "lucide-react";
 import { GoldCheck } from "../ui/CommonUI";
 
@@ -47,27 +48,29 @@ export const AccountSidebar = ({
   onLogoutClick,
 }: AccountSidebarProps) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentView = searchParams.get("view") || "overview";
 
   const menuItems = useMemo(() => {
     if (activeTab === "account") {
       return [
         { id: "overview", label: "Account Overview", icon: UserCog, href: "/account" },
-        { id: "orders", label: "My Orders", icon: ShoppingBag, href: "/account/orders" },
-        { id: "addresses", label: "Saved Addresses", icon: MapPin, href: "/account/addresses" },
-        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/payment" },
-        { id: "security", label: "Security & Privacy", icon: ShieldCheck, href: "/account/security" },
-        { id: "notifications", label: "Notifications", icon: Bell, href: "/account/notifications" },
-        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/support" },
+        { id: "orders", label: "My Orders", icon: ShoppingBag, href: "/account?view=orders" },
+        { id: "addresses", label: "Saved Addresses", icon: MapPin, href: "/account?view=addresses" },
+        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account?view=payment" },
+        { id: "security", label: "Security & Privacy", icon: ShieldCheck, href: "/account?view=security" },
+        { id: "notifications", label: "Notifications", icon: Bell, href: "/account?view=notifications" },
+        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account?view=support" },
       ];
     } else {
       return [
-        { id: "overview", label: "Dashboard", icon: TrendingUp, href: "/account/seller" },
-        { id: "shop", label: "Products", icon: Store, href: "/account/seller/products" },
-        { id: "orders", label: "Order Management", icon: Package, href: "/account/seller/orders" },
-        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/seller/payment" },
-        { id: "notifications", label: "Notifications", icon: Bell, href: "/account/seller/notifications" },
-        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/seller/support" },
-        { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/seller/settings" },
+        { id: "dashboard", label: "Dashboard", icon: Layout, href: "/account/seller" },
+        { id: "products", label: "Products", icon: Store, href: "/account/seller?view=products" },
+        { id: "orders", label: "Order Management", icon: Package, href: "/account/seller?view=orders" },
+        { id: "payment", label: "Payment Methods", icon: CreditCard, href: "/account/seller?view=payment" },
+        { id: "notifications", label: "Notifications", icon: Bell, href: "/account/seller?view=notifications" },
+        { id: "support", label: "Help & Support", icon: HelpCircle, href: "/account/seller?view=support" },
+        { id: "settings", label: "Shop Settings", icon: Settings, href: "/account/seller?view=settings" },
       ];
     }
   }, [activeTab]);
@@ -111,8 +114,8 @@ export const AccountSidebar = ({
               {activeTab === "account" ? <User className="w-6 h-6" /> : <Store className="w-6 h-6" />}
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Internal</p>
-              <h2 className="font-black text-foreground">CONSOLE</h2>
+              <p className="text-[10px] font-black text-primary leading-none mb-1">Account</p>
+              <h2 className="font-black text-foreground leading-none tracking-tighter">{activeTab === "account" ? "Buyer" : "Seller"}</h2>
             </div>
           </div>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-foreground">
@@ -159,9 +162,9 @@ export const AccountSidebar = ({
             const isInternal = !!onSectionChange;
             const isActive = isInternal
               ? activeSection === item.id
-              : item.id === "overview"
-              ? pathname === item.href
-              : pathname.startsWith(item.href);
+              : activeTab === "seller"
+              ? (item.id === "dashboard" ? currentView === "overview" : currentView === item.id)
+              : (item.id === "overview" ? currentView === "overview" : currentView === item.id);
 
             if (isInternal) {
               return (
@@ -175,7 +178,6 @@ export const AccountSidebar = ({
                       : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
                   `}
                 >
-                  {/* Item Spotlight */}
                   {!isActive && (
                     <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/item:opacity-100 transition-opacity" />
                   )}
@@ -200,7 +202,6 @@ export const AccountSidebar = ({
                     : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"}
                 `}
               >
-                {/* Item Spotlight */}
                 {!isActive && (
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover/item:opacity-100 transition-opacity" />
                 )}

@@ -21,7 +21,7 @@ import imageCompression from 'browser-image-compression';
 import { useQueryClient } from "@tanstack/react-query";
 import { ConfirmationModal } from "@/components/modals/ConfirmationModal";
 
-const SellerSettingsPage = () => {
+export const SettingsView = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { logout } = useUser();
@@ -92,7 +92,6 @@ const SellerSettingsPage = () => {
         }
       } catch (e) {
         console.error("Settings Auth Error:", e);
-        // If it's a 401, axios interceptor handles it, but we can also handle it here
         router.push("/auth?mode=login");
       } finally {
         setIsLoading(false);
@@ -190,7 +189,6 @@ const SellerSettingsPage = () => {
     } catch (error) {
       console.error('Image compression error:', error);
       toast.error('Failed to compress image. Please try a different file.');
-      // Fallback to original file if compression fails
       const reader = new FileReader();
       reader.onloadend = () => {
         if (type === 'avatar') {
@@ -212,13 +210,6 @@ const SellerSettingsPage = () => {
     setIsUpdating(true);
 
     try {
-      console.log("Starting branding update with files:", { 
-        avatar: avatarFile?.name, 
-        avatarSize: avatarFile?.size,
-        banner: bannerFile?.name,
-        bannerSize: bannerFile?.size
-      });
-
       const submitData = new FormData();
       if (avatarFile) submitData.append("avatar", avatarFile);
       if (bannerFile) submitData.append("banner", bannerFile);
@@ -230,11 +221,8 @@ const SellerSettingsPage = () => {
       }
 
       const response = await api.put("/shops/my-shop/branding", submitData, {
-        // Let Axios and the browser set the Content-Type with the boundary
         timeout: 120000 
       });
-
-      console.log("Branding update response:", response.data);
 
       if (response.data.success) {
         setShop(response.data.data);
@@ -325,9 +313,10 @@ const SellerSettingsPage = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center gap-4">
-        <Link href="/account/seller" className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group">
+        {/* We keep the Link but point it to seller dashboard root with overview parameter */}
+        <Link href="/account/seller?view=overview" className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group">
           <ArrowLeft className="w-6 h-6" />
         </Link>
         <div>
@@ -362,7 +351,7 @@ const SellerSettingsPage = () => {
           <form onSubmit={handleUpdateShop} className="bg-background rounded-2xl border border-border shadow-sm p-8 space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Shop Name</label>
+                <label className="text-xs font-bold text-muted-foreground">Shop name</label>
                 <input 
                   type="text" 
                   value={formData.name}
@@ -373,7 +362,7 @@ const SellerSettingsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Shop Username (Handle)</label>
+                <label className="text-xs font-bold text-muted-foreground">Shop handle (@)</label>
                 <div className="relative">
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-bold">@</span>
                   <input 
@@ -393,13 +382,13 @@ const SellerSettingsPage = () => {
                     ) : usernameStatus.error ? (
                       <p className="text-[10px] font-bold text-red-500">{usernameStatus.error}</p>
                     ) : usernameStatus.available ? (
-                      <p className="text-[10px] font-bold text-green-500 uppercase">Available</p>
+                      <p className="text-[10px] font-bold text-green-500">Available</p>
                     ) : null}
                   </div>
                 )}
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Category</label>
+                <label className="text-xs font-bold text-muted-foreground">Category</label>
                 <select 
                   value={formData.category}
                   onChange={(e) => setFormData({...formData, category: e.target.value})}
@@ -414,7 +403,7 @@ const SellerSettingsPage = () => {
                 </select>
               </div>
               <div className="md:col-span-2 space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Description</label>
+                <label className="text-xs font-bold text-muted-foreground">Description</label>
                 <textarea 
                   rows={4}
                   value={formData.description}
@@ -424,7 +413,7 @@ const SellerSettingsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Address</label>
+                <label className="text-xs font-bold text-muted-foreground">Address</label>
                 <input 
                   type="text" 
                   value={formData.address}
@@ -433,7 +422,7 @@ const SellerSettingsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-muted-foreground uppercase">Phone Number</label>
+                <label className="text-xs font-bold text-muted-foreground">Phone number</label>
                 <input 
                   type="tel" 
                   value={formData.phone}
@@ -567,9 +556,9 @@ const SellerSettingsPage = () => {
         isOpen={showDeleteAccountConfirm}
         onClose={() => setShowDeleteAccountConfirm(false)}
         onConfirm={confirmDeleteAccount}
-        title="Delete Account?"
-        description="PERMANENT ACTION: Are you sure you want to delete your entire account? This will delete your shop, all products, and your user profile forever. This cannot be undone."
-        confirmText="Delete Account"
+        title="Delete account?"
+        description="Are you sure you want to delete your entire account? This will delete your shop, all products, and your profile forever. This cannot be undone."
+        confirmText="Delete account"
         variant="danger"
         icon={Trash2}
         isLoading={isDeleting === "account"}
@@ -577,5 +566,3 @@ const SellerSettingsPage = () => {
     </div>
   );
 };
-
-export default SellerSettingsPage;
