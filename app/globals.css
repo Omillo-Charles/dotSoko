@@ -1,9 +1,33 @@
 @import "tailwindcss";
 
 @font-face {
-  font-family: ".SokoSans";
-  src: url("/fonts/weblysleekuisb.ttf") format("truetype");
-  font-weight: 600;
+  font-family: "Ubuntu";
+  src: url("/ubuntufont/ubuntu-font-family-0.83/Ubuntu-L.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/ubuntufont/ubuntu-font-family-0.83/Ubuntu-R.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/ubuntufont/ubuntu-font-family-0.83/Ubuntu-M.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("/ubuntufont/ubuntu-font-family-0.83/Ubuntu-B.ttf") format("truetype");
+  font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
@@ -11,7 +35,7 @@
 :root {
   --background: #ffffff;
   --foreground: #0f172a; /* Slate 900 */
-  --font-sans: ".SokoSans", Arial, Helvetica, sans-serif;
+  --font-sans: "Ubuntu", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --primary: #3b82f6; /* Blue 500 */
   --primary-foreground: #ffffff;
   --secondary: #f97316; /* Orange 500 */

@@ -41,7 +41,7 @@ export default function RootLayout({
       <head>
         <link
           rel="preload"
-          href="/fonts/weblysleekuisb.ttf"
+          href="/ubuntufont/ubuntu-font-family-0.83/Ubuntu-R.ttf"
           as="font"
           type="font/ttf"
           crossOrigin="anonymous"
