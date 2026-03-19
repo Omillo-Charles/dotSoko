@@ -18,6 +18,16 @@ export const metadata: Metadata = {
   description: "Top Multivendor E-Commerce Platform",
   icons: {
     icon: "/favicon.ico",
+    apple: "/dotsoko.png",
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: ".Soko",
+  },
+  formatDetection: {
+    telephone: false,
   },
 };
 
