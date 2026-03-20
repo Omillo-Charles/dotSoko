@@ -53,16 +53,16 @@ export const DashboardHeader = ({
   actions = []
 }: DashboardHeaderProps) => {
   return (
-    <div className="relative group overflow-hidden rounded-[3rem] border border-border shadow-sm dark:border-border/50 bg-background/40 backdrop-blur-3xl shadow-xl p-8 md:p-12">
+    <div className="relative overflow-hidden rounded-[3rem] border border-border bg-background/40 backdrop-blur-3xl p-8 md:p-12">
       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
       <div className="relative z-10 flex flex-col lg:flex-row items-center gap-8 text-center lg:text-left">
         
         {/* Identity Section */}
         <div className="relative shrink-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] blur-2xl opacity-20 group-hover:opacity-40 transition-all duration-700" />
-          <div className="relative w-32 h-32 md:w-40 md:h-40 shadow-2xl rounded-[2.4rem] overflow-hidden bg-background flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] blur-2xl opacity-20 transition-all duration-700" />
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-[2.4rem] overflow-hidden bg-background flex items-center justify-center">
               {image ? (
-                <img src={image} alt="Profile" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                <img src={image} alt="Profile" className="w-full h-full object-cover transition-transform duration-1000" />
               ) : (
                 <span className="text-4xl md:text-5xl font-black text-primary/80">
                   {initials || "U"}
@@ -70,7 +70,7 @@ export const DashboardHeader = ({
               )}
           </div>
           {isPremium && (
-            <div className="absolute -bottom-2 -right-2 bg-background p-1.5 rounded-full shadow-lg border border-border">
+            <div className="absolute -bottom-2 -right-2 bg-background p-1.5 rounded-full border border-border">
               <GoldCheck className="w-8 h-8" />
             </div>
           )}
@@ -96,7 +96,7 @@ export const DashboardHeader = ({
         {actions.length > 0 && (
           <div className="flex flex-wrap justify-center lg:justify-end gap-4 w-full lg:w-auto">
             {actions.map((action, idx) => {
-              const baseStyles = `flex items-center gap-3 px-8 py-4 rounded-[2rem] font-black text-sm transition-all hover:scale-[1.05] active:scale-95 shadow-2xl ${action.color || "bg-primary text-primary-foreground shadow-primary/20"}`;
+              const baseStyles = `flex items-center gap-3 px-8 py-4 rounded-[2rem] font-black text-sm transition-all ${action.color || "bg-primary text-primary-foreground"}`;
               
               if (action.href) {
                 return (
@@ -151,7 +151,7 @@ export const DashboardStatCard = ({
 }: DashboardStatCardProps) => {
   const content = (
     <div className="relative z-10 h-full flex flex-col">
-      <div className={`w-14 h-14 ${light} ${text} rounded-2xl flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-lg group-hover:bg-primary group-hover:text-white transition-all duration-300`}>
+      <div className={`w-14 h-14 ${light} ${text} rounded-2xl flex items-center justify-center mb-6 ring-1 ring-white/10 transition-all duration-300`}>
         {icon}
       </div>
       <div className="space-y-2 flex-1">
@@ -165,7 +165,7 @@ export const DashboardStatCard = ({
           {progress !== undefined && (
             <div className="flex h-2 flex-1 bg-muted/50 rounded-full overflow-hidden">
               <div 
-                className={`h-full ${color} rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)]`} 
+                className={`h-full ${color} rounded-full`} 
                 style={{ width: `${progress}%` }} 
               />
             </div>
@@ -175,19 +175,19 @@ export const DashboardStatCard = ({
       )}
 
       {href && (
-        <div className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-transparent group-hover:bg-primary group-hover:text-white text-muted-foreground transition-all">
+        <div className="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full bg-transparent text-muted-foreground transition-all">
           <ArrowRight className="w-5 h-5" />
         </div>
       )}
     </div>
   );
 
-  const wrapperStyles = "group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm dark:border-border/50 p-8 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2";
+  const wrapperStyles = "relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm dark:border-border/50 p-8 transition-all duration-500";
 
   if (href) {
     return (
       <Link href={href} className={wrapperStyles}>
-        <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${light} blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000`} />
+        <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${light} blur-[100px] transition-opacity duration-1000`} />
         {content}
       </Link>
     );
@@ -195,7 +195,7 @@ export const DashboardStatCard = ({
 
   return (
     <div className={wrapperStyles}>
-      <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${light} blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000`} />
+      <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full ${light} blur-[100px] transition-opacity duration-1000`} />
       {content}
     </div>
   );
@@ -215,7 +215,7 @@ interface DashboardSectionProps {
 }
 
 export const DashboardSection = ({ title, icon, action, children }: DashboardSectionProps) => (
-  <div className="bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm p-8 shadow-xl space-y-8">
+  <div className="bg-background/40 backdrop-blur-3xl rounded-[2.5rem] border border-border shadow-sm p-8 space-y-8">
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
         {icon && (
@@ -228,7 +228,7 @@ export const DashboardSection = ({ title, icon, action, children }: DashboardSec
       {action && (
         <Link 
           href={action.href} 
-          className="group flex items-center gap-2.5 text-primary font-black text-xs hover:gap-4 transition-all"
+          className="flex items-center gap-2.5 text-primary font-black text-xs transition-all"
         >
           {action.label}
           <ArrowRight className="w-4 h-4" />
@@ -265,19 +265,19 @@ export const DashboardListCard = ({
   statusVariant = "warning",
   href
 }: DashboardListCardProps) => (
-  <div className="group flex flex-col md:flex-row md:items-center justify-between p-6 bg-background/60 backdrop-blur-3xl rounded-[2rem] border border-border shadow-sm hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:border-primary/30 transition-all duration-500 gap-6">
+  <div className="flex flex-col md:flex-row md:items-center justify-between p-6 bg-background/60 backdrop-blur-3xl rounded-[2rem] border border-border shadow-sm transition-all duration-500 gap-6">
     <div className="flex items-center gap-6 flex-1 min-w-0">
-      <div className="w-20 h-20 bg-muted/50 rounded-[1.5rem] flex items-center justify-center border border-border/50 group-hover:bg-primary/10 overflow-hidden transition-all duration-500 shrink-0">
+      <div className="w-20 h-20 bg-muted/50 rounded-[1.5rem] flex items-center justify-center border border-border/50 overflow-hidden transition-all duration-500 shrink-0">
         {image ? (
-          <img src={image} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+          <img src={image} alt={title} className="w-full h-full object-cover transition-transform duration-500" />
         ) : (
-          <div className="text-primary/30 group-hover:text-primary transition-colors duration-500">
+          <div className="text-primary/30 transition-colors duration-500">
             {icon}
           </div>
         )}
       </div>
        <div className="min-w-0 flex-1">
-        <h4 className="font-black text-foreground text-xl tracking-tighter leading-none truncate group-hover:text-primary transition-colors duration-500">
+        <h4 className="font-black text-foreground text-xl tracking-tighter leading-none truncate transition-colors duration-500">
           {title}
         </h4>
         <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground mt-2 opacity-60">
@@ -292,14 +292,14 @@ export const DashboardListCard = ({
         )}
         {status && (
           <div className={`mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-[10px] font-black ${
-            statusVariant === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+            statusVariant === 'success' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'
           }`}>
-            <div className={`w-1.5 h-1.5 rounded-full ${statusVariant === 'success' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-amber-500 shadow-[0_0_10px_#f59e0b]'} animate-pulse`} />
+            <div className={`w-1.5 h-1.5 rounded-full ${statusVariant === 'success' ? 'bg-emerald-500' : 'bg-amber-500'} animate-pulse`} />
             {status}
           </div>
         )}
       </div>
-      <Link href={href} className="p-3 bg-background/60 hover:bg-primary hover:text-primary-foreground rounded-xl transition-all duration-500 shadow-lg border border-border">
+      <Link href={href} className="p-3 bg-background/60 rounded-xl transition-all duration-500 border border-border">
         <ArrowRight className="w-5 h-5" />
       </Link>
     </div>

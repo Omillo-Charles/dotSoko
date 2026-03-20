@@ -57,9 +57,9 @@ export const SecurityView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account?view=overview" 
-            className="p-3 hover:bg-muted rounded-xl transition-all text-muted-foreground hover:text-foreground border border-border group"
+            className="p-3  rounded-xl transition-all text-muted-foreground  border border-border group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-5 h-5 transition-transform" />
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">Security</h1>
@@ -97,7 +97,7 @@ export const SecurityView = () => {
                             <button 
                                 type="button"
                                 onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-primary transition-colors"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground  transition-colors"
                             >
                                 {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
@@ -117,7 +117,7 @@ export const SecurityView = () => {
                             <button 
                                 type="button"
                                 onClick={() => setShowNewPassword(!showNewPassword)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-primary transition-colors"
+                                className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-muted-foreground  transition-colors"
                             >
                                 {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
@@ -129,7 +129,7 @@ export const SecurityView = () => {
                     <button 
                         type="submit"
                         disabled={changePassword.isPending}
-                        className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase   transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {changePassword.isPending ? "Updating..." : "Update Password"}
                     </button>
@@ -169,9 +169,9 @@ export const SecurityView = () => {
             </div>
 
             {/* Account Deletion */}
-            <div className="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 space-y-4 hover:bg-rose-500/10 transition-all duration-500 group">
+            <div className="bg-rose-500/5 border border-rose-500/10 rounded-3xl p-8 space-y-4  transition-all duration-500 group">
                 <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 group-hover:rotate-12 transition-transform">
+                    <div className="w-10 h-10 rounded-xl bg-rose-500/10 flex items-center justify-center border border-rose-500/20 transition-transform">
                         <Trash2 className="w-5 h-5 text-rose-500" />
                     </div>
                     <div>
@@ -187,7 +187,7 @@ export const SecurityView = () => {
                 <button 
                     onClick={handleDeleteClick}
                     disabled={deleteAccount.isPending}
-                    className="w-full py-3 rounded-xl border border-rose-500/20 text-rose-500 font-bold text-[10px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 rounded-xl border border-rose-500/20 text-rose-500 font-bold text-[10px] uppercase tracking-widest   transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     {deleteAccount.isPending ? "Deleting..." : "Delete Account"}
                 </button>

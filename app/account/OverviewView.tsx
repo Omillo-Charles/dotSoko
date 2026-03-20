@@ -83,7 +83,7 @@ export const OverviewView = ({ user, orders }: OverviewViewProps) => {
                <p className="text-foreground text-xl font-black tracking-tight">No recent orders</p>
                <p className="text-muted-foreground font-medium max-w-xs mx-auto">Your order history is currently empty. Start exploring the shop.</p>
             </div>
-            <Link href="/shop" className="inline-block mt-4 px-10 py-4 bg-primary text-white rounded-[1.5rem] font-black tracking-widest text-xs hover:scale-105 transition-all shadow-xl shadow-primary/30">
+            <Link href="/shop" className="inline-block mt-4 px-10 py-4 bg-primary text-white rounded-[1.5rem] font-black tracking-widest text-xs transition-all shadow-xl shadow-primary/30">
               Explore Shop
             </Link>
           </div>

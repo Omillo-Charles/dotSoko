@@ -63,7 +63,7 @@ export default function OrderDetailsPage() {
           <p className="text-muted-foreground mb-6">We couldn't find the order you're looking for.</p>
           <button 
             onClick={() => router.back()}
-            className="w-full py-3 bg-primary text-primary-foreground rounded-2xl font-bold hover:bg-primary/90 transition-colors"
+            className="w-full py-3 bg-primary text-primary-foreground rounded-2xl font-bold  transition-colors"
           >
             Go Back
           </button>
@@ -79,7 +79,7 @@ export default function OrderDetailsPage() {
         <div className="h-16 flex items-center gap-4">
           <button 
             onClick={() => router.back()}
-            className="p-2 hover:bg-accent rounded-xl transition-colors"
+            className="p-2  rounded-xl transition-colors"
           >
             <ChevronLeft className="w-6 h-6 text-foreground" />
           </button>

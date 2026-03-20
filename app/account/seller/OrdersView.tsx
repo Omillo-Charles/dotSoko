@@ -66,7 +66,7 @@ export const OrdersView = () => {
         <p className="text-muted-foreground mt-4 font-medium text-lg leading-relaxed">We encountered an anomaly while synchronizing your shop's ledger.</p>
         <button 
           onClick={() => window.location.reload()}
-          className="mt-10 px-10 py-5 rounded-[2rem] bg-foreground text-background font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl"
+          className="mt-10 px-10 py-5 rounded-[2rem] bg-foreground text-background font-black text-sm   transition-all shadow-2xl"
         >
           Retry
         </button>
@@ -82,9 +82,9 @@ export const OrdersView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller?view=overview" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group"
+            className="p-4 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground border border-border shadow-sm dark:border-border/50 shadow-xl"
           >
-            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-6 h-6 transition-transform" />
           </Link>
           <div className="space-y-1">
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">Your orders</h1>
@@ -94,7 +94,7 @@ export const OrdersView = () => {
       </div>
 
       {orders.length === 0 ? (
-        <div className="bg-background/20 backdrop-blur-3xl border-2 border-dashed border-border shadow-sm rounded-[4rem] p-24 text-center shadow-2xl group transition-all hover:bg-white/[0.02] hover:border-border">
+        <div className="bg-background/20 backdrop-blur-3xl border-2 border-dashed border-border shadow-sm rounded-[4rem] p-24 text-center shadow-2xl transition-all">
           <div className="w-24 h-24 bg-muted/30 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 ring-4 ring-white/5">
             <Package className="w-12 h-12 text-muted-foreground/20" />
           </div>
@@ -104,7 +104,7 @@ export const OrdersView = () => {
           </p>
           <Link 
             href="/account/seller?view=overview" 
-            className="inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-5 rounded-[2.5rem] font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/30"
+            className="inline-flex items-center gap-3 bg-primary text-primary-foreground px-10 py-5 rounded-[2.5rem] font-black text-sm  transition-all shadow-2xl shadow-primary/30"
           >
             Dashboard
             <ArrowRight className="w-5 h-5" />
@@ -120,9 +120,9 @@ export const OrdersView = () => {
             return (
               <div 
                 key={order._id}
-                className="group relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3.5rem] border border-border shadow-sm transition-all duration-500 hover:shadow-[0_40px_80px_rgba(0,0,0,0.15)] hover:border-primary/20"
+                className="relative overflow-hidden bg-background/40 backdrop-blur-3xl rounded-[3.5rem] border border-border shadow-sm transition-all duration-500"
               >
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[100px] transition-opacity duration-1000" />
                 
                 {/* Visual Connector */}
                 <div className={`absolute top-0 left-0 bottom-0 w-2.5 ${order.status === 'delivered' ? 'bg-emerald-500' : 'bg-primary'} opacity-20`} />
@@ -169,10 +169,10 @@ export const OrdersView = () => {
                       <h5 className="text-[11px] font-black text-muted-foreground opacity-40">Unit breakdown</h5>
                       <div className="grid gap-4">
                         {order.items?.map((item, idx) => (
-                          <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl bg-background/30 border border-border/50 hover:bg-white/5 transition-colors group/item">
+                          <div key={idx} className="flex items-center gap-6 p-4 rounded-3xl bg-background/30 border border-border/50 transition-colors">
                             <div className="w-20 h-20 rounded-[1.5rem] bg-muted overflow-hidden border border-border shadow-sm shrink-0 shadow-lg relative">
                               {item.image ? (
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover group-hover/item:scale-110 transition-transform duration-700" />
+                                <img src={item.image} alt={item.name} className="w-full h-full object-cover transition-transform duration-700" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                   <Package className="w-8 h-8 text-black/20" />
@@ -197,7 +197,7 @@ export const OrdersView = () => {
                       </div>
                     </div>
 
-                     {/* Financial Summary Overlay */}
+                    {/* Financial Summary Overlay */}
                     <div className="pt-8 border-t border-border/50 flex flex-wrap gap-10">
                        <div className="space-y-1">
                           <p className="text-[10px] font-black text-muted-foreground opacity-50">Operational subtotal</p>
@@ -243,7 +243,7 @@ export const OrdersView = () => {
                     <div className="space-y-6 pt-6 border-t border-border/50">
                        <div className="space-y-3">
                           <p className="text-[10px] font-black text-muted-foreground opacity-40">Status</p>
-                          <div className="relative group/sel">
+                          <div className="relative">
                             <select 
                               value={order.status}
                               onChange={(e) => updateStatus({ orderId: order._id, status: e.target.value })}
@@ -254,7 +254,7 @@ export const OrdersView = () => {
                                 <option key={s} value={s} className="capitalize">{s}</option>
                               ))}
                             </select>
-                            <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary rotate-90 pointer-events-none group-hover/sel:scale-125 transition-transform" />
+                            <ChevronRight className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary rotate-90 pointer-events-none transition-transform" />
                           </div>
                           <p className="text-[9px] text-muted-foreground font-black tracking-tighter opacity-30 px-2">
                             Updating status sends a notification to the customer.

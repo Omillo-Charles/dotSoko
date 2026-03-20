@@ -76,9 +76,9 @@ export const AddressesView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account?view=overview" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-2xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm group"
+            className="p-4  backdrop-blur-3xl rounded-2xl transition-all text-muted-foreground  border border-border shadow-sm group"
           >
-            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-6 h-6 transition-transform" />
           </Link>
           <div className="space-y-1">
             <h1 className="text-4xl font-black text-foreground tracking-tighter leading-none">My Addresses</h1>
@@ -87,7 +87,7 @@ export const AddressesView = () => {
         </div>
         <button
           onClick={handleOpenCreate}
-          className="inline-flex items-center justify-center gap-4 bg-primary text-primary-foreground px-12 py-5 rounded-[2rem] font-black text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/40 hover:shadow-primary/60"
+          className="inline-flex items-center justify-center gap-4 bg-primary text-primary-foreground px-12 py-5 rounded-[2rem] font-black text-xs tracking-widest   transition-all shadow-2xl shadow-primary/40 "
         >
           <Plus className="w-5 h-5" />
           Add address
@@ -103,7 +103,7 @@ export const AddressesView = () => {
             </div>
             <button 
               onClick={handleOpenCreate}
-              className="px-8 py-3.5 bg-foreground text-background rounded-full font-bold text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
+              className="px-8 py-3.5 bg-foreground text-background rounded-full font-bold text-xs tracking-widest   transition-all shadow-xl"
             >
               Add Address
             </button>
@@ -112,7 +112,7 @@ export const AddressesView = () => {
           addresses.map((address) => (
             <div 
               key={address.id}
-              className={`relative p-8 rounded-[3rem] border transition-all duration-300 flex flex-col justify-between h-full bg-background/40 backdrop-blur-3xl border-border hover:border-primary/30 hover:shadow-xl group/card ${
+              className={`relative p-8 rounded-[3rem] border transition-all duration-300 flex flex-col justify-between h-full bg-background/40 backdrop-blur-3xl border-border   group/card ${
                 address.isDefault ? "ring-2 ring-primary/20 bg-primary/5" : ""
               }`}
             >
@@ -138,7 +138,7 @@ export const AddressesView = () => {
                 <div className="relative">
                   <button 
                     onClick={() => setActiveDropdown(activeDropdown === address.id ? null : address.id)}
-                    className="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-xl hover:bg-muted"
+                    className="p-2 text-muted-foreground  transition-colors rounded-xl "
                   >
                     <MoreHorizontal className="w-5 h-5" />
                   </button>
@@ -152,14 +152,14 @@ export const AddressesView = () => {
                               setDefaultAddress.mutate(address.id);
                               setActiveDropdown(null);
                             }}
-                            className="w-full text-left px-4 py-3 text-xs font-bold text-foreground hover:bg-primary/10 hover:text-primary rounded-xl transition-all"
+                            className="w-full text-left px-4 py-3 text-xs font-bold text-foreground   rounded-xl transition-all"
                           >
                             Set as Primary
                           </button>
                         )}
                         <button 
                           onClick={() => handleOpenEdit(address)}
-                          className="w-full text-left px-4 py-3 text-xs font-bold text-foreground hover:bg-muted rounded-xl transition-all"
+                          className="w-full text-left px-4 py-3 text-xs font-bold text-foreground  rounded-xl transition-all"
                         >
                           Edit Details
                         </button>
@@ -168,7 +168,7 @@ export const AddressesView = () => {
                             setAddressToDeleteId(address.id);
                             setActiveDropdown(null);
                           }}
-                          className="w-full text-left px-4 py-3 text-xs font-bold text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                          className="w-full text-left px-4 py-3 text-xs font-bold text-red-500  rounded-xl transition-all"
                         >
                           Remove Address
                         </button>

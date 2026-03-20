@@ -75,14 +75,14 @@ const SellerDashboard = () => {
         <div className="relative overflow-hidden bg-background/40 backdrop-blur-3xl p-10 rounded-[3rem] border border-border shadow-sm dark:border-border/50 text-center shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
           <div className="relative z-10">
-            <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] grid place-items-center mx-auto mb-8 shadow-2xl shadow-primary/30 rotate-3 transform transition-transform hover:rotate-0 duration-700">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary to-secondary rounded-[2.5rem] grid place-items-center mx-auto mb-8 shadow-2xl shadow-primary/30 rotate-3 transform transition-transform  duration-700">
               <Store className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-4xl font-black text-foreground tracking-tight">Launch Your Business</h2>
             <p className="text-muted-foreground mt-4 max-w-md mx-auto font-medium text-lg leading-relaxed">Create your professional shop presence and start reaching customers today with enterprise-grade tools.</p>
             <button
               onClick={() => setCreateOpen(true)}
-              className="mt-10 px-10 py-5 rounded-[2rem] bg-primary text-primary-foreground font-black shadow-2xl shadow-primary/30 hover:scale-105 active:scale-95 transition-all text-sm tracking-[0.2em]"
+              className="mt-10 px-10 py-5 rounded-[2rem] bg-primary text-primary-foreground font-black shadow-2xl shadow-primary/30   transition-all text-sm tracking-[0.2em]"
             >
               Setup my shop
             </button>

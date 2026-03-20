@@ -102,9 +102,9 @@ export const SupportView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller?view=overview" 
-            className="p-3 hover:bg-muted rounded-xl transition-all text-muted-foreground hover:text-foreground border border-border group"
+            className="p-3  rounded-xl transition-all text-muted-foreground  border border-border group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-5 h-5 transition-transform" />
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">Seller Support</h1>
@@ -185,7 +185,7 @@ export const SupportView = () => {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase   transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
@@ -219,9 +219,9 @@ export const SupportView = () => {
                 <a 
                   key={i}
                   href={item.href}
-                  className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl hover:bg-muted/50 transition-all group border border-border/50"
+                  className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl  transition-all group border border-border/50"
                 >
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform border border-primary/20">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-transform border border-primary/20">
                     <item.icon className="w-4 h-4" />
                   </div>
                   <div>
@@ -262,9 +262,9 @@ export const SupportView = () => {
                 <a 
                   key={i}
                   href={social.href}
-                  className="w-12 h-12 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all group shadow-sm hover:shadow-md"
+                  className="w-12 h-12 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground   transition-all group shadow-sm "
                 >
-                  <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <social.icon className="w-5 h-5 transition-transform" />
                 </a>
               ))}
             </div>

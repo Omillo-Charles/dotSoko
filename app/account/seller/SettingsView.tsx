@@ -316,7 +316,7 @@ export const SettingsView = () => {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex items-center gap-4">
         {/* We keep the Link but point it to seller dashboard root with overview parameter */}
-        <Link href="/account/seller?view=overview" className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group">
+        <Link href="/account/seller?view=overview" className="p-4  backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground  border border-border shadow-sm dark:border-border/50 shadow-xl group">
           <ArrowLeft className="w-6 h-6" />
         </Link>
         <div>
@@ -328,19 +328,19 @@ export const SettingsView = () => {
       <div className="flex p-1 bg-muted/50 border border-border rounded-2xl w-full max-w-md">
         <button 
           onClick={() => setActiveTab("profile")}
-          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "profile" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground "}`}
         >
           Profile
         </button>
         <button 
           onClick={() => setActiveTab("branding")}
-          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "branding" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground "}`}
         >
           Branding
         </button>
         <button 
           onClick={() => setActiveTab("danger")}
-          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-sm" : "text-muted-foreground hover:text-red-500"}`}
+          className={`flex-1 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === "danger" ? "bg-red-500 text-white shadow-sm" : "text-muted-foreground "}`}
         >
           Danger Zone
         </button>
@@ -436,7 +436,7 @@ export const SettingsView = () => {
               <button 
                 type="submit"
                 disabled={isUpdating}
-                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50"
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold  transition-all disabled:opacity-50"
               >
                 {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                 Save Changes
@@ -459,7 +459,7 @@ export const SettingsView = () => {
                     </div>
                   )}
                 </div>
-                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
+                <label className="absolute inset-0 bg-black/40 opacity-0 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
                   <div className="flex flex-col items-center gap-2 text-white">
                     <Camera className="w-8 h-8" />
                     <span className="font-bold text-sm">Update Banner</span>
@@ -488,7 +488,7 @@ export const SettingsView = () => {
                       </div>
                     )}
                   </div>
-                  <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
+                  <label className="absolute inset-0 bg-black/40 opacity-0 transition-opacity rounded-2xl flex items-center justify-center cursor-pointer">
                     <Camera className="w-6 h-6 text-white" />
                     <input 
                       type="file" 
@@ -510,7 +510,7 @@ export const SettingsView = () => {
               <button 
                 onClick={handleUpdateBranding}
                 disabled={isUpdating}
-                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50"
+                className="flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-xl font-bold  transition-all disabled:opacity-50"
               >
                 {isUpdating ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                 Save Branding
@@ -529,7 +529,7 @@ export const SettingsView = () => {
               <button 
                 onClick={handleDeleteShop}
                 disabled={isDeleting !== null}
-                className="px-8 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all disabled:opacity-50"
+                className="px-8 py-3 bg-red-500 text-white rounded-xl font-bold  transition-all disabled:opacity-50"
               >
                 {isDeleting === "shop" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Delete Shop"}
               </button>
@@ -543,7 +543,7 @@ export const SettingsView = () => {
               <button 
                 onClick={handleDeleteAccount}
                 disabled={isDeleting !== null}
-                className="px-8 py-3 bg-foreground text-background rounded-xl font-bold hover:opacity-90 transition-all disabled:opacity-50"
+                className="px-8 py-3 bg-foreground text-background rounded-xl font-bold  transition-all disabled:opacity-50"
               >
                 {isDeleting === "account" ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : "Delete Account"}
               </button>

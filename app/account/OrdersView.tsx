@@ -64,7 +64,7 @@ export const OrdersView = () => {
         <p className="text-muted-foreground mb-8 font-medium max-w-xs mx-auto text-sm leading-relaxed">Failed to synchronize your order history. Please try again later.</p>
         <button 
           onClick={() => window.location.reload()}
-          className="bg-foreground text-background px-8 py-3 rounded-full font-bold text-xs hover:scale-105 active:scale-95 transition-all shadow-xl"
+          className="bg-foreground text-background px-8 py-3 rounded-full font-bold text-xs   transition-all shadow-xl"
         >
           Retry Sync
         </button>
@@ -78,9 +78,9 @@ export const OrdersView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account?view=overview" 
-            className="p-3 hover:bg-muted rounded-xl transition-all text-muted-foreground hover:text-foreground border border-border group"
+            className="p-3 bg-muted rounded-xl transition-all text-muted-foreground border border-border group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-5 h-5 transition-transform" />
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">My Orders</h1>
@@ -102,7 +102,7 @@ export const OrdersView = () => {
              </div>
              <Link 
                href="/shop"
-               className="inline-block px-8 py-3 bg-foreground text-background rounded-full font-bold text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl"
+               className="inline-block px-8 py-3 bg-foreground text-background rounded-full font-bold text-xs tracking-widest transition-all shadow-xl"
              >
                Start Shopping
              </Link>
@@ -111,7 +111,7 @@ export const OrdersView = () => {
           orders.map((order: any) => (
             <div 
               key={order._id}
-              className="bg-background/40 backdrop-blur-3xl border border-border rounded-3xl overflow-hidden hover:border-primary/20 transition-all duration-300 shadow-sm"
+              className="bg-background/40 backdrop-blur-3xl border border-border rounded-3xl overflow-hidden transition-all duration-300 shadow-sm"
             >
               {/* Header */}
               <div className="p-6 border-b border-border/50 bg-muted/20 flex flex-wrap items-center justify-between gap-6">
@@ -154,7 +154,7 @@ export const OrdersView = () => {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-bold text-foreground line-clamp-1 truncate transition-colors group-hover/item:text-primary">{item.name}</h4>
+                      <h4 className="text-base font-bold text-foreground line-clamp-1 truncate transition-colors">{item.name}</h4>
                       <div className="flex items-center gap-4 mt-1 text-[10px] text-muted-foreground font-bold uppercase tracking-widest opacity-60">
                         <span>Qty: {item.quantity}</span>
                         {item.size && <span>Size: {item.size}</span>}
@@ -175,7 +175,7 @@ export const OrdersView = () => {
                  </div>
                  <Link 
                     href={`/account/orders/${order._id}`}
-                    className="text-[10px] font-bold text-primary hover:underline underline-offset-4 uppercase tracking-widest flex items-center gap-2"
+                    className="text-[10px] font-bold text-primary underline-offset-4 uppercase tracking-widest flex items-center gap-2"
                  >
                     Order Details
                     <ChevronRight className="w-3 h-3" />
@@ -193,7 +193,7 @@ export const OrdersView = () => {
         </div>
         <Link 
           href="/contact"
-          className="bg-foreground text-background px-8 py-3.5 rounded-full font-bold text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl whitespace-nowrap"
+          className="bg-foreground text-background px-8 py-3.5 rounded-full font-bold text-xs tracking-widest transition-all shadow-xl whitespace-nowrap"
         >
           Contact Support
         </Link>

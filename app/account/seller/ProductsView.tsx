@@ -146,9 +146,9 @@ export const ProductsView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account/seller?view=overview" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm dark:border-border/50 shadow-xl group"
+            className="p-4  backdrop-blur-3xl rounded-3xl transition-all text-muted-foreground  border border-border shadow-sm dark:border-border/50 shadow-xl group"
           >
-            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-6 h-6 transition-transform" />
           </Link>
           <div className="space-y-1">
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter">Your products</h1>
@@ -157,7 +157,7 @@ export const ProductsView = () => {
         </div>
         <button 
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center justify-center gap-3 bg-primary text-primary-foreground px-10 py-5 rounded-[2rem] font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/30"
+          className="flex items-center justify-center gap-3 bg-primary text-primary-foreground px-10 py-5 rounded-[2rem] font-black text-sm   transition-all shadow-2xl shadow-primary/30"
         >
           <Plus className="w-6 h-6" />
           <span>Add product</span>
@@ -167,7 +167,7 @@ export const ProductsView = () => {
       <div className="space-y-10">
         <div className="flex flex-col md:flex-row gap-6">
           <div className="flex-1 relative group">
-            <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            <div className="absolute inset-0 bg-primary/5 rounded-[2.5rem] blur-xl opacity-0 transition-opacity duration-700" />
             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text"
@@ -180,7 +180,7 @@ export const ProductsView = () => {
         </div>
 
         {filteredProducts.length === 0 ? (
-          <div className="bg-background/20 backdrop-blur-3xl rounded-[4rem] border-2 border-dashed border-border shadow-sm p-24 text-center shadow-2xl transition-all hover:bg-white/[0.02] hover:border-border">
+          <div className="bg-background/20 backdrop-blur-3xl rounded-[4rem] border-2 border-dashed border-border shadow-sm p-24 text-center shadow-2xl transition-all  ">
             <div className="w-24 h-24 bg-muted/30 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 ring-4 ring-white/5">
               <ShoppingBag className="w-12 h-12 text-muted-foreground/20" />
             </div>
@@ -191,7 +191,7 @@ export const ProductsView = () => {
             {!searchQuery && (
               <button 
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center gap-3 bg-foreground text-background px-10 py-5 rounded-[2.5rem] font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-foreground/20"
+                className="inline-flex items-center gap-3 bg-foreground text-background px-10 py-5 rounded-[2.5rem] font-black text-sm   transition-all shadow-2xl shadow-foreground/20"
               >
                 <Plus className="w-6 h-6" />
                 <span>Add product</span>
@@ -231,14 +231,14 @@ export const ProductsView = () => {
                 />
                 
                 {/* Admin Actions Overlay */}
-                <div className="absolute top-4 right-14 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-4 right-14 flex gap-2 opacity-100 transition-opacity">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       setEditingProduct(product);
                       setShowCreateModal(true);
                     }}
-                    className="p-2 bg-background/80 backdrop-blur-md hover:bg-primary hover:text-white rounded-full border border-border transition-all shadow-lg"
+                    className="p-2 bg-background/80 backdrop-blur-md rounded-full border border-border transition-all shadow-lg"
                     title="Edit Product"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -248,7 +248,7 @@ export const ProductsView = () => {
                       e.stopPropagation();
                       handleDelete(product._id);
                     }}
-                    className="p-2 bg-background/80 backdrop-blur-md hover:bg-red-500 hover:text-white rounded-full border border-border transition-all shadow-lg text-red-500"
+                    className="p-2 bg-background/80 backdrop-blur-md rounded-full border border-border transition-all shadow-lg text-red-500"
                     title="Delete Product"
                   >
                     <Trash2 className="w-4 h-4" />

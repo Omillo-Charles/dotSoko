@@ -30,9 +30,9 @@ export const NotificationsView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account?view=overview" 
-            className="p-4 hover:bg-background/60 backdrop-blur-3xl rounded-2xl transition-all text-muted-foreground hover:text-foreground border border-border shadow-sm group"
+            className="p-4  backdrop-blur-3xl rounded-2xl transition-all text-muted-foreground  border border-border shadow-sm group"
           >
-            <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-6 h-6 transition-transform" />
           </Link>
           <div>
             <h1 className="text-4xl font-black text-foreground tracking-tighter leading-none">Notifications</h1>
@@ -44,15 +44,15 @@ export const NotificationsView = () => {
         </div>
       </div>
 
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6 bg-background/20 backdrop-blur-3xl border-2 border-dashed border-border shadow-sm rounded-[4rem] group transition-all hover:bg-white/[0.02]">
-        <div className="w-24 h-24 bg-primary/10 rounded-[2.5rem] flex items-center justify-center mb-8 border border-primary/20 shadow-inner group-hover:scale-110 transition-transform duration-700">
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-6 bg-background/20 backdrop-blur-3xl border-2 border-dashed border-border shadow-sm rounded-[4rem] group transition-all ">
+        <div className="w-24 h-24 bg-primary/10 rounded-[2.5rem] flex items-center justify-center mb-8 border border-primary/20 shadow-inner transition-transform duration-700">
           <Bell className="w-12 h-12 text-primary animate-bounce" />
         </div>
         <h2 className="text-3xl font-black text-foreground tracking-tight mb-4">Notification hub coming soon</h2>
         <p className="text-muted-foreground mb-10 font-medium max-w-sm mx-auto text-lg leading-relaxed">
           We're building a centralized transmission hub to keep you informed about order milestones, platform updates, and exclusive shop insights.
         </p>
-        <div className="flex flex-wrap justify-center gap-6 opacity-40 group-hover:opacity-100 transition-opacity duration-700">
+        <div className="flex flex-wrap justify-center gap-6 opacity-40 transition-opacity duration-700">
            <div className="flex items-center gap-3 px-6 py-3 bg-muted/20 rounded-full border border-border text-[10px] font-black text-muted-foreground">
               <Mail className="w-4 h-4 text-primary" />
               Email: Active
@@ -65,7 +65,7 @@ export const NotificationsView = () => {
       </div>
 
       <div className="mt-16 p-10 md:p-16 rounded-[4.5rem] bg-primary/5 border border-primary/20 shadow-[0_50px_100px_rgba(0,0,0,0.2)] flex flex-col md:grid md:grid-cols-[auto_1fr_auto] items-center gap-12 relative overflow-hidden group">
-        <div className="absolute -top-32 -right-32 w-80 h-80 bg-primary/10 rounded-full blur-[140px] group-hover:scale-150 transition-transform duration-1000" />
+        <div className="absolute -top-32 -right-32 w-80 h-80 bg-primary/10 rounded-full blur-[140px] transition-transform duration-1000" />
         <div className="w-20 h-20 bg-primary/20 backdrop-blur-3xl rounded-[2rem] flex items-center justify-center text-primary border border-primary/20 shadow-2xl relative z-10">
           <LifeBuoy className="w-10 h-10" />
         </div>
@@ -75,7 +75,7 @@ export const NotificationsView = () => {
         </div>
         <Link 
           href="/contact"
-          className="bg-primary text-primary-foreground px-12 py-6 rounded-[2.5rem] text-xs font-black hover:scale-110 active:scale-95 transition-all shadow-2xl shadow-primary/30 shrink-0 relative z-10 hover:shadow-primary/50"
+          className="bg-primary text-primary-foreground px-12 py-6 rounded-[2.5rem] text-xs font-black   transition-all shadow-2xl shadow-primary/30 shrink-0 relative z-10 "
         >
           Contact us
         </Link>
@@ -150,9 +150,9 @@ export const SupportView = () => {
         <div className="flex items-center gap-6">
           <Link 
             href="/account?view=overview" 
-            className="p-3 hover:bg-muted rounded-xl transition-all text-muted-foreground hover:text-foreground border border-border group"
+            className="p-3  rounded-xl transition-all text-muted-foreground  border border-border group"
           >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft className="w-5 h-5 transition-transform" />
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">Support</h1>
@@ -233,7 +233,7 @@ export const SupportView = () => {
                 <button 
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase hover:scale-[1.01] active:scale-[0.99] transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  className="w-full bg-foreground text-background py-4 rounded-2xl font-bold text-xs tracking-widest uppercase   transition-all shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
@@ -267,9 +267,9 @@ export const SupportView = () => {
                 <a 
                   key={i}
                   href={item.href}
-                  className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl hover:bg-muted/50 transition-all group border border-border/50"
+                  className="flex items-center gap-4 p-4 bg-muted/30 rounded-2xl  transition-all group border border-border/50"
                 >
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform border border-primary/20">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary transition-transform border border-primary/20">
                     <item.icon className="w-4 h-4" />
                   </div>
                   <div>
@@ -310,9 +310,9 @@ export const SupportView = () => {
                 <a 
                   key={i}
                   href={social.href}
-                  className="w-12 h-12 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all group shadow-sm hover:shadow-md"
+                  className="w-12 h-12 bg-background border border-border rounded-xl flex items-center justify-center text-muted-foreground   transition-all group shadow-sm "
                 >
-                  <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  <social.icon className="w-5 h-5 transition-transform" />
                 </a>
               ))}
             </div>
