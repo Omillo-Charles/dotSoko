@@ -1,26 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { 
-  ShoppingBag, 
-  Package, 
-  BarChart3, 
-  Plus, 
-  Store, 
-  Settings, 
-  Zap, 
-  Clock, 
+import {
+  ShoppingBag,
+  Package,
+  BarChart3,
+  Plus,
+  Store,
+  Settings,
+  Zap,
+  Clock,
   LayoutDashboard
 } from "lucide-react";
 import Link from "next/link";
 import { SellerAnalytics } from "@/components/dashboard/SellerAnalytics";
 import { MarketInsights } from "@/components/dashboard/MarketInsights";
-import { 
-  DashboardShell, 
-  DashboardHeader, 
-  DashboardStatCard, 
-  DashboardSection, 
-  DashboardListCard 
+import {
+  DashboardShell,
+  DashboardHeader,
+  DashboardStatCard,
+  DashboardSection,
+  DashboardListCard
 } from "@/components/dashboard/DashboardComponents";
 import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
 
@@ -38,7 +38,7 @@ export const DashboardView = ({ user, shop, products, orders, refetchProducts }:
   if (!shop) return null;
 
   const activeOrdersCount = orders.filter(order => ['pending', 'processing', 'shipped'].includes(order.status)).length;
-  
+
   const totalSales = orders
     .filter(order => order.status !== 'cancelled')
     .reduce((acc: number, order: any) => {
@@ -89,10 +89,10 @@ export const DashboardView = ({ user, shop, products, orders, refetchProducts }:
         ))}
       </div>
 
-      <SellerAnalytics 
-        orders={orders} 
-        products={products} 
-        shopId={shop._id} 
+      <SellerAnalytics
+        orders={orders}
+        products={products}
+        shopId={shop._id}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -106,7 +106,7 @@ export const DashboardView = ({ user, shop, products, orders, refetchProducts }:
                 <div className="w-20 h-20 bg-muted/30 rounded-full flex items-center justify-center mx-auto ring-4 ring-white/5">
                   <Clock className="w-10 h-10 text-muted-foreground/30" />
                 </div>
-                <p className="text-muted-foreground text-lg font-bold tracking-tight">Listening for customer activity...</p>
+                <p className="text-muted-foreground text-lg font-bold tracking-tight">No orders yet!</p>
               </div>
             ) : (
               orders.slice(0, 2).map((o: any) => (
