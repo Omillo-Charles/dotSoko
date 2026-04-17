@@ -4,6 +4,8 @@ import React, { createContext, useContext, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { getErrorMessage } from '@/lib/errorHandler';
+import { useAuth } from '@/context/AuthContext';
 
 interface Product {
   id?: string;
@@ -44,6 +46,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
+  const { token } = useAuth();
 
   const { data: cartData, isLoading } = useQuery({
     queryKey: ['cart'],
@@ -51,7 +54,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const response = await api.get('/carts');
       return response.data.data;
     },
-    enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken'),
+    enabled: !!token,
   });
 
   const cartItems = cartData?.items || [];
@@ -66,7 +69,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       toast.success("Item added to cart");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to add item to cart");
+      toast.error(getErrorMessage(error));
     }
   });
 
@@ -79,7 +82,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to remove item");
+      toast.error(getErrorMessage(error));
     }
   });
 
@@ -104,7 +107,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const addToCart = async (productId: string, quantity = 1, size?: string, color?: string, image?: string) => {
-    const token = localStorage.getItem("accessToken");
     if (!token) {
       toast.error("Please login to add items to cart");
       return;

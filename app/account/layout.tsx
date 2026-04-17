@@ -24,10 +24,11 @@ const AccountLayout = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setMounted(true);
-    if (!userLoading && !user) {
+    // Only redirect if we are DEFINITELY not loading and DEFINITELY not authenticated
+    if (mounted && !userLoading && !user) {
       router.push("/auth?mode=login");
     }
-  }, [user, userLoading, router]);
+  }, [user, userLoading, mounted, router]);
 
   const handleLogout = () => {
     logout();

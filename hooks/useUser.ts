@@ -1,13 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 
 export const useUser = () => {
   const queryClient = useQueryClient();
+  const { user: contextUser, token, isProcessing, login, logout, updateUser } = useAuth();
 
   const { data: user, isLoading, error } = useQuery({
     queryKey: ['user-me'],
     queryFn: async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
       if (!token) return null;
       
       try {
@@ -17,29 +18,21 @@ export const useUser = () => {
           if (userData && userData.id && !userData._id) {
             userData._id = userData.id;
           }
-          // Sync localStorage
-          localStorage.setItem('user', JSON.stringify(userData));
+          // Sync with context
+          updateUser(userData);
           return userData;
         }
         return null;
       } catch (err) {
-        // If 401, the interceptor handles logout
+        // If 401, logout is handled by Axios interceptor or manually here
         return null;
       }
     },
     // Only run if we have a token
-    enabled: typeof window !== 'undefined' && !!localStorage.getItem('accessToken'),
+    enabled: !!token,
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 1,
   });
-
-  // Local fallback for immediate UI (e.g. during initial load)
-  const localUserStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-  const localUser = localUserStr ? JSON.parse(localUserStr) : null;
-  if (localUser && localUser.id && !localUser._id) {
-    localUser._id = localUser.id;
-  }
-  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
   const updateAccountTypeMutation = useMutation({
     mutationFn: async (accountType: 'buyer' | 'seller') => {
@@ -48,13 +41,26 @@ export const useUser = () => {
     },
     onSuccess: (updatedUser) => {
       queryClient.setQueryData(['user-me'], updatedUser);
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      updateUser(updatedUser);
+    }
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: FormData | { name?: string; avatar?: string }) => {
+      const response = await api.put('/users/me', data, {
+        headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {}
+      });
+      return response.data.data;
+    },
+    onSuccess: (updatedUser) => {
+      queryClient.setQueryData(['user-me'], updatedUser);
+      updateUser(updatedUser);
     }
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await api.put('/users/update-password', data);
+    mutationFn: async (data: { currentPassword: string; newPassword: string }) => {
+      const response = await api.put('/users/me/password', data);
       return response.data;
     }
   });
@@ -69,21 +75,18 @@ export const useUser = () => {
     }
   });
 
-  const logout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('accessToken');
-    queryClient.setQueryData(['user-me'], null);
-    queryClient.invalidateQueries();
-  };
-
   return { 
-    user: user || localUser, 
+    user: user || contextUser, 
     token, 
-    isLoading: isLoading && !localUser, // Only "loading" if we don't even have local data
+    isLoading: isLoading || isProcessing, // Also "loading" if we are processing a social login
+    isProcessing,
     error: error as any,
+    login,
     logout,
     updateAccountType: updateAccountTypeMutation.mutateAsync,
     isUpdatingAccountType: updateAccountTypeMutation.isPending,
+    updateProfile: updateProfileMutation.mutateAsync,
+    isUpdatingProfile: updateProfileMutation.isPending,
     updatePassword: updatePasswordMutation.mutateAsync,
     isUpdatingPassword: updatePasswordMutation.isPending,
     deleteAccount: deleteAccountMutation.mutateAsync,

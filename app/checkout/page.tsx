@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useUser } from "@/hooks/useUser";
 import api from "@/lib/api";
+import { getErrorMessage } from "@/lib/errorHandler";
 import { toast } from "sonner";
 import { 
   CreditCard, 
@@ -83,9 +84,10 @@ const CheckoutPage = () => {
           city: formData.city,
           street: formData.street,
         },
+        paymentMethod: formData.paymentMethod || 'Cash on Delivery',
         items: cartItems.map(item => ({
-          product: item.product.id || item.product._id,
-          shop: typeof item.product.shop === 'object' && item.product.shop !== null && ('id' in item.product.shop || '_id' in item.product.shop) 
+          productId: item.product.id || item.product._id,
+          shopId: typeof item.product.shop === 'object' && item.product.shop !== null && ('id' in item.product.shop || '_id' in item.product.shop) 
             ? (item.product.shop as any).id || (item.product.shop as any)._id 
             : item.product.shop,
           name: item.product.name,
@@ -110,7 +112,7 @@ const CheckoutPage = () => {
       }
     } catch (error: any) {
       console.error("Checkout error:", error);
-      toast.error(error.response?.data?.message || "Failed to place order. Please try again.");
+      toast.error(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
       setShowOrderConfirm(false);

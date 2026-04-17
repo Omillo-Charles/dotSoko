@@ -158,13 +158,13 @@ export const ProductFeedCard = ({
               className={`flex items-center gap-0 group transition-colors ${
                 isInWishlist(productId) ? 'text-pink-500' : 'hover:text-pink-500'
               }`}
+              title={isInWishlist(productId) ? "Remove from wishlist" : "Add to wishlist"}
             >
               <div className={`p-1.5 rounded-full transition-colors ${
                 isInWishlist(productId) ? 'bg-pink-500/10' : 'group-hover:bg-pink-500/10'
               }`}>
                 <Heart className={`w-[18px] h-[18px] ${isInWishlist(productId) ? 'fill-current' : ''}`} />
               </div>
-              <span className="text-xs font-bold">{product.likesCount || product.likes || 0}</span>
             </button>
 
             <button

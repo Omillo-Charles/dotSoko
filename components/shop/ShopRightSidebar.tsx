@@ -16,7 +16,6 @@ interface ShopRightSidebarProps {
   followMutation: any;
   shopsQuery: string;
   onPostProduct: () => void;
-  onAddUpdate: () => void;
   onFollowToggle: (shopId: string) => void;
 }
 
@@ -30,7 +29,6 @@ export const ShopRightSidebar = ({
   followMutation,
   shopsQuery,
   onPostProduct,
-  onAddUpdate,
   onFollowToggle,
 }: ShopRightSidebarProps) => {
   const router = useRouter();
@@ -131,19 +129,7 @@ export const ShopRightSidebar = ({
                 <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
               </button>
 
-              <button
-                onClick={onAddUpdate}
-                className="w-full text-left group block relative overflow-hidden rounded-2xl p-5 bg-secondary shadow-xl shadow-secondary/20 transition-all duration-300 hover:scale-[1.02] active:scale-95"
-              >
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-[10px] font-black text-white/70 uppercase tracking-widest mb-1">Stories</p>
-                    <p className="text-xl font-black text-white leading-tight">ADD UPDATE</p>
-                  </div>
-                  <Send className="w-8 h-8 text-white/40 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform duration-500" />
-                </div>
-                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
-              </button>
+
             </div>
           </div>
         )}

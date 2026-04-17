@@ -69,7 +69,6 @@ export const ProductsView = () => {
           price: Number(p.price || 0),
           description: p.description || "",
           image: p.image || p.images?.[0] || null,
-          likesCount: p.likesCount || p.likes?.length || 0,
           commentsCount: p.commentsCount || p.comments?.length || 0,
           reposts: p.reposts || 0,
           averageRating: p.averageRating || p.rating || 0,

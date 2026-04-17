@@ -146,7 +146,6 @@ const ShopProfilePage = () => {
       price: Number(p.price || 0),
       description: String(p.description || ""),
       image: p.image || p.images?.[0] || null,
-      likesCount: Number(p.likesCount || p.likes?.length || 0),
       commentsCount: Number(p.commentsCount || p.comments?.length || 0),
       repostsCount: Number(p.repostsCount || 0),
       rating: Number(p.rating || 0),

@@ -45,7 +45,13 @@ export const useMyShop = () => {
   });
 };
 
-export const useShopProducts = (idOrHandle: string, params?: { limit?: number; minPrice?: number; maxPrice?: number }) => {
+export const useShopProducts = (idOrHandle: string, params?: { 
+  limit?: number; 
+  minPrice?: number; 
+  maxPrice?: number;
+  minRating?: number;
+  sortBy?: 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'rating' | 'popular';
+}) => {
   return useQuery({
     queryKey: ['shop-products', idOrHandle, params],
     queryFn: async () => {
@@ -76,6 +82,25 @@ export const usePopularShops = (limit?: number) => {
       });
       return response.data.data;
     },
+  });
+};
+
+export const useShops = (params?: {
+  q?: string;
+  category?: string;
+  verified?: boolean;
+  minRating?: number;
+  sortBy?: 'newest' | 'oldest' | 'rating' | 'popular' | 'products';
+  limit?: number;
+  page?: number;
+}) => {
+  return useQuery({
+    queryKey: ['shops', params],
+    queryFn: async () => {
+      const response = await api.get('/shops', { params });
+      return response.data;
+    },
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -176,6 +201,33 @@ export const useFollowShop = () => {
       queryClient.invalidateQueries({ queryKey: ['my-shop'] });
       queryClient.invalidateQueries({ queryKey: ['shop', shopId] });
       queryClient.invalidateQueries({ queryKey: ['popular-shops'] });
+    },
+  });
+};
+
+export const useSellerAnalytics = (period: string = '30') => {
+  return useQuery({
+    queryKey: ['seller-analytics', period],
+    queryFn: async () => {
+      const response = await api.get('/shops/my-shop/analytics', {
+        params: { period }
+      });
+      return response.data.data;
+    },
+    staleTime: 1000 * 60 * 2, // 2 minutes
+  });
+};
+
+export const useRateShop = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ shopId, rating }: { shopId: string; rating: number }) => {
+      const response = await api.post(`/shops/${shopId}/rate`, { rating });
+      return response.data;
+    },
+    onSettled: (_data, _error, { shopId }) => {
+      queryClient.invalidateQueries({ queryKey: ['shop', shopId] });
+      queryClient.invalidateQueries({ queryKey: ['shop-reviews', shopId] });
     },
   });
 };

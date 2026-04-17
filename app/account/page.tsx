@@ -23,10 +23,11 @@ const BuyerDashboard = () => {
 
   useEffect(() => {
     setIsMounted(true);
-    if (!isUserLoading && !user) {
+    // Only redirect if we are DEFINITELY not loading and DEFINITELY not authenticated
+    if (isMounted && !isUserLoading && !user) {
       router.push("/auth?mode=login");
     }
-  }, [user, isUserLoading, router]);
+  }, [user, isUserLoading, isMounted, router]);
 
   const isLoading = isUserLoading || isOrdersLoading;
 

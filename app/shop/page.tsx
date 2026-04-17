@@ -24,7 +24,6 @@ import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
 import CommentModal from "@/components/modals/CommentModal";
 import ShopSearchModal from "@/components/modals/ShopSearchModal";
 import ChoiceModal from "@/components/modals/ChoiceModal";
-import { CreateUpdateModal } from "@/components/modals/CreateUpdateModal";
 import ProductCreateModal from "@/components/modals/ProductCreateModal";
 
 import { ShopLeftSidebar } from "@/components/shop/ShopLeftSidebar";
@@ -64,7 +63,6 @@ const ShopContent = () => {
   const [shareModal, setShareModal] = useState({ isOpen: false, url: "", title: "" });
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [repostPopover, setRepostPopover] = useState<{ isOpen: boolean; productId: string | null; position: { top: number; left: number } }>({ isOpen: false, productId: null, position: { top: 0, left: 0 } });
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
 
   const [desktopSearchQuery, setDesktopSearchQuery] = useState(shopsQuery || "");
@@ -167,7 +165,7 @@ const ShopContent = () => {
   const handleAddToCart = (e: React.MouseEvent, p: any) => {
     e.stopPropagation();
     const id = p._id || p.id;
-    if (id) { trackActivity({ type: "@/components/marketplace/cart", productId: id, category: p.category }); addToCart(id); }
+    if (id) { trackActivity({ type: "cart", productId: id, category: p.category }); addToCart(id); }
   };
 
   const handleWishlist = (e: React.MouseEvent, p: any) => {
@@ -255,11 +253,8 @@ const ShopContent = () => {
             <div className="lg:hidden border-b border-border bg-muted/20 px-4 py-4 space-y-3">
               <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Seller Hub</h3>
               <div className="flex gap-2">
-                <button onClick={() => setShowProductModal(true)} className="flex-1 flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-primary/10 active:scale-95 transition-all">
+                <button onClick={() => setShowProductModal(true)} className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-primary/10 active:scale-95 transition-all">
                   <Plus className="w-4 h-4" />POST PRODUCT
-                </button>
-                <button onClick={() => setIsUpdateModalOpen(true)} className="flex-1 flex items-center justify-center gap-2 bg-secondary text-white py-3 rounded-xl text-xs font-black shadow-lg shadow-secondary/10 active:scale-95 transition-all">
-                  <Search className="w-4 h-4" />ADD UPDATE
                 </button>
               </div>
             </div>
@@ -399,7 +394,6 @@ const ShopContent = () => {
           />
         )}
         <ShopSearchModal isOpen={isSearchModalOpen} onClose={() => setIsSearchModalOpen(false)} initialQuery={shopsQuery} />
-        <CreateUpdateModal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} onCreated={() => setIsUpdateModalOpen(false)} />
 
         {/* Right Sidebar */}
         <ShopRightSidebar
@@ -412,7 +406,6 @@ const ShopContent = () => {
           followMutation={followMutation}
           shopsQuery={shopsQuery}
           onPostProduct={() => setShowProductModal(true)}
-          onAddUpdate={() => setIsUpdateModalOpen(true)}
           onFollowToggle={handleFollowToggle}
         />
       </div>
@@ -442,8 +435,6 @@ const ShopContent = () => {
         }}
         shopName={myShop?.name}
       />
-
-      <CreateUpdateModal isOpen={isUpdateModalOpen} onClose={() => setIsUpdateModalOpen(false)} />
     </div>
   );
 };

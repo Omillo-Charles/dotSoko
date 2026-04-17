@@ -452,7 +452,6 @@ const ProductDetailsPage = () => {
                             <p className="text-[11px] md:text-xs font-medium text-muted-foreground line-clamp-2 mt-0.5">{p.description}</p>
                           </div>
                           <div className="flex items-center gap-3 text-[9px] md:text-[10px] font-bold text-muted-foreground">
-                            <div className="flex items-center gap-1"><Heart className="w-3 h-3" /> {p.likesCount || 0}</div>
                             <div className="flex items-center gap-1"><MessageIcon className="w-3 h-3" /> {p.commentsCount || 0}</div>
                             {p.rating > 0 && <div className="flex items-center gap-1 text-amber-500"><Star className="w-3 h-3 fill-current" /> {p.rating}</div>}
                           </div>

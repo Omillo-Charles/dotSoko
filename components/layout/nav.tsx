@@ -30,22 +30,21 @@ import SearchBar from "@/components/marketplace/searchBar";
 import { ThemeToggle, GoldCheck } from "@/components/ui/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useAuth } from "@/context/AuthContext";
 import { useUser } from "@/hooks/useUser";
 import ChoiceModal from "@/components/modals/ChoiceModal";
-import { CreateUpdateModal } from "@/components/modals/CreateUpdateModal";
 import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
 import { toast } from "sonner";
 
 const Navbar = () => {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
-  const { user, token } = useUser();
+  const { user, token, isLoading: authLoading } = useUser();
   const [mounted, setMounted] = useState(false);
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showPremiumMenu, setShowPremiumMenu] = useState(false);
   const [showMobilePremiumMenu, setShowMobilePremiumMenu] = useState(false);
   const [showCreateChoice, setShowCreateChoice] = useState(false);
-  const [showCreateUpdate, setShowCreateUpdate] = useState(false);
   const [showCreateProduct, setShowCreateProduct] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
@@ -54,7 +53,9 @@ const Navbar = () => {
     setMounted(true);
   }, []);
 
-  const isLoggedIn = mounted ? !!token : false;
+  // Directly derive state from AuthContext with high reactivity
+  // We use both token and user presence to ensure no delay in UI switching
+  const isLoggedIn = mounted ? (!!token || !!user) : false;
   const isPremium = mounted ? !!user?.isPremium : false;
   const cartCount = mounted ? totalItems : 0;
   const wishlistCount = mounted ? wishlistItems.length : 0;
@@ -184,7 +185,10 @@ const Navbar = () => {
                   {cartCount}
                 </span>
               </Link>
-              <Link href={isLoggedIn ? "/account" : "/auth"} className="relative transition-colors">
+              <Link 
+                href={authLoading ? "#" : (isLoggedIn ? "/account" : "/auth")} 
+                className="relative transition-colors"
+              >
                 <User className={`w-6 h-6 ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-50"}`} />
               </Link>
             </div>
@@ -198,7 +202,10 @@ const Navbar = () => {
           {/* Desktop Icons (Hidden on mobile) */}
           <div className="hidden md:flex items-center gap-6 text-slate-50">
             <ThemeToggle />
-            <Link href={isLoggedIn ? "/account" : "/auth"} className={`flex flex-col items-center group transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-50"}`}>
+            <Link 
+              href={authLoading ? "#" : (isLoggedIn ? "/account" : "/auth")} 
+              className={`flex flex-col items-center group transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-50"}`}
+            >
               <User className={`w-6 h-6 transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "group-hover:text-primary"}`} />
               <span className={`text-xs mt-1 font-medium transition-colors ${pathname.startsWith("/account") || pathname === "/auth" ? "text-primary" : "text-slate-400 group-hover:text-primary"}`}>
                 {isLoggedIn ? "Dashboard" : "Account"}
@@ -421,14 +428,6 @@ const Navbar = () => {
       subtitle="Select what you want to post"
       items={[
         {
-          id: "update",
-          label: "Post Update",
-          description: "Share a photo or video with followers",
-          icon: Camera,
-          onClick: () => setShowCreateUpdate(true),
-          variant: "primary" as const
-        },
-        {
           id: "product",
           label: "New Product",
           description: "List a new item for sale in your shop",
@@ -437,10 +436,6 @@ const Navbar = () => {
           variant: "secondary" as const
         }
       ]}
-    />
-    <CreateUpdateModal 
-      isOpen={showCreateUpdate} 
-      onClose={() => setShowCreateUpdate(false)} 
     />
     <ProductCreateModal 
       isOpen={showCreateProduct} 

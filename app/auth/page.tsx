@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useUser } from "@/hooks/useUser";
 
 const GoogleIcon = () => (
   <svg
@@ -58,6 +59,7 @@ type AuthMode = "login" | "register" | "forgot" | "verify" | "reset";
 const AuthContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { login } = useUser();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5500/api/v1";
 
   // --- Zod Schemas ---
@@ -121,6 +123,24 @@ const AuthContent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [resetToken, setResetToken] = useState<string>("");
 
+  // pendingEmail is kept in sessionStorage so it survives a page refresh
+  // (user registers → gets OTP email → refreshes tab → can still verify)
+  const [pendingEmail, setPendingEmail] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('dotSoko_pendingEmail') || '';
+    }
+    return '';
+  });
+
+  const updatePendingEmail = (email: string) => {
+    setPendingEmail(email);
+    if (email) {
+      sessionStorage.setItem('dotSoko_pendingEmail', email);
+    } else {
+      sessionStorage.removeItem('dotSoko_pendingEmail');
+    }
+  };
+
   useEffect(() => {
     // Get params from both searchParams hook and window.location for maximum reliability
     const urlParams = new URLSearchParams(window.location.search);
@@ -129,20 +149,18 @@ const AuthContent = () => {
     const path = window.location.pathname;
 
     // Redirect if already logged in (and not in a special flow like reset/verify)
-    const token = localStorage.getItem("accessToken");
-    if (token && !["reset", "verify"].includes(m || "")) {
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken && !["reset", "verify"].includes(m || "")) {
       router.push("/account");
       return;
     }
 
-    console.log("Auth State Sync:", { m, t, path });
-
-    // Handle direct reset-password path (from rewrite)
+    // Handle direct reset-password path (from rewrite in next.config.ts)
     if (path.includes("/reset-password/")) {
-      const token = path.split("/").filter(Boolean).pop();
-      if (token && token !== "reset-password") {
+      const pathToken = path.split("/").filter(Boolean).pop();
+      if (pathToken && pathToken !== "reset-password") {
         setMode("reset");
-        setResetToken(token);
+        setResetToken(pathToken);
         return;
       }
     }
@@ -151,21 +169,6 @@ const AuthContent = () => {
     const errorParam = searchParams.get("error") || urlParams.get("error");
     if (errorParam) {
       toast.error(errorParam);
-    }
-
-    if (m === "social-success") {
-      const userData = searchParams.get("user") || urlParams.get("user");
-      if (t && userData) {
-        try {
-          localStorage.setItem("accessToken", t);
-          localStorage.setItem("user", userData);
-          toast.success("Social login successful! Redirecting...");
-          setTimeout(() => router.push("/account"), 1500);
-          return;
-        } catch (e) {
-          toast.error("Failed to process login data");
-        }
-      }
     }
 
     if (m === "reset") {
@@ -177,9 +180,7 @@ const AuthContent = () => {
     } else if (m === "login") {
       setMode("login");
     }
-  }, [searchParams]);
-
-  const [pendingEmail, setPendingEmail] = useState<string>("");
+  }, [searchParams, router, verifyForm]);
 
   const onLoginSubmit = async (data: LoginForm) => {
     setIsLoading(true);
@@ -192,8 +193,7 @@ const AuthContent = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || result.error || "Login failed");
       
-      localStorage.setItem("accessToken", result.data.accessToken);
-      localStorage.setItem("user", JSON.stringify(result.data.user));
+      login(result.data.accessToken, result.data.user);
       
       toast.success("Login successful! Redirecting...");
       setTimeout(() => router.push("/account"), 1500);
@@ -214,8 +214,9 @@ const AuthContent = () => {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || result.error || "Registration failed");
-      
-      setPendingEmail(data.email);
+
+      // Persist so the email survives a page refresh before the user verifies
+      updatePendingEmail(data.email);
       setMode("verify");
       toast.success("Account created! Please check your email for the verification code.");
     } catch (err: any) {
@@ -228,6 +229,9 @@ const AuthContent = () => {
   const onVerifySubmit = async (data: VerifyForm) => {
     setIsLoading(true);
     try {
+      if (!pendingEmail) {
+        throw new Error("Could not determine your email address. Please register again.");
+      }
       const response = await fetch(`${apiUrl}/auth/verify-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -235,7 +239,9 @@ const AuthContent = () => {
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.message || result.error || "Verification failed");
-      
+
+      // Clear the persisted email now that verification is done
+      updatePendingEmail("");
       toast.success("Email verified successfully! You can now sign in.");
       setTimeout(() => setMode("login"), 2000);
     } catch (err: any) {

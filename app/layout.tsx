@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import Navbar from "@/components/layout/nav";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { CartProvider } from "@/context/CartContext";
 import { WishlistProvider } from "@/context/WishlistContext";
+import { AuthProvider } from "@/context/AuthContext";
 import QueryProvider from "@/components/providers/QueryProvider";
 import { Toaster } from "sonner";
 import "./globals.css";
@@ -47,23 +48,25 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistMono.variable} antialiased`}>
-        <ThemeProvider
+      <body className={`${geistMono.variable} antialiased`} suppressHydrationWarning>
+        <NextThemesProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
           <QueryProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <Toaster position="top-right" richColors />
-                <Navbar />
-                {children}
-              </WishlistProvider>
-            </CartProvider>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <Toaster position="top-right" richColors />
+                  <Navbar />
+                  {children}
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
           </QueryProvider>
-        </ThemeProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );

@@ -3,7 +3,6 @@ import { Zap, Truck, ShieldCheck, Headphones, ChevronRight } from "lucide-react"
 import Categories from "@/components/marketplace/categories";
 import FeaturedProducts from "@/components/marketplace/featuredProducts";
 import Footer from "@/components/layout/footer";
-import { Updates } from "@/components/dashboard/Updates";
 import { BannerCarousel } from "@/components/media/BannerCarousel";
 import { Metadata } from "next";
 
@@ -22,9 +21,6 @@ export default function Home() {
         <div className="absolute top-[10%] right-[-5%] w-[30%] h-[30%] bg-secondary/5 rounded-full blur-[100px]"></div>
       </div>
 
-      <section className="border-y border-border bg-muted/20">
-        <Updates />
-      </section>
 
       <Categories />
       <FeaturedProducts />

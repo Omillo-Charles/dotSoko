@@ -1,7 +1,19 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 
-export const useProducts = (params?: any) => {
+interface ProductSearchParams {
+  q?: string;
+  cat?: string;
+  following?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minRating?: number;
+  sortBy?: 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'rating' | 'popular';
+  limit?: number;
+  page?: number;
+}
+
+export const useProducts = (params?: ProductSearchParams) => {
   return useQuery({
     queryKey: ['products', params],
     queryFn: async () => {
