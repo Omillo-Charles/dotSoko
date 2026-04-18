@@ -47,7 +47,7 @@ export const OverviewView = ({ user, orders }: OverviewViewProps) => {
         subtitle={
           <div className="space-y-4">
             <p className="text-muted-foreground font-medium">{user?.email}</p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-3">
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 text-blue-500 text-sm font-bold border border-blue-500/20 shadow-sm">
                 <Package className="w-4 h-4" />
                 {activeOrdersCount} Active Orders
