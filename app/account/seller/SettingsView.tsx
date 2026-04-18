@@ -31,6 +31,7 @@ export const SettingsView = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState<"shop" | "account" | null>(null);
   const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
+  const [showDeleteShopConfirm, setShowDeleteShopConfirm] = useState(false);
   const [activeTab, setActiveTab] = useState<"profile" | "branding" | "danger">("profile");
   
   const [formData, setFormData] = useState({
@@ -246,13 +247,11 @@ export const SettingsView = () => {
     }
   };
 
-  const handleDeleteShop = async () => {
-    const confirmName = prompt(`To delete your shop, please type your shop name: "${shop.name}"`);
-    if (confirmName !== shop.name) {
-      if (confirmName !== null) toast.error("Shop name mismatch. Deletion cancelled.");
-      return;
-    }
+  const handleDeleteShop = () => {
+    setShowDeleteShopConfirm(true);
+  };
 
+  const confirmDeleteShop = async () => {
     setIsDeleting("shop");
 
     try {
@@ -262,8 +261,9 @@ export const SettingsView = () => {
         const userData = JSON.parse(localStorage.getItem("user") || "{}");
         userData.accountType = "buyer";
         localStorage.setItem("user", JSON.stringify(userData));
-        
+
         toast.success("Shop deleted successfully. Switched back to buyer account.");
+        queryClient.invalidateQueries({ queryKey: ["my-shop"] });
         router.push("/account");
       } else {
         toast.error(response.data.message || "Failed to delete shop");
@@ -274,6 +274,7 @@ export const SettingsView = () => {
       toast.error(message);
     } finally {
       setIsDeleting(null);
+      setShowDeleteShopConfirm(false);
     }
   };
 
@@ -551,6 +552,19 @@ export const SettingsView = () => {
           </div>
         )}
       </div>
+
+      <ConfirmationModal
+        isOpen={showDeleteShopConfirm}
+        onClose={() => setShowDeleteShopConfirm(false)}
+        onConfirm={confirmDeleteShop}
+        title="Delete Shop?"
+        description={`This will permanently remove "${shop?.name}", all its products, and store data. This action cannot be undone.`}
+        confirmText="Delete Shop"
+        cancelText="Keep Shop"
+        variant="danger"
+        icon={Trash2}
+        isLoading={isDeleting === "shop"}
+      />
 
       <ConfirmationModal
         isOpen={showDeleteAccountConfirm}
