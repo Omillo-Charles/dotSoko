@@ -21,20 +21,76 @@ import Image from "next/image";
 import Link from "next/link";
 
 const StatusBadge = ({ status }: { status: string }) => {
-  const statusConfig: Record<string, { color: string; icon: any; label: string }> = {
-    pending: { color: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400", icon: Clock, label: "Pending" },
-    processing: { color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400", icon: Package, label: "Processing" },
-    shipped: { color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", icon: Truck, label: "Shipped" },
-    delivered: { color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400", icon: CheckCircle2, label: "Delivered" },
-    cancelled: { color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400", icon: XCircle, label: "Cancelled" },
+  const statusConfig: Record<string, {
+    bg: string;
+    border: string;
+    text: string;
+    dot: string;
+    icon: any;
+    label: string;
+    pulse: boolean;
+  }> = {
+    pending: {
+      bg: "bg-amber-500/15",
+      border: "border-amber-500/40",
+      text: "text-amber-600 dark:text-amber-400",
+      dot: "bg-amber-500",
+      icon: Clock,
+      label: "Pending",
+      pulse: true,
+    },
+    processing: {
+      bg: "bg-blue-500/15",
+      border: "border-blue-500/40",
+      text: "text-blue-600 dark:text-blue-400",
+      dot: "bg-blue-500",
+      icon: Package,
+      label: "Processing",
+      pulse: true,
+    },
+    shipped: {
+      bg: "bg-purple-500/15",
+      border: "border-purple-500/40",
+      text: "text-purple-600 dark:text-purple-400",
+      dot: "bg-purple-500",
+      icon: Truck,
+      label: "Shipped",
+      pulse: true,
+    },
+    delivered: {
+      bg: "bg-emerald-500/15",
+      border: "border-emerald-500/40",
+      text: "text-emerald-600 dark:text-emerald-400",
+      dot: "bg-emerald-500",
+      icon: CheckCircle2,
+      label: "Delivered",
+      pulse: false,
+    },
+    cancelled: {
+      bg: "bg-red-500/15",
+      border: "border-red-500/40",
+      text: "text-red-600 dark:text-red-400",
+      dot: "bg-red-500",
+      icon: XCircle,
+      label: "Cancelled",
+      pulse: false,
+    },
   };
 
   const config = statusConfig[status] || statusConfig.pending;
   const Icon = config.icon;
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${config.color}`}>
-      <Icon className="w-3.5 h-3.5" />
+    <span
+      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-black border ${config.bg} ${config.border} ${config.text}`}
+    >
+      <span className="relative flex items-center justify-center w-2.5 h-2.5">
+        {config.pulse && (
+          <span className={`absolute inline-flex h-full w-full rounded-full ${config.dot} opacity-50 animate-ping`} />
+        )}
+        <span className={`relative inline-flex rounded-full w-2 h-2 ${config.dot}`} />
+      </span>
+      <Icon className="w-4 h-4" />
       {config.label}
     </span>
   );

@@ -32,7 +32,6 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { useAuth } from "@/context/AuthContext";
 import { useUser } from "@/hooks/useUser";
-import ChoiceModal from "@/components/modals/ChoiceModal";
 import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
 import { toast } from "sonner";
 
@@ -44,7 +43,6 @@ const Navbar = () => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
   const [showPremiumMenu, setShowPremiumMenu] = useState(false);
   const [showMobilePremiumMenu, setShowMobilePremiumMenu] = useState(false);
-  const [showCreateChoice, setShowCreateChoice] = useState(false);
   const [showCreateProduct, setShowCreateProduct] = useState(false);
   const { totalItems } = useCart();
   const { wishlistItems } = useWishlist();
@@ -80,7 +78,7 @@ const Navbar = () => {
       return;
     }
 
-    setShowCreateChoice(true);
+    setShowCreateProduct(true);
   };
 
   // Close menu when clicking outside
@@ -420,23 +418,6 @@ const Navbar = () => {
       </div>
     </div>
 
-    {/* Creation Modals */}
-    <ChoiceModal 
-      isOpen={showCreateChoice} 
-      onClose={() => setShowCreateChoice(false)} 
-      title="Create"
-      subtitle="Select what you want to post"
-      items={[
-        {
-          id: "product",
-          label: "New Product",
-          description: "List a new item for sale in your shop",
-          icon: ShoppingBag,
-          onClick: () => setShowCreateProduct(true),
-          variant: "secondary" as const
-        }
-      ]}
-    />
     <ProductCreateModal 
       isOpen={showCreateProduct} 
       onClose={() => setShowCreateProduct(false)} 
