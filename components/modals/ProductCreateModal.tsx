@@ -42,6 +42,38 @@ export const ProductCreateModal: React.FC<Props> = ({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateStep = (currentStep: number) => {
+    const newErrors: Record<string, string> = {};
+    
+    if (currentStep === 1) {
+      if (!formData.name.trim()) newErrors.name = "Product name is required";
+      else if (formData.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters";
+      
+      if (!formData.category) newErrors.category = "Please select a category";
+    }
+
+    if (currentStep === 2) {
+      if (!formData.description.trim()) newErrors.description = "Description is required";
+      else if (formData.description.trim().length < 10) newErrors.description = "Description must be at least 10 characters";
+      
+      if (!formData.price) newErrors.price = "Price is required";
+      else if (parseFloat(formData.price) <= 0) newErrors.price = "Price must be greater than 0";
+      
+      if (!formData.stock) newErrors.stock = "Stock quantity is required";
+      else if (parseInt(formData.stock) < 1) newErrors.stock = "Stock must be at least 1";
+    }
+
+    if (currentStep === 3) {
+      if (imageFiles.length === 0 && existingImages.length === 0) {
+        newErrors.images = "Please upload at least one product image";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -83,6 +115,14 @@ export const ProductCreateModal: React.FC<Props> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,10 +174,18 @@ export const ProductCreateModal: React.FC<Props> = ({
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreviews((prev) => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(finalFile);
-    });
-  };
+      // Clear image error if any
+      if (errors.images) {
+        setErrors((prev) => {
+          const newErrors = { ...prev };
+          delete newErrors.images;
+          return newErrors;
+        });
+      }
+    };
+    reader.readAsDataURL(finalFile);
+  });
+};
 
   const removeImage = (index: number) => {
     const previewToRemove = imagePreviews[index];
@@ -155,8 +203,8 @@ export const ProductCreateModal: React.FC<Props> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (imageFiles.length === 0 && existingImages.length === 0) {
-      toast.error("Please select at least one product image");
+    if (!validateStep(step)) {
+      toast.error("Please fix the errors before publishing.");
       return;
     }
 
@@ -211,8 +259,17 @@ export const ProductCreateModal: React.FC<Props> = ({
     }
   };
 
-  const nextStep = () => setStep((s) => s + 1);
-  const prevStep = () => setStep((s) => s - 1);
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep((s) => s + 1);
+    } else {
+      toast.error("Please fill in all required fields correctly.");
+    }
+  };
+  const prevStep = () => {
+    setErrors({});
+    setStep((s) => s - 1);
+  };
 
   const steps = [
     { title: "Basics", icon: <PenSquare /> },
@@ -266,24 +323,23 @@ export const ProductCreateModal: React.FC<Props> = ({
                     <input
                       type="text"
                       name="name"
-                      required
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g., Vintage Leather Jacket"
                       disabled={isSubmitting}
-                      className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm disabled:opacity-50"
+                      className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium disabled:opacity-50`}
                     />
+                    {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.name}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs">Category</label>
                     <div className="relative mt-1.5">
                       <select
                         name="category"
-                        required
                         value={formData.category}
                         onChange={handleInputChange}
                         disabled={isSubmitting}
-                        className="w-full px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm appearance-none disabled:opacity-50"
+                        className={`w-full px-3 py-2.5 bg-muted/50 border ${errors.category ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium appearance-none disabled:opacity-50`}
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat) => (
@@ -292,8 +348,9 @@ export const ProductCreateModal: React.FC<Props> = ({
                           </option>
                         ))}
                       </select>
-                      <Layers className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                      <Layers className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${errors.category ? 'text-red-500' : 'text-muted-foreground'} pointer-events-none`} />
                     </div>
+                    {errors.category && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.category}</p>}
                   </div>
                 </div>
               </section>
@@ -309,14 +366,14 @@ export const ProductCreateModal: React.FC<Props> = ({
                     <label className="font-medium text-xs">Description</label>
                     <textarea
                       name="description"
-                      required
                       value={formData.description}
                       onChange={handleInputChange}
                       placeholder="Describe the magic behind this product..."
                       rows={4}
                       disabled={isSubmitting}
-                      className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm resize-none disabled:opacity-50"
+                      className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.description ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium resize-none disabled:opacity-50`}
                     />
+                    {errors.description && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.description}</p>}
                     <div className="flex justify-end mt-1">
                       <span className="text-[10px] font-bold text-muted-foreground">
                         {formData.description.length}/1000
@@ -329,29 +386,29 @@ export const ProductCreateModal: React.FC<Props> = ({
                       <input
                         type="number"
                         name="price"
-                        required
                         min="1"
                         step="0.01"
                         value={formData.price}
                         onChange={handleInputChange}
                         placeholder="0.00"
                         disabled={isSubmitting}
-                        className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm disabled:opacity-50"
+                        className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.price ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium disabled:opacity-50`}
                       />
+                      {errors.price && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.price}</p>}
                     </div>
                     <div>
                       <label className="font-medium text-xs">Stock</label>
                       <input
                         type="number"
                         name="stock"
-                        required
                         min="1"
                         value={formData.stock}
                         onChange={handleInputChange}
                         placeholder="1"
                         disabled={isSubmitting}
-                        className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm disabled:opacity-50"
+                        className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.stock ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium disabled:opacity-50`}
                       />
+                      {errors.stock && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.stock}</p>}
                     </div>
                   </div>
                 </div>
@@ -399,6 +456,7 @@ export const ProductCreateModal: React.FC<Props> = ({
                       <p className="text-[10px] text-muted-foreground mt-1 text-center">Weighs less than 5MB per image. Max 10 images.</p>
                     </div>
                   )}
+                  {errors.images && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight text-center mt-2">{errors.images}</p>}
                 </div>
               </section>
             )}
@@ -417,10 +475,6 @@ export const ProductCreateModal: React.FC<Props> = ({
                   <button 
                     type="button" 
                     onClick={nextStep} 
-                    disabled={
-                      (step === 1 && (!formData.name.trim() || !formData.category)) ||
-                      (step === 2 && (!formData.description.trim() || !formData.price || !formData.stock))
-                    } 
                     className="px-6 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     Next
@@ -429,7 +483,7 @@ export const ProductCreateModal: React.FC<Props> = ({
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting || imagePreviews.length === 0}
+                    disabled={isSubmitting}
                     className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}

@@ -35,6 +35,27 @@ export const AddressModal: React.FC<Props> = ({
     street: "",
     isDefault: false,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateStep = (currentStep: number) => {
+    const newErrors: Record<string, string> = {};
+    
+    if (currentStep === 1) {
+      if (!formData.name.trim()) newErrors.name = "Full name is required";
+      else if (formData.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters";
+      
+      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+      else if (formData.phone.trim().length < 10) newErrors.phone = "Enter a valid phone number";
+    }
+
+    if (currentStep === 3) {
+      if (!formData.city.trim()) newErrors.city = "City / Region is required";
+      if (!formData.street.trim()) newErrors.street = "Street / Building is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -69,10 +90,21 @@ export const AddressModal: React.FC<Props> = ({
       ...prev, 
       [name]: type === 'checkbox' ? checked : value 
     }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateStep(step)) {
+      return;
+    }
     setIsSubmitting(true);
     try {
       await onSubmit(formData);
@@ -84,8 +116,15 @@ export const AddressModal: React.FC<Props> = ({
     }
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
-  const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep((s) => Math.min(s + 1, 3));
+    }
+  };
+  const prevStep = () => {
+    setErrors({});
+    setStep((s) => Math.max(s - 1, 1));
+  };
 
   const steps = [
     { id: 1, title: "IDENTITY" },
@@ -151,12 +190,12 @@ export const AddressModal: React.FC<Props> = ({
                     <input
                       type="text"
                       name="name"
-                      required
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g. John Doe"
-                      className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium`}
                     />
+                    {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.name}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs">Phone Number</label>
@@ -165,13 +204,13 @@ export const AddressModal: React.FC<Props> = ({
                       <input
                         type="tel"
                         name="phone"
-                        required
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="+254 XXX XXX XXX"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium`}
                       />
                     </div>
+                    {errors.phone && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.phone}</p>}
                   </div>
                 </div>
               </section>
@@ -222,13 +261,13 @@ export const AddressModal: React.FC<Props> = ({
                       <input
                         type="text"
                         name="city"
-                        required
                         value={formData.city}
                         onChange={handleInputChange}
                         placeholder="e.g. Nairobi"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.city ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium`}
                       />
                     </div>
+                    {errors.city && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.city}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs">Street / Apartment / Building</label>
@@ -237,13 +276,13 @@ export const AddressModal: React.FC<Props> = ({
                       <input
                         type="text"
                         name="street"
-                        required
                         value={formData.street}
                         onChange={handleInputChange}
                         placeholder="e.g. Kilimani, Galana Rd"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.street ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all text-sm font-medium`}
                       />
                     </div>
+                    {errors.street && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.street}</p>}
                   </div>
                   <label className="flex items-center gap-3 p-4 bg-muted/20 border border-border rounded-xl cursor-pointer hover:bg-muted/30 transition-all group mt-2">
                     <input
@@ -280,7 +319,6 @@ export const AddressModal: React.FC<Props> = ({
                   <button 
                     type="button" 
                     onClick={nextStep} 
-                    disabled={step === 1 && (!formData.name || !formData.phone)}
                     className="px-6 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     Next
@@ -289,7 +327,7 @@ export const AddressModal: React.FC<Props> = ({
                 ) : (
                   <button
                     type="submit"
-                    disabled={isSubmitting || !formData.city || !formData.street}
+                    disabled={isSubmitting}
                     className="px-8 py-2.5 bg-primary text-primary-foreground rounded-2xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-primary/20 hover:bg-primary/90 active:scale-95 disabled:opacity-50 transition-all inline-flex items-center gap-2"
                   >
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}

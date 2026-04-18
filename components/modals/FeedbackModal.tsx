@@ -32,6 +32,19 @@ const FeedbackModal = ({
   const [selectedRating, setSelectedRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (selectedRating === 0) {
+      newErrors.rating = "Please select a rating";
+    }
+    if (type === "shop" && comment.trim().length > 1000) {
+      newErrors.comment = "Review must be less than 1000 characters";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   if (!isOpen) return null;
 
@@ -61,8 +74,7 @@ const FeedbackModal = ({
   };
 
   const handleShopSubmit = async () => {
-    if (selectedRating === 0) {
-      toast.error("Please select a rating");
+    if (!validate()) {
       return;
     }
 
@@ -158,6 +170,11 @@ const FeedbackModal = ({
 
   const handleStarClick = (rating: number) => {
     setSelectedRating(rating);
+    setErrors((prev) => {
+      const newErrors = { ...prev };
+      delete newErrors.rating;
+      return newErrors;
+    });
     if (type === "product") {
       setIsSubmitting(true);
       handleProductSubmit(rating).finally(() => setIsSubmitting(false));
@@ -213,6 +230,7 @@ const FeedbackModal = ({
                 </button>
               ))}
             </div>
+            {errors.rating && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.rating}</p>}
 
             {type === "shop" && (
               <div className="w-full space-y-4">
@@ -222,11 +240,21 @@ const FeedbackModal = ({
                   </label>
                   <textarea
                     value={comment}
-                    onChange={(e) => setComment(e.target.value)}
+                    onChange={(e) => {
+                      setComment(e.target.value);
+                      if (errors.comment) {
+                        setErrors(prev => {
+                          const ne = {...prev};
+                          delete ne.comment;
+                          return ne;
+                        });
+                      }
+                    }}
                     placeholder="Tell us about your experience..."
-                    className="w-full min-h-[120px] p-4 rounded-2xl bg-muted/50 border border-border focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none text-sm font-medium outline-none"
+                    className={`w-full min-h-[120px] p-4 rounded-2xl bg-muted/50 border ${errors.comment ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:border-primary/50'} focus:border-primary focus:ring-1 transition-all resize-none text-sm font-medium outline-none placeholder:text-muted-foreground/30`}
                     disabled={isSubmitting}
                   />
+                  {errors.comment && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.comment}</p>}
                 </div>
 
                 <button

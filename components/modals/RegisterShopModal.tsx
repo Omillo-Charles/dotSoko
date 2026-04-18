@@ -36,6 +36,41 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
     available: null,
     error: null,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateStep = (currentStep: number) => {
+    const newErrors: Record<string, string> = {};
+    
+    if (currentStep === 1) {
+      if (!formData.name.trim()) newErrors.name = "Shop name is required";
+      else if (formData.name.trim().length < 3) newErrors.name = "Name must be at least 3 characters";
+      
+      if (!formData.username.trim()) newErrors.username = "Shop handle is required";
+      else if (usernameStatus.error) newErrors.username = usernameStatus.error;
+      else if (usernameStatus.available === false) newErrors.username = "Username already taken";
+    }
+
+    if (currentStep === 2) {
+      if (!formData.description.trim()) newErrors.description = "Description is required";
+      else if (formData.description.trim().length < 20) newErrors.description = "Description must be at least 20 characters";
+      
+      if (!formData.category) newErrors.category = "Please select a category";
+    }
+
+    if (currentStep === 4) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!formData.email.trim()) newErrors.email = "Business email is required";
+      else if (!emailRegex.test(formData.email)) newErrors.email = "Please enter a valid email address";
+      
+      if (!formData.phone.trim()) newErrors.phone = "Phone number is required";
+      else if (formData.phone.trim().length < 10) newErrors.phone = "Enter a valid phone number";
+      
+      if (!formData.address.trim()) newErrors.address = "Physical address is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -76,6 +111,14 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>, type: "avatar" | "banner") => {
@@ -116,6 +159,10 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateStep(step)) {
+      toast.error("Please fix the errors before launching your shop.");
+      return;
+    }
     setIsLoading(true);
     try {
       const submitData = new FormData();
@@ -141,8 +188,17 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
     }
   };
 
-  const nextStep = () => setStep((s) => s + 1);
-  const prevStep = () => setStep((s) => s - 1);
+  const nextStep = () => {
+    if (validateStep(step)) {
+      setStep((s) => s + 1);
+    } else {
+      toast.error("Please fill in all required fields correctly.");
+    }
+  };
+  const prevStep = () => {
+    setErrors({});
+    setStep((s) => s - 1);
+  };
 
   const steps = [
     { title: "Identity", icon: <Building /> },
@@ -193,12 +249,12 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                     <input
                       type="text"
                       name="name"
-                      required
                       value={formData.name}
                       onChange={handleInputChange}
                       placeholder="e.g., Urban Threads"
-                      className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium`}
                     />
+                    {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.name}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs flex justify-between items-center">
@@ -213,12 +269,11 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                       <input
                         type="text"
                         name="username"
-                        required
                         value={formData.username}
                         onChange={handleInputChange}
                         placeholder="your_shop_handle"
-                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border rounded-lg focus:outline-none focus:ring-2 ${
-                          usernameStatus.error
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border rounded-lg focus:outline-none focus:ring-2 transition-all font-medium ${
+                          errors.username || usernameStatus.error
                             ? "border-red-500 focus:ring-red-500/50"
                             : usernameStatus.available
                             ? "border-green-500 focus:ring-green-500/50"
@@ -226,10 +281,10 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                         }`}
                       />
                     </div>
-                    {usernameStatus.error && (
-                      <p className="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                    {(errors.username || usernameStatus.error) && (
+                      <p className="text-[11px] font-bold text-red-500 mt-1 flex items-center gap-1 uppercase tracking-tight">
                         <AlertCircle className="w-3 h-3" />
-                        {usernameStatus.error}
+                        {errors.username || usernameStatus.error}
                       </p>
                     )}
                     {usernameStatus.available && (
@@ -253,23 +308,22 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                     <label className="font-medium text-xs">Description</label>
                     <textarea
                       name="description"
-                      required
                       value={formData.description}
                       onChange={handleInputChange}
                       placeholder="What makes your shop special?"
                       rows={4}
-                      className="w-full mt-1.5 px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
+                      className={`w-full mt-1.5 px-3 py-2.5 bg-muted/50 border ${errors.description ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium resize-none`}
                     />
+                    {errors.description && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.description}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs">Category</label>
                     <div className="relative mt-1.5">
                       <select
                         name="category"
-                        required
                         value={formData.category}
                         onChange={handleInputChange}
-                        className="w-full px-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none"
+                        className={`w-full px-3 py-2.5 bg-muted/50 border ${errors.category ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium appearance-none`}
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat) => (
@@ -278,8 +332,9 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                           </option>
                         ))}
                       </select>
-                      <Package className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                      <Package className={`absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 ${errors.category ? 'text-red-500' : 'text-muted-foreground'} pointer-events-none`} />
                     </div>
+                    {errors.category && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.category}</p>}
                   </div>
                 </div>
               </section>
@@ -336,13 +391,13 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                       <input
                         type="email"
                         name="email"
-                        required
                         value={formData.email}
                         onChange={handleInputChange}
                         placeholder="hello@yourshop.com"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.email ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium`}
                       />
                     </div>
+                    {errors.email && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.email}</p>}
                   </div>
                   <div>
                     <label className="font-medium text-xs">Phone Number</label>
@@ -351,13 +406,13 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                       <input
                         type="tel"
                         name="phone"
-                        required
                         value={formData.phone}
                         onChange={handleInputChange}
                         placeholder="+254 700 000 000"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.phone ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium`}
                       />
                     </div>
+                    {errors.phone && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.phone}</p>}
                   </div>
                   <div className="sm:col-span-2">
                     <label className="font-medium text-xs">Physical Address</label>
@@ -366,13 +421,13 @@ export const RegisterShopModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
                       <input
                         type="text"
                         name="address"
-                        required
                         value={formData.address}
                         onChange={handleInputChange}
                         placeholder="e.g., 1st Floor, Garden Plaza"
-                        className="w-full pl-9 pr-3 py-2.5 bg-muted/50 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
+                        className={`w-full pl-9 pr-3 py-2.5 bg-muted/50 border ${errors.address ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/50'} rounded-lg focus:outline-none focus:ring-2 transition-all font-medium`}
                       />
                     </div>
+                    {errors.address && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.address}</p>}
                   </div>
                 </div>
               </section>

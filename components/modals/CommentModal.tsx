@@ -18,6 +18,18 @@ const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded 
   const [content, setContent] = useState("");
   const { createComment, isPosting } = useComments(productId);
   const { user } = useUser();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!content.trim()) {
+      newErrors.content = "Comment cannot be empty";
+    } else if (content.trim().length < 3) {
+      newErrors.content = "Comment must be at least 3 characters";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   if (!isOpen) return null;
 
@@ -29,8 +41,7 @@ const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded 
       return;
     }
 
-    if (!content.trim()) {
-      toast.error("Please enter a comment");
+    if (!validate()) {
       return;
     }
 
@@ -39,6 +50,7 @@ const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded 
       {
         onSuccess: () => {
           setContent("");
+          setErrors({});
           onClose();
           if (onCommentAdded) onCommentAdded();
         },
@@ -79,11 +91,21 @@ const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded 
             </label>
             <textarea
               value={content}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value);
+                if (errors.content) {
+                  setErrors(prev => {
+                    const ne = {...prev};
+                    delete ne.content;
+                    return ne;
+                  });
+                }
+              }}
               placeholder="What do you think about this product?"
-              className="w-full h-32 px-4 py-3 bg-muted border border-border rounded-2xl text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none outline-none placeholder:text-muted-foreground/50"
+              className={`w-full h-32 px-4 py-3 bg-muted border ${errors.content ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/20'} rounded-2xl text-foreground text-sm focus:ring-2 focus:border-primary transition-all resize-none outline-none placeholder:text-muted-foreground/30`}
               autoFocus
             />
+            {errors.content && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-1">{errors.content}</p>}
             <p className="mt-2 text-[10px] text-muted-foreground text-right">
               {content.length}/1000 characters
             </p>
@@ -99,7 +121,7 @@ const CommentModal = ({ isOpen, onClose, productId, productName, onCommentAdded 
             </button>
             <button
               type="submit"
-              disabled={isPosting || !content.trim()}
+              disabled={isPosting}
               className="flex-[2] px-6 py-3 bg-primary text-primary-foreground rounded-xl font-bold hover:bg-blue-700 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
             >
               {isPosting ? (
