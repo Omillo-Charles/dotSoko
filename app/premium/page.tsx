@@ -135,7 +135,7 @@ const PremiumPage = () => {
           </Link>
           <div className="space-y-1">
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase leading-none">Premium Access</h1>
-            <p className="text-muted-foreground font-medium text-lg">Elevate your commerce experience with advanced protocols.</p>
+            <p className="text-muted-foreground font-medium text-lg">Elevate your commerce experience with advanced features.</p>
           </div>
         </div>
 
@@ -227,7 +227,7 @@ const PremiumPage = () => {
                         : "bg-foreground text-background hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98]"
                     }`}
                   >
-                    {isCurrentPlan ? "Active Protocol" : plan.buttonText}
+                    {isCurrentPlan ? "Active Plan" : plan.buttonText}
                   </button>
                 </div>
               </div>
@@ -239,8 +239,8 @@ const PremiumPage = () => {
       {/* Modern Comparison Table */}
       <div className="w-full px-6 xl:px-12 max-w-7xl mx-auto">
         <div className="text-center mb-16 space-y-2">
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic">Tier Comparison</h2>
-            <p className="text-muted-foreground font-black text-xs uppercase tracking-[0.3em]">Commercial Protocol Specifications</p>
+            <h2 className="text-3xl font-black uppercase tracking-tighter">Tier Comparison</h2>
+            <p className="text-muted-foreground font-black text-xs uppercase tracking-[0.3em]">Commercial Plan Features</p>
         </div>
 
         <div className="overflow-x-auto custom-scrollbar pb-8">
