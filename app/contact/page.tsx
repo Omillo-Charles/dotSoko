@@ -30,16 +30,63 @@ const ContactPage = () => {
     subject: "",
     message: "",
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!form.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (form.name.trim().length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!form.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!form.subject.trim()) {
+      newErrors.subject = "Subject is required";
+    } else if (form.subject.trim().length < 5) {
+      newErrors.subject = "Subject must be at least 5 characters";
+    }
+
+    if (!form.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (form.message.trim().length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -114,30 +161,30 @@ const ContactPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label htmlFor="name" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Your Name</label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={form.name}
-                      onChange={onChange}
-                      placeholder="John Doe"
-                      className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Your Email</label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={form.email}
-                      onChange={onChange}
-                      placeholder="john@example.com"
-                      className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
-                    />
-                  </div>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        value={form.name}
+                        onChange={onChange}
+                        placeholder="John Doe"
+                        className={`w-full bg-muted/20 border ${errors.name ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/20'} rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 transition-all font-medium`}
+                      />
+                      {errors.name && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.name}</p>}
+                    </div>
+                    <div className="space-y-2">
+                      <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Your Email</label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={form.email}
+                        onChange={onChange}
+                        placeholder="john@example.com"
+                        className={`w-full bg-muted/20 border ${errors.email ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/20'} rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 transition-all font-medium`}
+                      />
+                      {errors.email && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.email}</p>}
+                    </div>
                 </div>
 
                 <div className="space-y-2">
@@ -149,8 +196,9 @@ const ContactPage = () => {
                     value={form.subject}
                     onChange={onChange}
                     placeholder="How can we help?"
-                    className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+                    className={`w-full bg-muted/20 border ${errors.subject ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/20'} rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 transition-all font-medium`}
                   />
+                  {errors.subject && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.subject}</p>}
                 </div>
 
                 <div className="space-y-2">
@@ -158,13 +206,13 @@ const ContactPage = () => {
                   <textarea
                     id="message"
                     name="message"
-                    required
                     rows={6}
                     value={form.message}
                     onChange={onChange}
                     placeholder="Describe your inquiry..."
-                    className="w-full bg-muted/20 border border-border rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium resize-none"
+                    className={`w-full bg-muted/20 border ${errors.message ? 'border-red-500 focus:ring-red-500/20' : 'border-border focus:ring-primary/20'} rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:ring-2 transition-all font-medium resize-none`}
                   />
+                  {errors.message && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.message}</p>}
                 </div>
 
                 <button
