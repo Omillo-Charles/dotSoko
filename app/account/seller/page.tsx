@@ -3,16 +3,17 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { 
-  ShoppingBag, 
-  Package, 
-  BarChart3, 
-  Plus, 
-  Store, 
-  Settings, 
-  Zap, 
-  Clock, 
-  LayoutDashboard
+import {
+  ShoppingBag,
+  Package,
+  BarChart3,
+  Plus,
+  Store,
+  Settings,
+  Zap,
+  Clock,
+  LayoutDashboard,
+  AlertTriangle
 } from "lucide-react";
 
 import { useUser } from "@/hooks/useUser";
@@ -23,8 +24,8 @@ import { RegisterShopModal } from "@/components/modals/RegisterShopModal";
 import { ProductCreateModal } from "@/components/modals/ProductCreateModal";
 import { SellerAnalytics } from "@/components/dashboard/SellerAnalytics";
 import { MarketInsights } from "@/components/dashboard/MarketInsights";
-import { 
-  DashboardShell, 
+import {
+  DashboardShell,
 } from "@/components/dashboard/DashboardComponents";
 import { DashboardView } from "./DashboardView";
 import { OrdersView } from "./OrdersView";
@@ -38,7 +39,7 @@ const SellerDashboard = () => {
   const { data: shop, isLoading: isShopLoading, error: shopError } = useMyShop();
   const { data: products = [], isLoading: isProductsLoading, refetch: refetchProducts } = useMyProducts();
   const { orders = [], isLoading: isOrdersLoading } = useSellerOrders();
-  
+
   const searchParams = useSearchParams();
   const currentView = searchParams.get("view") || "overview";
   const [isMounted, setIsMounted] = useState(false);
@@ -64,6 +65,28 @@ const SellerDashboard = () => {
         <div className="relative">
           <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <div className="absolute inset-0 w-12 h-12 border-4 border-transparent border-b-secondary rounded-full animate-spin-slow"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (shopError) {
+    return (
+      <div className="w-full max-w-3xl mx-auto py-12 px-4">
+        <div className="relative overflow-hidden bg-background/40 backdrop-blur-3xl p-10 rounded-[3rem] border border-border text-center shadow-sm">
+          <div className="relative z-10">
+            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+            <h2 className="text-3xl font-black text-red-500 tracking-tight">Connection Error</h2>
+            <p className="text-muted-foreground mt-4 max-w-md mx-auto font-medium text-base leading-relaxed">
+              We couldn't load your shop details. Please check your internet connection and try again.
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-8 px-10 py-4 rounded-[2rem] bg-gray-500/20 text-black hover:bg-gray-500/30 font-black transition-all text-sm tracking-[0.2em]"
+            >
+              Retry Connection
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -120,9 +143,9 @@ const SellerDashboard = () => {
       default:
         return (
           <div className="p-20 text-center bg-background/40 backdrop-blur-3xl rounded-[3rem] border border-border">
-             <Store className="w-16 h-16 text-primary/20 mx-auto mb-6" />
-             <h2 className="text-2xl font-black text-foreground">{currentView} view</h2>
-             <p className="text-muted-foreground mt-2">Experimental module initializing...</p>
+            <Store className="w-16 h-16 text-primary/20 mx-auto mb-6" />
+            <h2 className="text-2xl font-black text-foreground">{currentView} view</h2>
+            <p className="text-muted-foreground mt-2">Experimental module initializing...</p>
           </div>
         );
     }

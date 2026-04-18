@@ -65,7 +65,7 @@ const SearchBar = () => {
   const handleSuggestionClick = (product: any) => {
     setQuery(product.name);
     setShowSuggestions(false);
-    router.push(`/shop/product/${product._id}`);
+    router.push(`/shop/product/${product.id || product._id}`);
   };
 
   return (
@@ -131,9 +131,9 @@ const SearchBar = () => {
                 Product Suggestions
               </div>
               <div className="max-h-[400px] overflow-y-auto">
-                {suggestions.map((product) => (
+                {suggestions.map((product, index) => (
                   <div
-                    key={product._id}
+                    key={product.id || product._id || index}
                     onClick={() => handleSuggestionClick(product)}
                     className="flex items-center gap-4 p-3 hover:bg-white/5 cursor-pointer transition-all group border-b border-white/5 last:border-0"
                   >
