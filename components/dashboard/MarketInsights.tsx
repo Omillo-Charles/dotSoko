@@ -18,7 +18,7 @@ import { useProducts } from "@/hooks/useProducts";
 
 export const MarketInsights = () => {
   const { data: popularShops = [], isLoading: isShopsLoading } = usePopularShops(2);
-  const { data: trendingProducts = [], isLoading: isProductsLoading } = useProducts({ limit: 2, sort: '-views' });
+  const { data: trendingProducts = [], isLoading: isProductsLoading } = useProducts({ limit: 2, sortBy: 'popular' });
 
   if (isShopsLoading || isProductsLoading) {
     return (
