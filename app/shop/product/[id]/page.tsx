@@ -492,8 +492,6 @@ const ProductDetailsPage = () => {
                         </div>
                         <div className="flex items-center gap-2 mt-0.5">
                           <p className="text-[10px] font-bold text-muted-foreground truncate max-w-[80px]">{vendor.handle}</p>
-                          <span className="text-muted-foreground/30">·</span>
-                          <p className="text-[10px] font-bold text-muted-foreground">{vendor.followersCount} followers</p>
                         </div>
                       </div>
                     </div>
