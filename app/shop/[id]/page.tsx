@@ -27,7 +27,7 @@ import { GoldCheck } from "@/components/ui/CommonUI";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
-import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop, useShopReviews } from "@/hooks/useShop";
+import { useShop, useShopProducts, usePopularShops, useFollowShop, useShopLists, useMyShop, useShopReviews, useInfiniteShopProducts } from "@/hooks/useShop";
 import { useUser } from "@/hooks/useUser";
 import FeedbackModal from "@/components/modals/FeedbackModal";
 import { UniversalShareModal } from "@/components/modals/UniversalShareModal";
@@ -118,12 +118,50 @@ const ShopProfilePage = () => {
     setIsMounted(true);
   }, []);
 
+  const observerTarget = React.useRef(null);
+
   const { data: shop, isLoading: isShopLoading, error: shopError } = useShop(idOrHandle);
-  const { data: productsData = [], isLoading: isProductsLoading, refetch: refetchProducts } = useShopProducts(idOrHandle, {
+  
+  const currentQuery = useInfiniteShopProducts(idOrHandle, {
     minPrice: debouncedPriceRange.min ? parseFloat(debouncedPriceRange.min) : undefined,
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined
   });
-  const { data: popularShopsData = [] } = usePopularShops(4);
+
+  const { refetch: refetchProducts } = useShopProducts(idOrHandle); // Keep for compatibility if needed
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && currentQuery.hasNextPage && !currentQuery.isFetchingNextPage) {
+          currentQuery.fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) observer.observe(observerTarget.current);
+    return () => observer.disconnect();
+  }, [currentQuery.hasNextPage, currentQuery.fetchNextPage, currentQuery.isFetchingNextPage]);
+
+  const products = React.useMemo(() => {
+    const rawProducts = currentQuery.data?.pages.flatMap((page: any) => page.data) || [];
+    return rawProducts.map((p: any) => ({
+      ...p,
+      _id: String(p._id || p.id || `product-${Math.random()}`),
+      name: String(p.name || "Untitled Product"),
+      price: Number(p.price || 0),
+      description: String(p.description || ""),
+      image: p.image || p.images?.[0] || null,
+      commentsCount: Number(p.commentsCount || p.comments?.length || 0),
+      repostsCount: Number(p.repostsCount || 0),
+      rating: Number(p.rating || 0),
+      reviewsCount: Number(p.reviewsCount || 0)
+    }));
+  }, [currentQuery.data]);
+
+  const isProductsLoading = currentQuery.isLoading;
+  const isFetchingNextPage = currentQuery.isFetchingNextPage;
+  const { data: popularShopsData = [], isLoading: isShopsLoading } = usePopularShops(4);
   const { data: listData = [], isLoading: isListsLoading } = useShopLists(idOrHandle, activeSection as 'Followers' | 'Following');
   const { data: reviewsData = [], isLoading: isReviewsLoading } = useShopReviews(idOrHandle);
   const followMutation = useFollowShop();
@@ -137,21 +175,6 @@ const ShopProfilePage = () => {
       router.replace(`/shop/@${shop.username}`);
     }
   }, [shop, idOrHandle, router]);
-
-  const products = React.useMemo(() => {
-    return (productsData || []).map((p: any) => ({
-      ...p,
-      _id: String(p._id || p.id || `product-${Math.random()}`),
-      name: String(p.name || "Untitled Product"),
-      price: Number(p.price || 0),
-      description: String(p.description || ""),
-      image: p.image || p.images?.[0] || null,
-      commentsCount: Number(p.commentsCount || p.comments?.length || 0),
-      repostsCount: Number(p.repostsCount || 0),
-      rating: Number(p.rating || 0),
-      reviewsCount: Number(p.reviewsCount || 0)
-    }));
-  }, [productsData]);
 
   const isFollowing = (shop as any)?.isFollowing ?? false;
   
@@ -438,6 +461,19 @@ const ShopProfilePage = () => {
                       onShareOpen={(url, title) => setShareModal({ isOpen: true, url, title })}
                     />
                   ))}
+                  
+                  {/* Intersection Observer Sentinel */}
+                  <div ref={observerTarget} className="h-20 flex items-center justify-center border-t border-border/50">
+                    {isFetchingNextPage && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <p className="text-[10px] font-black uppercase tracking-widest">Loading more...</p>
+                      </div>
+                    )}
+                    {!currentQuery.hasNextPage && products.length > 0 && (
+                      <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">End of products</p>
+                    )}
+                  </div>
                 </div>
               )
             ) : activeSection === 'Reviews' ? (
@@ -891,31 +927,48 @@ const ShopProfilePage = () => {
             <div className="space-y-4">
               <h3 className="text-[11px] font-black text-foreground/50 uppercase tracking-[0.2em] px-2">Popular Stores</h3>
               <div className="space-y-1">
-                {popularShops
-                  .filter((s: any) => s.id !== shop?._id) // Filter out the current shop
-                  .slice(0, 4) // Limit to 4 shops
-                  .map((vendor: any) => (
-                  <div 
-                    key={vendor.id} 
-                    onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
-                    className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center gap-3 rounded-xl group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted dark:bg-slate-800 border border-border shrink-0">
-                        <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-0.5">
-                          <p className="font-bold text-foreground/90 text-sm truncate">{vendor.name}</p>
-                          {vendor.verified && <GoldCheck className="w-3 h-3" />}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
-                        </div>
+                {isShopsLoading ? (
+                  [1, 2, 3, 4].map((i) => (
+                    <div key={i} className="p-3 flex items-center gap-3 animate-pulse">
+                      <div className="w-10 h-10 rounded-full bg-muted shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-3/4" />
+                        <div className="h-3 bg-muted rounded w-1/2" />
                       </div>
                     </div>
+                  ))
+                ) : popularShops.length > 0 ? (
+                  popularShops
+                    .filter((s: any) => s.id !== shop?._id)
+                    .slice(0, 4)
+                    .map((vendor: any) => (
+                      <div 
+                        key={vendor.id} 
+                        onClick={() => router.push(`/shop/${vendor.handle || vendor.id}`)}
+                        className="p-3 hover:bg-muted dark:hover:bg-white/5 transition-all cursor-pointer flex items-center gap-3 rounded-xl group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="w-10 aspect-square rounded-full overflow-hidden bg-muted dark:bg-slate-800 border border-border shrink-0">
+                            <img src={vendor.avatar} alt={vendor.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-0.5">
+                              <p className="font-bold text-foreground/90 text-sm truncate">{vendor.name}</p>
+                              {vendor.verified && <GoldCheck className="w-3 h-3" />}
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <p className="text-muted-foreground text-[11px] truncate">{vendor.handle}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                ) : (
+                  <div className="p-8 text-center space-y-2">
+                    <p className="text-xs font-black text-foreground uppercase">No shops found</p>
+                    <p className="text-[10px] font-bold text-muted-foreground/60">Check back later for new stores</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </aside>

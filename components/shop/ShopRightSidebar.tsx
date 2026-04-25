@@ -15,6 +15,7 @@ interface ShopRightSidebarProps {
   currentUser: any;
   followMutation: any;
   shopsQuery: string;
+  isLoading?: boolean;
   onPostProduct: () => void;
   onFollowToggle: (shopId: string) => void;
 }
@@ -28,6 +29,7 @@ export const ShopRightSidebar = ({
   currentUser,
   followMutation,
   shopsQuery,
+  isLoading,
   onPostProduct,
   onFollowToggle,
 }: ShopRightSidebarProps) => {
@@ -42,7 +44,17 @@ export const ShopRightSidebar = ({
         <div className="space-y-4">
           <h3 className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] px-2">Popular Shops</h3>
           <div className="space-y-1">
-            {popularShops.length > 0 ? (
+            {isLoading ? (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="p-3 flex items-center gap-3 animate-pulse">
+                  <div className="w-10 h-10 rounded-full bg-muted shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4" />
+                    <div className="h-3 bg-muted rounded w-1/2" />
+                  </div>
+                </div>
+              ))
+            ) : popularShops.length > 0 ? (
               popularShops.map((vendor: any) => (
                 <div
                   key={vendor.id}

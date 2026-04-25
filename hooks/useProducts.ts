@@ -134,6 +134,33 @@ export const usePersonalizedFeed = (limit: number = 12) => {
   });
 };
 
+export const useInfinitePersonalizedFeed = (limit: number = 12) => {
+  return useInfiniteQuery({
+    queryKey: ['product-feed-infinite', limit],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await api.get('/products/feed', { 
+        params: { limit, page: pageParam } 
+      });
+      const data = response.data;
+      if (data.data && Array.isArray(data.data)) {
+        data.data = data.data.map((p: any) => ({
+          ...p,
+          _id: p.id || p._id
+        }));
+      }
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination && lastPage.pagination.page < lastPage.pagination.pages) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
 export const useTrackActivity = () => {
   return async (data: { type: string; productId?: string; category?: string; searchQuery?: string }) => {
     try {

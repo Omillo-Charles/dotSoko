@@ -1,4 +1,4 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import api from '@/lib/api';
 
 export const useShop = (idOrHandle: string) => {
@@ -6,13 +6,13 @@ export const useShop = (idOrHandle: string) => {
     queryKey: ['shop', idOrHandle],
     queryFn: async () => {
       // Check if it's a handle (starts with @)
-      const endpoint = idOrHandle.startsWith('@') 
-        ? `/shops/handle/${idOrHandle.substring(1)}` 
+      const endpoint = idOrHandle.startsWith('@')
+        ? `/shops/handle/${idOrHandle.substring(1)}`
         : `/shops/${idOrHandle}`;
-        
+
       const response = await api.get(endpoint);
       const shopData = response.data.data || response.data;
-      
+
       // If the data is empty or missing name, it might be an unsuccessful response
       if (!shopData || (typeof shopData === 'object' && !shopData.name && !shopData.id && !shopData._id)) {
         throw new Error("Shop not found");
@@ -22,7 +22,7 @@ export const useShop = (idOrHandle: string) => {
       if (shopData && shopData.id && !shopData._id) {
         shopData._id = shopData.id;
       }
-      
+
       return shopData;
     },
     enabled: !!idOrHandle && idOrHandle !== 'undefined',
@@ -45,9 +45,9 @@ export const useMyShop = () => {
   });
 };
 
-export const useShopProducts = (idOrHandle: string, params?: { 
-  limit?: number; 
-  minPrice?: number; 
+export const useShopProducts = (idOrHandle: string, params?: {
+  limit?: number;
+  minPrice?: number;
   maxPrice?: number;
   minRating?: number;
   sortBy?: 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'rating' | 'popular';
@@ -68,6 +68,37 @@ export const useShopProducts = (idOrHandle: string, params?: {
         ...p,
         _id: p.id || p._id || `prod-${Math.random()}`
       }));
+    },
+    enabled: !!idOrHandle && idOrHandle !== 'undefined',
+  });
+};
+
+export const useInfiniteShopProducts = (idOrHandle: string, params?: any) => {
+  return useInfiniteQuery({
+    queryKey: ['shop-products-infinite', idOrHandle, params],
+    queryFn: async ({ pageParam = 1 }) => {
+      const endpoint = idOrHandle.startsWith('@')
+        ? `/products/shop/handle/${idOrHandle.substring(1)}`
+        : `/products/shop/${idOrHandle}`;
+
+      const response = await api.get(endpoint, {
+        params: { limit: 12, page: pageParam, ...params }
+      });
+      const data = response.data;
+      if (data.data && Array.isArray(data.data)) {
+        data.data = data.data.map((p: any) => ({
+          ...p,
+          _id: p.id || p._id || `prod-${Math.random()}`
+        }));
+      }
+      return data;
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination && lastPage.pagination.page < lastPage.pagination.pages) {
+        return lastPage.pagination.page + 1;
+      }
+      return undefined;
     },
     enabled: !!idOrHandle && idOrHandle !== 'undefined',
   });
@@ -110,8 +141,8 @@ export const useShopLists = (idOrHandle: string, type: 'Followers' | 'Following'
     queryFn: async () => {
       const isHandle = idOrHandle.startsWith('@');
       const cleanHandle = isHandle ? idOrHandle.substring(1) : idOrHandle;
-      
-      const endpoint = type === 'Followers' 
+
+      const endpoint = type === 'Followers'
         ? (isHandle ? `/shops/handle/${cleanHandle}/followers` : `/shops/${idOrHandle}/followers`)
         : (isHandle ? `/shops/handle/${cleanHandle}/following` : `/shops/${idOrHandle}/following`);
 
@@ -126,7 +157,7 @@ export const useShopLists = (idOrHandle: string, type: 'Followers' | 'Following'
       }
     },
     enabled: !!idOrHandle && (type === 'Followers' || type === 'Following'),
-    staleTime: 30000, 
+    staleTime: 30000,
   });
 };
 
@@ -137,7 +168,7 @@ export const useShopReviews = (idOrHandle: string) => {
       const endpoint = idOrHandle.startsWith('@')
         ? `/shops/handle/${idOrHandle.substring(1)}/reviews`
         : `/shops/${idOrHandle}/reviews`;
-        
+
       const response = await api.get(endpoint);
       return response.data.data;
     },
@@ -147,7 +178,7 @@ export const useShopReviews = (idOrHandle: string) => {
 
 export const useFollowShop = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (shopId: string) => {
       const response = await api.post(`/shops/${shopId}/follow`);
@@ -166,13 +197,13 @@ export const useFollowShop = () => {
         const sid = shop._id || shop.id;
         if (String(sid) !== String(shopId)) return shop;
 
-        const isFollowing = Boolean(shop.isFollowing) || 
-                          (Array.isArray(shop.followersList) && userId && shop.followersList.some((f: any) => String(f._id || f) === String(userId))) ||
-                          (Array.isArray(shop.followers) && userId && shop.followers.some((f: any) => String(f._id || f) === String(userId)));
-        
+        const isFollowing = Boolean(shop.isFollowing) ||
+          (Array.isArray(shop.followersList) && userId && shop.followersList.some((f: any) => String(f._id || f) === String(userId))) ||
+          (Array.isArray(shop.followers) && userId && shop.followers.some((f: any) => String(f._id || f) === String(userId)));
+
         const nextFollowing = !isFollowing;
         const count = Number(shop.followersCount ?? shop._count?.followers ?? shop.followers?.length ?? 0);
-        
+
         return {
           ...shop,
           isFollowing: nextFollowing,

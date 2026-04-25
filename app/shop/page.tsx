@@ -15,7 +15,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "sonner";
 
-import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity } from "@/hooks/useProducts";
+import { useProducts, useLimitedProducts, usePersonalizedFeed, useTrackActivity, useInfiniteProducts, useInfinitePersonalizedFeed } from "@/hooks/useProducts";
 import { usePopularShops, useFollowShop, useMyShop } from "@/hooks/useShop";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/hooks/useUser";
@@ -64,6 +64,7 @@ const ShopContent = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [repostPopover, setRepostPopover] = useState<{ isOpen: boolean; productId: string | null; position: { top: number; left: number } }>({ isOpen: false, productId: null, position: { top: 0, left: 0 } });
   const [showProductModal, setShowProductModal] = useState(false);
+  const observerTarget = React.useRef(null);
 
   const [desktopSearchQuery, setDesktopSearchQuery] = useState(shopsQuery || "");
   const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false);
@@ -109,7 +110,7 @@ const ShopContent = () => {
 
   const isSeller = isMounted && (currentUser?.accountType === 'seller' || !!myShop);
 
-  const { data: productsData, isLoading: isProductsLoading, error: productsError } = useProducts({
+  const infiniteProducts = useInfiniteProducts({
     q: query,
     cat: cat !== 'all' ? cat : undefined,
     following: activeTab === 'following' ? 'true' : undefined,
@@ -117,12 +118,32 @@ const ShopContent = () => {
     maxPrice: debouncedPriceRange.max ? parseFloat(debouncedPriceRange.max) : undefined,
   });
 
-  const products = activeTab === 'foryou' && !query && cat === 'all' && !debouncedPriceRange.min && !debouncedPriceRange.max
-    ? (feedProducts || [])
-    : (productsData || []);
+  const infiniteFeed = useInfinitePersonalizedFeed(24);
 
-  const isLoading = isProductsLoading || (activeTab === 'foryou' && isFeedLoading);
-  const error = productsError ? (productsError as any).response?.data?.message || "Failed to load products" : null;
+  const isFeedTab = activeTab === 'foryou' && !query && cat === 'all' && !debouncedPriceRange.min && !debouncedPriceRange.max;
+  const currentQuery = isFeedTab ? infiniteFeed : infiniteProducts;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && currentQuery.hasNextPage && !currentQuery.isFetchingNextPage) {
+          currentQuery.fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) observer.observe(observerTarget.current);
+    return () => observer.disconnect();
+  }, [currentQuery.hasNextPage, currentQuery.fetchNextPage, currentQuery.isFetchingNextPage]);
+
+  const products = React.useMemo(() => {
+    return currentQuery.data?.pages.flatMap((page: any) => page.data) || [];
+  }, [currentQuery.data]);
+
+  const isLoading = currentQuery.isLoading;
+  const isFetchingNextPage = currentQuery.isFetchingNextPage;
+  const error = currentQuery.error ? (currentQuery.error as any).response?.data?.message || "Failed to load products" : null;
 
   const displayProducts = React.useMemo(() => {
     if (activeTab === 'following' && myShop) {
@@ -355,6 +376,19 @@ const ShopContent = () => {
                     onShareOpen={(url, title) => setShareModal({ isOpen: true, url, title })}
                   />
                 ))}
+                
+                {/* Intersection Observer Sentinel */}
+                <div ref={observerTarget} className="h-20 flex items-center justify-center">
+                  {isFetchingNextPage && (
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                      <p className="text-[10px] font-bold uppercase tracking-widest">Loading more...</p>
+                    </div>
+                  )}
+                  {!currentQuery.hasNextPage && products.length > 0 && (
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">You've reached the end</p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -405,6 +439,7 @@ const ShopContent = () => {
           currentUser={currentUser}
           followMutation={followMutation}
           shopsQuery={shopsQuery}
+          isLoading={isShopsLoading}
           onPostProduct={() => setShowProductModal(true)}
           onFollowToggle={handleFollowToggle}
         />
