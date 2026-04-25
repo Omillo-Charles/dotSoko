@@ -155,6 +155,12 @@ const ShopProfilePage = () => {
 
   const isFollowing = (shop as any)?.isFollowing ?? false;
   
+  const isOwner = isMounted && currentUser && (
+    String(shop?.owner?._id || shop?.owner) === String(currentUser?._id) ||
+    String(shop?.ownerId) === String(currentUser?._id) ||
+    (myShop && String(myShop._id || myShop.id) === String(shop?._id))
+  );
+  
   const popularShops = React.useMemo(() => {
     return (popularShopsData || []).map((s: any) => ({
       id: String(s._id || s.id || `shop-${Math.random()}`),
@@ -242,8 +248,10 @@ const ShopProfilePage = () => {
                   { name: 'Products', icon: <ShoppingBag className="w-5 h-5" />, count: products.length },
                   { name: 'Reviews', icon: <Star className="w-5 h-5" />, count: shop?.reviewsCount || reviewsData.length },
                   { name: 'About', icon: <Info className="w-5 h-5" /> },
-                  { name: 'Followers', icon: <Users className="w-5 h-5" />, count: shop?.followersCount ?? shop?.followers?.length },
-                  { name: 'Following', icon: <Users className="w-5 h-5" />, count: shop?.followingCount ?? shop?.following?.length },
+                  ...(isOwner ? [
+                    { name: 'Followers', icon: <Users className="w-5 h-5" />, count: shop?.followersCount ?? shop?.followers?.length },
+                    { name: 'Following', icon: <Users className="w-5 h-5" />, count: shop?.followingCount ?? shop?.following?.length },
+                  ] : []),
                 ].map((item) => (
                   <button 
                     key={item.name}
@@ -362,25 +370,19 @@ const ShopProfilePage = () => {
                 <div className="flex items-center gap-3">
                   <p className="text-sm font-bold text-muted-foreground">{shop.username ? `@${shop.username}` : `@${shop.name.toLowerCase().replace(/\s+/g, "_")}`}</p>
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
-                  <button 
-                    onClick={() => setActiveSection('Followers')}
-                    className="group"
-                  >
-                    <span className="text-sm font-bold text-foreground/90 group-hover:underline">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-foreground/90">
                       {shop?.followersCount ?? shop?.followers?.length ?? 0}
                     </span>
-                    <span className="text-sm font-bold text-muted-foreground ml-1 group-hover:underline">Followers</span>
-                  </button>
+                    <span className="text-sm font-bold text-muted-foreground ml-1">Followers</span>
+                  </div>
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
-                  <button 
-                    onClick={() => setActiveSection('Following')}
-                    className="group"
-                  >
-                    <span className="text-sm font-bold text-foreground/90 group-hover:underline">
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-foreground/90">
                       {shop?.followingCount ?? shop?.following?.length ?? 0}
                     </span>
-                    <span className="text-sm font-bold text-muted-foreground ml-1 group-hover:underline">Following</span>
-                  </button>
+                    <span className="text-sm font-bold text-muted-foreground ml-1">Following</span>
+                  </div>
                   <div className="w-1 h-1 rounded-full bg-border dark:bg-white/10" />
                   <button 
                     onClick={() => setActiveSection('Products')}
@@ -549,7 +551,19 @@ const ShopProfilePage = () => {
               </div>
             ) : activeSection === 'Followers' ? (
               <div className="divide-y divide-border">
-                {isListsLoading ? (
+                {!isOwner ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-2">
+                      <Users className="w-10 h-10 opacity-20" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-black text-xl text-foreground uppercase tracking-tight">Private List</p>
+                      <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
+                        This shop's followers list is private and can only be viewed by the owner.
+                      </p>
+                    </div>
+                  </div>
+                ) : isListsLoading ? (
                   <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading followers...</p>
@@ -584,7 +598,19 @@ const ShopProfilePage = () => {
               </div>
             ) : activeSection === 'Following' ? (
               <div className="divide-y divide-border">
-                {isListsLoading ? (
+                {!isOwner ? (
+                  <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4 text-center">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-2">
+                      <Users className="w-10 h-10 opacity-20" />
+                    </div>
+                    <div className="space-y-2">
+                      <p className="font-black text-xl text-foreground uppercase tracking-tight">Private List</p>
+                      <p className="text-sm font-medium text-muted-foreground max-w-xs mx-auto">
+                        This shop's following list is private and can only be viewed by the owner.
+                      </p>
+                    </div>
+                  </div>
+                ) : isListsLoading ? (
                   <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
                     <div className="w-8 h-8 border-3 border-primary border-t-transparent rounded-full animate-spin"></div>
                     <p className="font-bold text-sm">Loading following...</p>
