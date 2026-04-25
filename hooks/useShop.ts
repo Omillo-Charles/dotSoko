@@ -113,6 +113,8 @@ export const usePopularShops = (limit?: number) => {
       });
       return response.data.data;
     },
+    staleTime: 60000,
+    retry: 3,
   });
 };
 
