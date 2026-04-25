@@ -414,7 +414,7 @@ const ShopContent = () => {
       {isSeller && (
         <button
           onClick={() => setShowProductModal(true)}
-          className={`fixed bottom-24 right-6 md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
+          className={`hidden md:flex fixed md:bottom-8 md:right-8 z-40 transition-all duration-300 transform ${showFab ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0 pointer-events-none'}`}
         >
           <div className="bg-primary text-primary-foreground p-4 rounded-full shadow-2xl shadow-primary/40 hover:scale-110 active:scale-95 transition-all group flex items-center gap-2">
             <Plus className="w-6 h-6" />
