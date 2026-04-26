@@ -16,6 +16,7 @@ interface ShopRightSidebarProps {
   followMutation: any;
   shopsQuery: string;
   isLoading?: boolean;
+  isFlashDealsLoading?: boolean;
   onPostProduct: () => void;
   onFollowToggle: (shopId: string) => void;
 }

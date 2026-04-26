@@ -46,7 +46,7 @@ const ShopContent = () => {
   const queryClient = useQueryClient();
   const { data: popularShopsData, isLoading: isShopsLoading } = usePopularShops(4);
   const shopsQuery = searchParams.get("shops_q") || "";
-  const { data: flashDealsData } = useLimitedProducts(3);
+  const { data: flashDealsData, isLoading: isFlashDealsLoading } = useLimitedProducts(3);
   const followMutation = useFollowShop();
 
   const [isMounted, setIsMounted] = useState(false);
@@ -325,9 +325,16 @@ const ShopContent = () => {
 
             {/* Loading / Error / Empty / Feed states */}
             {isLoading ? (
-              <div className="p-20 flex flex-col items-center justify-center text-muted-foreground gap-4">
-                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                <p className="font-bold text-sm">Loading products...</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 px-4 py-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                  <div key={i} className="aspect-[4/5] rounded-3xl bg-muted animate-pulse overflow-hidden">
+                    <div className="h-2/3 bg-muted-foreground/10" />
+                    <div className="p-4 space-y-3">
+                      <div className="h-4 bg-muted-foreground/10 rounded-full w-3/4" />
+                      <div className="h-3 bg-muted-foreground/10 rounded-full w-1/2" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
               <div className="p-20 flex flex-col items-center justify-center text-destructive gap-4">
